@@ -11,7 +11,6 @@
 
 var currentLocation = window.location.href;
 var companyRegex = /(u_company=)\w*/;
-//var searchTermRegex = /(?<=query=)\S*(?=&)/;
 
 function toggle(){
     var sw = document.getElementById("ScriptToggle");
@@ -87,20 +86,12 @@ function reapplyFilter(){
     console.log("current location: ", currentLocation);
     var company = companyRegex.exec(currentLocation.concat("&"));
     console.log("current company: ",company);
-    //var searchTerm = searchTermRegex.exec(currentLocation.concat("&"));
-    //console.log("current search term: ",searchTerm);
     if (company==null || companyRegex.test(window.location.href) ){
         console.log("no company currently or new url already has company");
         return
     }
-    //Request URL: https://virteva.service-now.com/api/now/sp/rectangle/fe379905db30320099f93691f0b8f571?id=kb_search&language=en&query=phone&spa=1&u_company=7d805cbc1368ee489b04745fd144b019
     if (window.location.href != currentLocation){
         var url = window.location.href.concat("&").concat(company);
-        //var xhttp = new XMLHttpRequest();
-
-
-        //xhttp.open("POST", "https://virteva.service-now.com/api/now/sp/rectangle/fe379905db30320099f93691f0b8f571?id=kb_search&language=en&query=phone&spa=1&u_company=7d805cbc1368ee489b04745fd144b019", true);
-       // xhttp.send();
 
         console.log("new location: ", window.location.href);
         console.log("new appended location: ", url);

@@ -1,7 +1,9 @@
 // ==UserScript==
 // @name         KB - Keep company filter
-// @namespace    https://*.service-now.com
-// @version      0.2
+// @namespace    https://github.com/VivianVerdant/kb-keep-company-filter/
+// @homepageURL  https://github.com/VivianVerdant/kb-keep-company-filter/
+// @supportURL   https://github.com/VivianVerdant/kb-keep-company-filter/
+// @version      0.3
 // @description  Keep that pesky search filter from wandering off
 // @author       Vivian
 // @match        https://*.service-now.com/kb*

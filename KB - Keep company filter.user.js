@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         KB - Keep company filter
 // @namespace    https://*.service-now.com
-// @version      0.1
+// @version      0.2
 // @description  Keep that pesky search filter from wandering off
 // @author       Vivian
 // @match        https://*.service-now.com/kb*

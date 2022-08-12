@@ -11,6 +11,8 @@
 // @grant        GM_getValue
 // ==/UserScript==
 
+//testing update
+
 var currentLocation = window.location.href;
 var companyRegex = /(u_company=)\w*/;
 

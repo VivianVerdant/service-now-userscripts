@@ -8,6 +8,9 @@
 // @grant        none
 // ==/UserScript==
 
+// Changelog
+// v0.2 - fixes links generated after page load and doesn't sometimes create duplicate links
+
 function replaceKBlinks(){
 	var qLinks = document.querySelectorAll("a[href*='id=kb_article_view']");
 

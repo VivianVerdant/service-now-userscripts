@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better KB Links
 // @namespace    https://github.com/VivianVerdant/
-// @version      0.3
+// @version      0.4
 // @description  Always open KBs in new tabs and choose between viewing minimal and full versions
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -9,6 +9,7 @@
 // ==/UserScript==
 
 /* Changelog
+v0.4 - REALLY fixed duplicate link creation this time
 v0.3 - Creates correct links inside of KBs and for permalinks
 v0.2 - Fixes links generated after page load and doesn't sometimes create duplicate links
 v0.1 - Initial release
@@ -30,8 +31,9 @@ function replaceKBlinks(){
 			oldHref = "https://virteva.service-now.com/kb" + oldHref;
 		}
 		//console.log (oldHref + "\n" + newHref);
-		qLinks[J].setAttribute ('href', newHref);
+		qLinks[J].setAttribute('href', newHref);
 		qLinks[J].setAttribute("target", "_blank");
+		qLinks[J].setAttribute('class', "handled");
 
 		var buttonNew = document.createElement("a");
 		buttonNew.setAttribute("href", oldHref);

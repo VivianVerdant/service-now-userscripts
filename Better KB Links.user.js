@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better KB Links
 // @namespace    https://github.com/VivianVerdant/
-// @version      0.1
+// @version      0.2
 // @description  Always open KBs in new tabs and choose between viewing minimal and full versions
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -12,6 +12,9 @@ function replaceKBlinks(){
 	var qLinks = document.querySelectorAll("a[href*='id=kb_article_view']");
 
 	for (var J = qLinks.length - 1; J >= 0; --J) {
+		if (qLinks[J].getAttribute ('class')=="handled"){
+			continue
+		}
 		var oldHref = qLinks[J].getAttribute ('href');
 		var newHref = oldHref.replace (/(\?id=kb_article_view&)/, "kb_view.do?");
 		//console.log (oldHref + "\n" + newHref);
@@ -23,6 +26,7 @@ function replaceKBlinks(){
 		buttonNew.setAttribute("href", oldHref);
 		buttonNew.setAttribute("target", "_blank");
 		buttonNew.setAttribute("title", oldHref);
+		buttonNew.setAttribute("class", "handled");
 		buttonNew.innerHTML = "\(Full View\)   ";
 		qLinks[J].parentElement.insertBefore(buttonNew, qLinks[J]);
 	}
@@ -33,11 +37,8 @@ function main() {
 	var origOpen = XMLHttpRequest.prototype.open;
     XMLHttpRequest.prototype.open = function(method, url) {
         this.addEventListener('load', function() {
-            //console.log('XHR finished loading', method, url);
-            if (url.includes("message")){
-                //console.log('message');
-                replaceKBlinks();
-            }
+            //console.log('Degugging', method, url);
+            replaceKBlinks();
         });
         origOpen.apply(this, arguments);
     };

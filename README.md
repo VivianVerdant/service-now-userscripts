@@ -1,6 +1,7 @@
 # Repository of various scripts for Service-Now.
-To use these scripts install Tampermonkey (or other userscript extention of your choice).
-Then use the links below to install any of the scripts.
+To use these scripts:
+- Install [Tampermonkey](https://www.tampermonkey.net/) (or other userscript extention of your choice).
+- Use the links below to install any of the scripts.
 
 ## [Better KB Links](https://github.com/VivianVerdant/service-now-userscripts/raw/main/Better%20KB%20Links.user.js)
 Always open KBs in new tabs and choose between viewing minimal and full versions

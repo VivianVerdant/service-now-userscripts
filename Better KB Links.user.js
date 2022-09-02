@@ -122,7 +122,7 @@ async function buttonifyKB(){
 
 function main() {
     'use strict';
-	if (window.location.href.includes("sysparm_article") || window.location.href.includes("kb_article_view")){
+	if (window.location.href.includes("sysparm_article") || window.location.href.includes("kb_article_view") || window.location.href.includes("kb_view.do")){
 		replaceKBlinks();
 		buttonifyKB();
 		return;

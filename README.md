@@ -3,6 +3,12 @@ To use these scripts:
 - Install [Tampermonkey](https://www.tampermonkey.net/) (or other userscript extention of your choice).
 - Use the links below to install any of the scripts.
 
+## [Better Incident Page](https://github.com/VivianVerdant/service-now-userscripts/raw/main/Better_Incident_Page.user.js)
+- Responsive sizing on text entry fields. 
+- Prevent company notes for overtaking the whole page.
+- Jump to close notes field when pressing the resolve button.
+- Autofill user's name into the close notes field.
+
 ## [Better KB Links](https://github.com/VivianVerdant/service-now-userscripts/raw/main/Better%20KB%20Links.user.js)
 Always open KBs in new tabs and choose between viewing minimal and full versions
 

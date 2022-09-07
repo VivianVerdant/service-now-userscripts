@@ -52,8 +52,8 @@ function kbToClipboard(){
 
 function editIncidentPage(){
 	var text_notes = document.getElementById("activity-stream-textarea");
-	text_notes.setAttribute("onchange", 'this.style.height = "";this.style.height = this.scrollHeight + 24 + "px"; this.scrollIntoView(false)');
-	text_notes.setAttribute("onkeydown", 'this.style.height = "";this.style.height = this.scrollHeight + 24 + "px"; this.scrollIntoView(false)');
+	text_notes.setAttribute("onchange", 'this.style.height = "";this.style.height = this.scrollHeight + 24 + "px";');
+	text_notes.setAttribute("onkeydown", 'this.style.height = "";this.style.height = this.scrollHeight + 24 + "px";');
 	text_notes.setAttribute("style", "overflow-y: max-content; max-height: 2000px !important; resize: none;");
 	text_notes.style.height = text_notes.scrollHeight + 24 + "px";
 

@@ -1,77 +1,66 @@
 /*--- waitForKeyElements():  A utility function, for Greasemonkey scripts,
-    that detects and handles AJAXed content.
-
+    that detects and handles AJAXed content. Forked for use without JQuery.
     Usage example:
-
         waitForKeyElements (
             "div.comments"
             , commentCallbackFunction
         );
-
         //--- Page-specific function to do what we want when the node is found.
-        function commentCallbackFunction (jNode) {
-            jNode.text ("This comment changed by waitForKeyElements().");
+        function commentCallbackFunction (element) {
+            element.text ("This comment changed by waitForKeyElements().");
         }
 
-    IMPORTANT: This function requires your script to have loaded jQuery.
+    IMPORTANT: Without JQuery, this fork does not look into the content of
+    iframes.
 */
 function waitForKeyElements (
-    selectorTxt,    /* Required: The jQuery selector string that
+    selectorTxt,    /* Required: The selector string that
                         specifies the desired element(s).
                     */
     actionFunction, /* Required: The code to run when elements are
                         found. It is passed a jNode to the matched
                         element.
                     */
-    bWaitOnce,      /* Optional: If false, will continue to scan for
+    bWaitOnce      /* Optional: If false, will continue to scan for
                         new elements even after the first match is
                         found.
                     */
-    iframeSelector  /* Optional: If set, identifies the iframe to
-                        search.
-                    */
 ) {
     var targetNodes, btargetsFound;
-
-    if (typeof iframeSelector == "undefined")
-        targetNodes     = $(selectorTxt);
-    else
-        targetNodes     = $(iframeSelector).contents ()
-                                           .find (selectorTxt);
+    targetNodes = document.querySelectorAll(selectorTxt);
 
     if (targetNodes  &&  targetNodes.length > 0) {
-        btargetsFound   = true;
+        btargetsFound = true;
         /*--- Found target node(s).  Go through each and act if they
             are new.
         */
-        targetNodes.each ( function () {
-            var jThis        = $(this);
-            var alreadyFound = jThis.data ('alreadyFound')  ||  false;
+        targetNodes.forEach(function(element) {
+            var alreadyFound = element.dataset.found == 'alreadyFound' ? 'alreadyFound' : false;
 
             if (!alreadyFound) {
                 //--- Call the payload function.
-                var cancelFound     = actionFunction (jThis);
+                var cancelFound     = actionFunction (element);
                 if (cancelFound)
                     btargetsFound   = false;
                 else
-                    jThis.data ('alreadyFound', true);
+                    element.dataset.found = 'alreadyFound';
             }
         } );
     }
     else {
-        btargetsFound   = false;
+        btargetsFound = false;
     }
 
     //--- Get the timer-control variable for this selector.
-    var controlObj      = waitForKeyElements.controlObj  ||  {};
-    var controlKey      = selectorTxt.replace (/[^\w]/g, "_");
-    var timeControl     = controlObj [controlKey];
+    var controlObj  = waitForKeyElements.controlObj  ||  {};
+    var controlKey  = selectorTxt.replace (/[^\w]/g, "_");
+    var timeControl = controlObj [controlKey];
 
     //--- Now set or clear the timer as appropriate.
     if (btargetsFound  &&  bWaitOnce  &&  timeControl) {
         //--- The only condition where we need to clear the timer.
         clearInterval (timeControl);
-        delete controlObj [controlKey]
+        delete controlObj [controlKey];
     }
     else {
         //--- Set a timer, if needed.
@@ -79,8 +68,7 @@ function waitForKeyElements (
             timeControl = setInterval ( function () {
                     waitForKeyElements (    selectorTxt,
                                             actionFunction,
-                                            bWaitOnce,
-                                            iframeSelector
+                                            bWaitOnce
                                         );
                 },
                 300

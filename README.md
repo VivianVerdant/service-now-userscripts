@@ -5,7 +5,7 @@ To use these scripts:
 
 ## [Better Incident Page](https://github.com/VivianVerdant/service-now-userscripts/raw/main/Better_Incident_Page.user.js)
 - Responsive sizing on text entry fields. 
-- Prevent company notes for overtaking the whole page.
+- Prevent company notes from overtaking the whole page.
 - Jump to close notes field when pressing the resolve button.
 - Autofill user's name into the close notes field.
 

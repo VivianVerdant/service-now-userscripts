@@ -153,8 +153,9 @@ console.warn("Starting better KB links");
 var loc = window.location.href;
 if (loc.includes("kb_search")){
 		kb_search_page();
-}else if(loc.includes("kb_article_view")){
+}else if(loc.includes("kb_article_view")||loc.includes("kb_view.do")){
 	kb_view_page();
 }
 waitForKeyElements("a[href*='id=kb_article_view']", main, true);
 console.warn("Ending better KB links");
+

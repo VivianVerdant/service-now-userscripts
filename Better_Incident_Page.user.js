@@ -1,35 +1,44 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/
-// @version      0.2
+// @version      0.3
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
-
-// @grant        none
+// @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/waitForKeyElements.js
+// @grant        GM_addStyle
 // ==/UserScript==
 
 /* Changelog
+v0.3 - Made more reliable, less buggy, and hopefully more performant.
 v0.2 - Added more features,
         - Auto show Close Notes when you press the Resolve button.
-	- Auto fill user's First name into the Close Notes.
-	- Responsive sizing on the Work Notes field.
+		- Auto fill user's First name into the Close Notes.
+		- Responsive sizing on the Work Notes field.
 v0.1 - Initial release
 */
 
+/* globals waitForKeyElements */
+
+'use strict';
+
 var INC;
 var resolve_tab;
+var run_once = false;
+var options_btn;
 
 function newIncidentPage(){
+	options_btn.setAttribute("style", "position: relative; top: 4px;");
+
 	console.log("RUN");
 	var text_desc = document.getElementsByClassName("question_textarea_input")[0];
 	text_desc.setAttribute("onchange", 'this.style.height = "";this.style.height = this.scrollHeight + 24 + "px"; this.scrollIntoView(true)');
 	text_desc.setAttribute("onkeydown", 'this.style.height = "";this.style.height = this.scrollHeight + 24 + "px"; this.scrollIntoView(true)');
 	text_desc.setAttribute("style", "overflow-y: max-content; max-height: 2000px !important; resize: none;");
-	//text_desc.setAttribute('onchange', "");
 
 	var company_popup = document.getElementsByClassName("outputmsg_div")[0];
 	company_popup.setAttribute("style", "position: absolute; right: 0px; top: 40px; max-width: 45%;");
+
 }
 
 var btn_style = "position: fixed;"+
@@ -45,6 +54,19 @@ var btn_style = "position: fixed;"+
   "z-index: 10000;"+
   "box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.3);"+
   "cursor: pointer;"
+
+async function onClickResolveBtn(){
+	console.log("clicking");
+	resolve_tab.click();
+	document.getElementById("tabs2_section").scrollIntoView(true);
+
+	var user_name = document.getElementById("sys_display.incident.u_affected_user").getAttribute("value");
+	console.log(user_name);
+	var close_field = document.getElementById("incident.close_notes");
+	close_field.innerHTML = close_field.innerHTML.concat(user_name);
+	console.log(close_field);
+
+}
 
 function kbToClipboard(){
 	  navigator.clipboard.writeText(INC);
@@ -70,67 +92,38 @@ function editIncidentPage(){
 	var tabs = document.getElementsByClassName("tabs2_tab");
 	resolve_tab = tabs[2];
 	console.log("resolver: ", resolve_tab);
-	/*
-	for (let t in tabs){
-		if (!tabs[t].hasAttribute("style")){
-			continue;
-		}
-		console.log(tabs[t].getAttribute("style"));
-		if (tabs[t].getAttribute("style").includes("display: none")){
-			resolve_tab = tabs[t];
-		}
-	}*/
 
-	//id="resolve_incident"
 	var close_btn = document.getElementById("resolve_incident");
 	close_btn.addEventListener("click", onClickResolveBtn);
 	console.log("btn: ", close_btn);
-	//id="element.incident.close_code" get parent until tab_caption="Closure Information"
-
 }
 
-async function onClickResolveBtn(){
-	console.log("clicking");
-	resolve_tab.click();
-	document.getElementById("tabs2_section").scrollIntoView(true);
 
-	var user_name = document.getElementById("sys_display.incident.u_affected_user").getAttribute("value");
-	console.log(user_name);
-	var close_field = document.getElementById("incident.close_notes");
-	close_field.innerHTML = close_field.innerHTML.concat(user_name);
-	console.log(close_field);
-
-}
-
-//id="output_messages"
-
-//document.getElementById('#something').scrollIntoView({ behavior: 'smooth', block: 'top' });
-//https://virtevatest.service-now.com/nav_to.do?uri=%2Fincident.do%3Fsys_id%3D8e78c6d5db7555907036e6ccd39619ce%26sysparm_view%3D  b47514e26f122500a2fbff2f5d3ee4d0
-//https://virtevatest.service-now.com/nav_to.do?uri=%2Fcom.glideapp.servicecatalog_cat_item_view.do%3Fv%3D1%26sysparm_id%3D       b47514e26f122500a2fbff2f5d3ee4d0  %26sysparm_preview%3Dtrue%26sysparm_stack%3Dno
-//https://virtevatest.service-now.com/nav_to.do?uri=%2Fhome.do
-
-function main() {
-    'use strict';
-
-	if (window.location.href.includes("incident.do")){
-		document.getElementsByClassName("col-xs-12")[0].scrollIntoView(true);
+function main(element) {
+	console.log("main");
+	let loc = window.location.href;
+	if (run_once){
+		return
 	}
+	run_once = true;
 
+	var header = document.querySelectorAll("div[role='navigation'],nav[role='navigation']")[0].firstChild.childNodes[1].firstChild;
+	options_btn = document.createElement("button");
+	options_btn.setAttribute("class", "icon-cog");
+	header.appendChild(options_btn, header);
 
-	var origOpen = XMLHttpRequest.prototype.open;
-    XMLHttpRequest.prototype.open = function(method, url) {
-        this.addEventListener('load', function() {
-            //console.log('Degugging', method, url);
-			if (method == "PATCH" && window.location.href.includes("b47514e26f122500a2fbff2f5d3ee4d0")){
-				console.log("NEW INC");
-				newIncidentPage();
-			}else if (method == "PATCH" && window.location.href.includes("incident.do")){
-				console.log("EDIT INC");
-				editIncidentPage();
-			}
-        });
-        origOpen.apply(this, arguments);
-    };
-
+	if (loc.includes("b47514e26f122500a2fbff2f5d3ee4d0")){
+		console.log("NEW INC");
+		newIncidentPage();
+	}else if (loc.includes("incident.do")){
+		document.getElementsByClassName("col-xs-12")[0].scrollIntoView(true);
+		console.log("EDIT INC");
+		editIncidentPage();
+	}else{
+		console.log("exiting better incidents");
+		return;
+	}
 }
-main();
+console.warn("Better Incidents Start");
+waitForKeyElements("div[role]", main, true);
+console.warn("Better Incidents End");

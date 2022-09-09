@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/
-// @version      0.3
+// @version      0.4
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -10,6 +10,7 @@
 // ==/UserScript==
 
 /* Changelog
+v0.4 - Made company notes on Incident edit page into a toggleable static div.
 v0.3 - Made more reliable, less buggy, and hopefully more performant.
 v0.2 - Added more features,
         - Auto show Close Notes when you press the Resolve button.
@@ -69,11 +70,54 @@ async function onClickResolveBtn(){
 }
 
 function kbToClipboard(){
-	  navigator.clipboard.writeText(INC);
+	navigator.clipboard.writeText(INC);
+	this.setAttribute("class", "icon-cog");
+	setTimeout(() => {this.setAttribute("class", "icon-cog");}, 500);
+
+}
+
+function msg_click(){
+	if (this.nextSibling.getAttribute("style") == "display: block;"){
+		this.nextSibling.setAttribute("style", "display: none;");
+	}else{
+		this.nextSibling.setAttribute("style", "display: block;");
+	}
+}
+
+function company_notes(){
+	var first_msg_txt = document.getElementsByClassName("outputmsg_text")[0];
+	if (first_msg_txt && first_msg_txt.innerHTML.startsWith("Incident")){
+		let p = first_msg_txt.parentNode;
+		p.remove()
+	}
+
+	var msg_box = document.getElementById("output_messages");
+	var msg_close_btn = document.getElementById("close-messages-btn");
+	var msg_icon = document.getElementsByClassName("notification-icon")[0];
+	var msg_info_box = document.getElementsByClassName("outputmsg_info")[0];
+	var msg_txt = document.getElementsByClassName("outputmsg_text")[0];
+
+
+	msg_box.setAttribute("style", "position: fixed; max-width: 50vw; top: 45px; right: 25px;");
+	msg_close_btn.setAttribute("style", "display: none;");
+	msg_info_box.setAttribute("style", "min-width: 38px; min-height: 32px;");
+	msg_txt.setAttribute("style", "display: none;");
+
+	msg_icon.setAttribute("visible", false);
+	msg_icon.setAttribute("style", "float: right;");
+	msg_icon.setAttribute("class", "btn-icon notification-icon icon-info");
+	msg_icon.addEventListener("click", msg_click);
 }
 
 function editIncidentPage(){
-	var text_notes = document.getElementById("activity-stream-textarea");
+	company_notes();
+
+	//document.getElementsByClassName("col-xs-12")[0].scrollIntoView(true);
+
+	var text_notes = document.getElementById("activity-stream-work_notes-textarea");
+	if (!text_notes){
+		text_notes = document.getElementById("activity-stream-textarea");
+	}
 	text_notes.setAttribute("onchange", 'this.style.height = "";this.style.height = this.scrollHeight + 24 + "px";');
 	text_notes.setAttribute("onkeydown", 'this.style.height = "";this.style.height = this.scrollHeight + 24 + "px";');
 	text_notes.setAttribute("style", "overflow-y: max-content; max-height: 2000px !important; resize: none;");
@@ -116,7 +160,6 @@ function main(element) {
 		console.log("NEW INC");
 		newIncidentPage();
 	}else if (loc.includes("incident.do")){
-		document.getElementsByClassName("col-xs-12")[0].scrollIntoView(true);
 		console.log("EDIT INC");
 		editIncidentPage();
 	}else{
@@ -125,5 +168,5 @@ function main(element) {
 	}
 }
 console.warn("Better Incidents Start");
-waitForKeyElements("div[role]", main, true);
+waitForKeyElements("#output_messages", main, true);
 console.warn("Better Incidents End");

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/
-// @version      0.4
+// @version      0.5
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -10,18 +10,36 @@
 // ==/UserScript==
 
 /* Changelog
+v0.5 - Made Incident fields that are mandatory but not filled out have a more prominent styling.
 v0.4 - Made company notes on Incident edit page into a toggleable static div.
 v0.3 - Made more reliable, less buggy, and hopefully more performant.
 v0.2 - Added more features,
         - Auto show Close Notes when you press the Resolve button.
-		- Auto fill user's First name into the Close Notes.
-		- Responsive sizing on the Work Notes field.
+	- Auto fill user's First name into the Close Notes.
+	- Responsive sizing on the Work Notes field.
 v0.1 - Initial release
 */
 
 /* globals waitForKeyElements */
 
 'use strict';
+
+// CSS
+function addGlobalStyle(css){
+	var head, style;
+	head = document.getElementsByTagName('head')[0];
+	if (!head) { return; }
+	style = document.createElement('style');
+	style.type = 'text/css';
+	style.innerHTML = css;
+	head.appendChild(style);
+}
+
+//addGlobalStyle("div.is-required input{background: red;}");
+addGlobalStyle(".form-control{color: black !important;}");
+addGlobalStyle(".label-text{color: black !important;}");
+
+// CSS
 
 var INC;
 var resolve_tab;
@@ -110,6 +128,10 @@ function company_notes(){
 }
 
 function editIncidentPage(){
+	addGlobalStyle("div.is-required input{background: #ffb1ab;}");
+	addGlobalStyle("div.is-required select{background: #ffb1ab;}");
+	addGlobalStyle("div.is-required textarea{background: #ffb1ab;}");
+
 	company_notes();
 
 	//document.getElementsByClassName("col-xs-12")[0].scrollIntoView(true);
@@ -122,6 +144,8 @@ function editIncidentPage(){
 	text_notes.setAttribute("onkeydown", 'this.style.height = "";this.style.height = this.scrollHeight + 24 + "px";');
 	text_notes.setAttribute("style", "overflow-y: max-content; max-height: 2000px !important; resize: none;");
 	text_notes.style.height = text_notes.scrollHeight + 24 + "px";
+
+	//.required-marker:before
 
 	INC = document.getElementById("incident.number").value;
 	let btn = document.createElement("button");
@@ -170,3 +194,6 @@ function main(element) {
 console.warn("Better Incidents Start");
 waitForKeyElements("#output_messages", main, true);
 console.warn("Better Incidents End");
+
+
+

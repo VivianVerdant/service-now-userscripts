@@ -36,8 +36,8 @@ function addGlobalStyle(css){
 }
 
 //addGlobalStyle("div.is-required input{background: red;}");
-addGlobalStyle(".form-control{color: black !important;}");
-addGlobalStyle(".label-text{color: black !important;}");
+//addGlobalStyle(".form-control{color: black !important;}");
+//addGlobalStyle(".label-text{color: black !important;}");
 
 // CSS
 

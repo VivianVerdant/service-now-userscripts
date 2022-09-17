@@ -15,7 +15,7 @@ function createBetterSettingsMenu(){
 	better_options_btn.setAttribute("style", "float: right;");
 	better_options_btn.innerHTML = menu_html;
 	
-	header.insertAfter(better_options_btn, header.firstChild);
+	header.insertBefore(better_options_btn, header.firstChild);
     
     
     document.querySelectorAll(".better-dropdown-container").forEach(dropDownFunc);

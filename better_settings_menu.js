@@ -8,7 +8,7 @@ function createBetterSettingsMenu(e){
 							'<label class="better-menu better-tgl-btn" data-tg-off="OFF" data-tg-on="ON" for="cb3"></label></li>';
 
 	var better_options_btn = document.createElement("div");
-	better_options_btn.setAttribute("class", "better-menu better-dropdown-container better-click-dropdown");
+	better_options_btn.setAttribute("class", "better-menu better-dropdown-container better-click-dropdown icon-cog");
 	var better_dropdown = document.createElement("li");
 	better_dropdown.setAttribute("class", "better-menu better-dropdown-menu");
 	better_dropdown.innerHTML = menu_html;

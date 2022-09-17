@@ -8,47 +8,37 @@
 /* Dropdown menu css */
 .better-dropdown-container {
     position: relative;
+    top: 3px;
+    align-self: center;
+    align-items: center;
     width: 20px;
-    float: right;
+    float: left;
     height: 20px;
     color: var(--accent-color);
     background-color: var(--main-color);
     font-size: 17px;
-    padding: 4px 4px;
-    box-shadow: 0px 0px 4px -2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 0px 4px -2px rgb(0 0 0 / 50%);
     border-radius: 4px;
+    outline-style: auto;
+    outline-color: grey;
     font-weight: 600;
     cursor: pointer;
     transition: all ease-in-out 0.3s;
 }
 
-.better-dropdown-container::before {
-    content: "";
-    position: absolute;
-    right: 32%;
-    top: 48%;
-    transform: translateY(-50%) rotate(45deg);
-    border: 5px solid;
-    border-top-color: rgba(0, 0, 0, 0);
-    border-left-color: rgba(0, 0, 0, 0);
-    margin-top: -2.5px;
-    background-color: rgba(0, 0, 0, 0);
-    transition: all ease-in-out 0.2s;
-}
-
 .better-dropdown-menu {
+	outline-style: auto;
+    outline-color: grey;
     width: fit-content;
     border-radius: 4px;
-    box-shadow: 0px 0px 4px -2px rgba(0, 0, 0, 0.5);
-    margin-top: 17px;
-    position: relative;
-    left: 28px;
-    top: 32px;
+    box-shadow: 0px 0px 4px -2px rgb(0 0 0 / 50%);
+    position: absolute;
+    top: 110%;
     display: none;
     background-color: var(--main-color);
     z-index: 10;
     list-style: none;
-    padding: 0;
+    padding: 5px;
     margin: 0;
     overflow: hidden;
 }

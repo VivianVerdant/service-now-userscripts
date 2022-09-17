@@ -10,11 +10,12 @@ function createBetterSettingsMenu(){
                         '<label class="better-menu better-tgl-btn" data-tg-off="OFF" data-tg-on="ON" for="cb3"></label></li>'+
                       '</ul>';
 
-	var header = document.querySelectorAll("div[role='navigation'],nav[role='navigation']")[0].firstChild.childNodes[1].firstChild;
+	var header = document.querySelectorAll("div.navbar-right")[0].firstChild;
 	better_options_btn = document.createElement("div");
 	better_options_btn.setAttribute("style", "float: right;");
 	better_options_btn.innerHTML = menu_html;
-	document.getElementById("close_modal").parentNode.insertAfter(better_options_btn, document.getElementById("close_modal"));
+	
+	header.insertAfter(better_options_btn, header.firstChild);
     
     
     document.querySelectorAll(".better-dropdown-container").forEach(dropDownFunc);

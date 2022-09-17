@@ -3,17 +3,16 @@ function createBetterSettingsMenu(e){
     var cssTxt = GM_getResourceText("customCSS");
 	GM_addStyle (cssTxt);
 
-	var menu_html = '<div class="better-menu better-dropdown-container better-click-dropdown"></div>'+
-		      '<ul class="better-menu better-dropdown-menu">'+
-			'<li>Better Service-Now Settings</li>'+
-			 '<li>Keep Company Filter<input class="better-menu tgl-hidden tgl-skewed" id="cb3" type="checkbox" />'+
-			'<label class="better-menu better-tgl-btn" data-tg-off="OFF" data-tg-on="ON" for="cb3"></label></li>'+
-		      '</ul>';
+	var menu_html =	'<li>Better Service-Now Settings</li>'+
+						'<li>Keep Company Filter<input class="better-menu tgl-hidden tgl-skewed" id="cb3" type="checkbox" />'+
+							'<label class="better-menu better-tgl-btn" data-tg-off="OFF" data-tg-on="ON" for="cb3"></label></li>';
 
-	better_options_btn = document.createElement("div");
-	better_options_btn.setAttribute("style", "float: right;");
-	better_options_btn.innerHTML = menu_html;
-
+	var better_options_btn = document.createElement("div");
+	better_options_btn.setAttribute("class", "better-menu better-dropdown-container better-click-dropdown");
+	var better_dropdown = document.createElement("li");
+	better_dropdown.setAttribute("class", "better-menu better-dropdown-menu");
+	better_dropdown.innerHTML = menu_html;
+	e.insertAdjacentElement('afterbegin', better_dropdown);
 	e.insertAdjacentElement('afterbegin', better_options_btn);
     
     document.querySelectorAll(".better-dropdown-container").forEach(dropDownFunc);

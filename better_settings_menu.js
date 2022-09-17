@@ -1,5 +1,24 @@
 // Get all the dropdown from document
-document.querySelectorAll(".better-dropdown-container").forEach(dropDownFunc);
+function createBetterSettingsMenu(){
+    var cssTxt = GM_getResourceText("customCSS");
+	GM_addStyle (cssTxt);
+
+	var menu_html = '<div class="better-menu better-dropdown-container better-click-dropdown"></div>'+
+                      '<ul class="better-menu better-dropdown-menu">'+
+                        '<li>Better Service-Now Settings</li>'+
+                         '<li>Keep Company Filter<input class="better-menu tgl-hidden tgl-skewed" id="cb3" type="checkbox" />'+
+                        '<label class="better-menu better-tgl-btn" data-tg-off="OFF" data-tg-on="ON" for="cb3"></label></li>'+
+                      '</ul>';
+
+	var header = document.querySelectorAll("div[role='navigation'],nav[role='navigation']")[0].firstChild.childNodes[1].firstChild;
+	better_options_btn = document.createElement("div");
+	better_options_btn.setAttribute("style", "float: right;");
+	better_options_btn.innerHTML = menu_html;
+	document.getElementById("close_modal").parentNode.insertAfter(better_options_btn, document.getElementById("close_modal"));
+    
+    
+    document.querySelectorAll(".better-dropdown-container").forEach(dropDownFunc);
+}
 
 // Dropdown Open and Close function
 function dropDownFunc(dropDown) {

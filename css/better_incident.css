@@ -1,0 +1,17 @@
+/* Overrides */
+
+div.is-required input {
+	background: #ffb1ab;
+}
+
+div.is-required select {
+	background: #ffb1ab;
+}
+
+div.is-required textarea {
+	background: #ffb1ab;
+}
+
+#activity-stream-comments-textarea {
+	background: #88c4fd;
+}

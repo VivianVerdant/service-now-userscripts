@@ -1,33 +1,45 @@
+.better-kb-cbcopy {
+	display: block;
+	z-index: 150;
+	font-size: 21pt;
+	float: left;
+	left: 50%;
+	position: absolute;
+	transform: translate(-50%, 0%);
+}
+
+
 /* override css */
+div.sp-page-root {
+	margin-top: 45px;
+	max-height: 100vh;
+}
+
+html {
+	max-height: ;
+}
+
+.more-actions-menu {
+	border: 0 !important;
+    background: transparent !important;
+}
+
 section.page {
 	/*overflow-x: clip;*/
-	max-width: 100%;
+	/*max-width: 100%;*/
+}
+
+.kb-number-info {
+	width: max-content;
 }
 
 .container {
-	width: 100% !important;
+	max-width: 100% !important;
 }
 
-
-.search-bar {
-	position: fixed !important;
-	/*width: 100% !important;*/
-	z-index: 1000 !important;
-}
-
-#kb_search_input {
-	padding: 1rem;
-	height: 1.4rem;
-	border-radius: .4rem;
-}
-
-.fa-search::before {
-	content: \f1dd !important;
-	padding: 0px 0px !important;
-}
 
 .knowledge-articles {
-	margin-top: 2.5rem !important;
+	/*margin-top: 2.5rem !important;*/
 	/*max-height: 13rem;*/
 	overflow-y: scroll;
 	max-width: 100%;
@@ -39,7 +51,7 @@ header,
 .kb-about,
 .kb-description,
 .kb-detail,
-.kb_container-right,
+/*.kb_container-right,*/
 .kb-type,
 .kb-icon-pad,
 /*.navbar_fixed,*/
@@ -56,12 +68,75 @@ header,
 	width: 100%;
 }
 
+.panel-title {
+	display: fixed !important;
+}
+
+div[sn-atf-area="Most Recent Tasks"] {
+	/*rotate: 45deg;*/
+}
+
+.panel-heading {
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+	max-height: 3.5rem !important;
+}
+
+.kb_container-right {
+    width: auto;
+}
+
+.kb-panel-heading {
+	position: fixed;
+    width: 100%;
+    left: 0px;
+    top: 0px;
+    z-index: 100;
+	display: flex;
+	align-items: center;
+}
+
+.kb-end-buttons {
+	position: fixed;
+    right: 50px;
+    top: -1px;
+    z-index: 100;
+}
+
+.kb-permalink {
+	position: fixed;
+    right: 165px;
+    top: 8px;
+    z-index: 100;
+}
+
+#uiNotificationContainer {
+	position: fixed !important;
+    top: 50px !important;
+	right: 50px;
+    z-index: 100;
+	width: fit-content;
+}
+
+.kb-title-header {
+	margin-top: 50px !important;
+}
+
+.btn,
+.kb-dropdown-button,
+.kb-panel-title-header,
+.padding-top,
 .panel-body,
 .pad-bottom,
 .kb-search-block,
 .kb-article-summary,
 .kb-summary-block,
-.padding-top,
 .container,
 .sp-row-content,
 .col-md-12,
@@ -70,17 +145,19 @@ header,
 .col-lg-12,
 .col-md-9,
 .col-lg-9,
+.col-md-7,
+.col-md-5,
 .col-md-3,
 .kb-template,
 .row {
-	margin-left: 0 !important;
-	margin-right: 0 !important;
-	margin-top: 0 !important;
-	margin-bottom: 0 !important;
-	padding-top: 0rem !important;
-	padding-bottom: 0rem !important;
-	padding-left: 0rem !important;
-	padding-right: 0rem !important;
+	margin-left: 1px !important;
+	margin-right: 1px !important;
+	margin-top: 1px !important;
+	margin-bottom: 1px !important;
+	padding-top: 1px !important;
+	padding-bottom: 1px !important;
+	padding-left: 1px !important;
+	padding-right: 1px !important;
 	min-height: 0 !important;
 	min-width: 0 !important;
 }

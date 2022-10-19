@@ -1,1 +1,40 @@
 /* CSS */
+/*
+.ui-manager {
+	display: flex;
+	flex-direction: column;
+	height: 50% !important;
+}*/
+
+.ui-frame {
+	/*margin-left: 0 !important;*/
+}
+/*
+.glance {
+	display: flex !important;
+	top: unset !important;
+	bottom: 0 !important;
+	width: 345px !important;
+	position: flex !important;
+	height: -webkit-fill-available !important;
+    height: 50% !important;
+	z-index: 10 !important;
+}*/
+
+.skill-dots {
+	vertical-align: top;
+}
+
+.glance-pin {
+	display: none;
+}
+
+.external-template {
+	display: flow-root !important;
+	line-height: 1rem !important;
+	height: 126px !important;
+}
+
+#contactContainer {
+	display: flex !important;
+}

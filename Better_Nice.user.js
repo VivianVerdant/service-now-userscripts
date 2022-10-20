@@ -4,8 +4,8 @@
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @version      0.1
-// @description  Make it even Nicer
-// @author       Vivian
+// @description  try to take over the world!
+// @author       You
 // @match        https://*.niceincontact.com/*
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/waitForKeyElements.js
 // @resource     better_nice_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_nice.css
@@ -42,5 +42,7 @@ function sleep(ms) {
     }
 
     let resizeManager = app.api.ModuleManager.instances["resizemanager-0"];
+    resizeManager.resizeWidth = function() {};
     resizeManager.destroy();
+    console.warn(resizeManager);
 })();

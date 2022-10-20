@@ -4,8 +4,8 @@
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @version      0.1
-// @description  try to take over the world!
-// @author       You
+// @description  Make it even Nicer
+// @author       Vivian
 // @match        https://*.niceincontact.com/*
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/waitForKeyElements.js
 // @resource     better_nice_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_nice.css

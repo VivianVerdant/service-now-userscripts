@@ -1,25 +1,8 @@
 /* CSS */
-/*
-.ui-manager {
-	display: flex;
-	flex-direction: column;
-	height: 50% !important;
-}*/
 
-.ui-frame {
-	/*margin-left: 0 !important;*/
-}
-/*
-.glance {
-	display: flex !important;
-	top: unset !important;
-	bottom: 0 !important;
+#uimanager_container .ui-manager .glance {
 	width: 345px !important;
-	position: flex !important;
-	height: -webkit-fill-available !important;
-    height: 50% !important;
-	z-index: 10 !important;
-}*/
+}
 
 .skill-dots {
 	vertical-align: top;

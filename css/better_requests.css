@@ -1,1 +1,7 @@
 /* Normalize Icon Sizes */
+
+.sc_category_item_left {
+	object-fit: contain;
+    width: 48px;
+    height: 48px;
+}

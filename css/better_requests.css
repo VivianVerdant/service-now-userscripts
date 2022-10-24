@@ -1,6 +1,6 @@
 /* Normalize Icon Sizes */
 
-.sc_category_item_left {
+.sc_category_item_left > span > img {
 	object-fit: contain;
     width: 48px;
     height: 48px;

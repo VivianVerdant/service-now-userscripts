@@ -1,17 +1,447 @@
 /* Overrides */
 
-div.is-required input {
+nav.navbar.navbar-default.section_zero.ng-scope {
+
+}
+
+
+.overflow_x_hidden-hotfix {
+	overflow-x: clip !important;
+}
+
+div[aria-label="Closure Information form section"],
+div[aria-label="Related Records form section"],
+form[name="incident.do"] {
+	flex-direction: column;
+    display: flex !important;
+    column-count: 2;
+    float: left;
+}
+
+div.section_header_content_no_scroll.touch_scroll.overflow_x_hidden-hotfix {
+	margin-left: 37vw !important;
+}
+
+
+div[id="incident.form_scroll"] > div,
+form[name="incident.do"] > div,
+form[name="incident.do"] > span{
+	position: relative;
+	/*margin-left: 37vw;*/
+}
+/*
+form[name="incident.do"] > span:first-of-type{
+	position: fixed;
+	margin-left: 0;
+	column-count: 2;
+	float: left;
+	left: 0;
+}*/
+
+
+HTML[data-doctype=true] .tab_section > span {
+	display: flex !important;
+	/*width: 63vw;*/
+}
+
+#header_attachment {
+	position: fixed !important;
+	width: 37% !important;
+	bottom: 0px !important;
+	left: 0px;
+}
+
+/* Flow graph */
+.process-breadcrumb {
+	position: fixed !important;
+	top: 32px !important;
+	left: 0;
+	width: 37% !important;
+	overflow: hidden !important;
+}
+
+.process-breadcrumb > li:after {
+	transform: translateX(-16px) rotate(45deg);
+}
+
+.process-breadcrumb > li > a {
+	transition: none;
+}
+
+.process-breadcrumb > li.active > a:before, .process-breadcrumb > li > a:hover:before{
+	transform: skew(-45deg) translateX(-15px);
+}
+
+/* Top half of INC page */
+/*
+div.section-content.with-overflow {
+	position: relative;
+}*/
+/*
+div[id="div_core_company"] > span > span > div > div:nth-of-type(2).row{
+	position: unset !important;
+	max-width: 100% !important;
+}*/
+
+form > span.tabs2_section.tabs2_section_0.tabs2_section0  > span.section > div.section-content.with-overflow > div:nth-of-type(2).row {
+	position: fixed;
+	left: 0px;
+	top: 60px;
+	max-width: 37%;
+
+}
+
+/* row objects */
+div.vsplit.col-sm-6 > div.form-group {
+    border-bottom: 1px solid #ddd;
+}
+
+
+/* Data boxes */
+div.section-content.with-overflow div.row {
+	break-inside: avoid-column;
+	flex-direction: column;
+    display: flex;
+}
+
+div.row {
+	width: 100%;
+}
+
+/* Data Columns */
+div.row > div.vsplit.col-sm-6 {
+	width: 100%;
+}
+
+div[id="label.incident.opened_at"] > label.control-label {
+	font-size: 0 !important;
+}
+
+div[id="label.incident.opened_at"] > label.control-label > span.label-text {
+	font-size: xx-small;
+}
+
+.label-text {
+	vertical-align: sub;
+}
+
+
+div[id="element.core_company.notes"] {
+	display: none;
+}
+
+/* Description boxes */
+
+span.tabs2_section.tabs2_section_0.tabs2_section0 > span > div >  div:nth-child(3).row{
+	position: relative;
+}
+
+.col-xs-10.col-md-9.col-lg-8.form-field.input_controls {
+	width: 100%	;
+}
+
+HTML[data-doctype=true] .col-md-1_5 {
+	width: fit-content;
+}
+
+div[id="element.incident.short_description"] {
+}
+
+label[for="incident.short_description"],
+label[for="incident.description"] {
+	font-size: 0 !important;
+}
+
+div[id="element.incident.short_description"] > div.col-xs-10.col-md-9.col-lg-8.form-field.input_controls {
+	max-width: 75% !important;
+	margin: 0;
+	clear: left;
+}
+
+textarea[id="incident.description"] {
+	overflow-y: scroll !important;
+    /*height: 160px !important;*/
+	width: 100%;
+    min-width: 55vw !important;
+}
+
+
+/* Knowledge results */
+.horizontal-rule {
+	display: none;
+}
+.cxs_results_header .header-button {
+	float: left;
+	transform: translate(-100% -100%);
+}
+
+/* Notes Related Records and Close tabs */
+div#tabs2_section {
+	padding-top: 25px;
+}
+
+.section.sn-stream-section > div {
+	column-count: 1;
+}
+
+.tabs2_section.tabs2_section_1.tabs2_section1.tab_section {
+	/*width:  calc(100% - 1px);*/
+}
+
+div#sn_form_inline_stream_entries {
+	width: 100%;
+}
+
+div#element\.incident\.work_notes_list,
+div#element\.incident\.watch_list {
+	min-height: 50px;
+}
+
+span[tab_caption="Notes"] > span > div > div {
+	display: flex;
+}
+
+div[aria-label="Closure Information form section"] > div.row,
+div[aria-label="Notes form section"] > div.row {
+	/*width: 63vw !important;*/
+}
+
+div[aria-label="Closure Information form section"] > div.row > div.vsplit > div > div > label,
+div[aria-label="Closure Information form section"] > div.row > div.vsplit,
+div[aria-label="Notes form section"] > div.row > div.vsplit {
+	/*width: 50% !important;*/
+}
+
+.h-card-wrapper.activities-form {
+	/*width: 63vw !important;*/
+}
+
+.sn-form-inline-stream-entries {
+	float: initial;
+}
+
+div#single-input-journal-entry {
+	flex-direction: row;
+    display: flex;
+}
+
+div#single-input-journal-entry > div.form-field {
+	width: -webkit-fill-available;
+}
+
+label[for="activity-stream-textarea"] {
+	max-width: 93px;
+}
+
+div[id="element.incident.watch_list"] {
+
+}
+
+span[tab_caption="Notes"] {
+
+}
+
+span[tab_caption="Related Records"] {
+
+}
+
+span[tab_caption="Closure Information"] {
+
+}
+
+.form_action_button_container {
+
+}
+
+.related-links-wrapper {
+
+}
+
+div[id="incident.incident.parent_list"] {
+	overflow-x: scroll;
+}
+
+span.tabs2_section.tabs2_section_2.tabs2_section2.tab_section > span > div,
+span.tabs2_section.tabs2_section_3.tabs2_section3.tab_section > span > div {
+	width: 100%
+}
+
+
+
+.outputmsg_div {
+	position: absolute;
+	right: 0px;
+	top: 18px;
+	max-width: 45vw;
+}
+
+span .outputmsg_container {
+	position: fixed;
+    right: 16px;
+    top: 12px;
+}
+
+.notification-info {
+	min-width: 24px;
+	min-height: 24px;
+}
+
+.notification .notification-icon {
+	scale: 1.4;
+	float: right;
+    right: 4px;
+	top: 7px;
+}
+
+.outputmsg_text {
+	text-align: center;
+}
+
+HTML[data-doctype=true] .outputmsg.notification {
+	width: max-content;
+    max-width: 45vw;
+	float: right;
+}
+
+
+div[id="element.incident.watch_list"] > div.form-field {
+	width: -webkit-fill-available !important;
+}
+
+div.custom-form-group.is-wide.form-group.ng-scope,
+.cxs_a11y,
+table.cxs_results_header.wide {
+	width: fit-content !important;
+}
+
+HTML[data-doctype=true] .tab_section > span,
+td, tr,
+div#cxs_widget_container,
+.comment-box.container-fluid,
+.required-marker:before,
+.vsplit,
+.col-sm-6,
+.col-xs-12,
+.section_header_content_no_scroll,
+.process-breadcrumb > li > a,
+.compact, .row, .form-field,
+.compact .form-group,
+.inc_copy_button,
+HTML[data-doctype=true] .section-content {
+	padding-left: 0px !important;
+    padding-right: 0px !important;
+	padding-top: 0px !important;
+    padding-bottom: 0px !important;
+	margin-left: 0px !important;
+    margin-right: 0px !important;
+	margin-top: 0px !important;
+    margin-bottom: 0px !important;
+}
+
+.compact .form-horizontal .control-label {
+    text-align: right;
+    margin-bottom: 0px;
+	margin
+    padding-top: 4px;
+    font-size: 12px;
+}
+
+
+.col-xs-12 > div.is-required select,
+.col-xs-12 > div.is-required textarea,
+.col-xs-12 > div.is-required input,
+.vsplit > div.is-required select,
+.vsplit > div.is-required textarea ,
+.vsplit > div.is-required input {
 	background: #ffb1ab;
 }
 
-div.is-required select {
-	background: #ffb1ab;
+input[name="sys_display.incident.u_affected_user"] {
+	background: linear-gradient(90deg, white, #8e67cf);
 }
 
-div.is-required textarea {
-	background: #ffb1ab;
+input[name="sys_display.incident.company"] {
+	background: linear-gradient(90deg, white, #f4283a);
 }
 
-#activity-stream-comments-textarea {
-	background: #88c4fd;
+#cxs_search_container {
+	position: fixed;
+	display: contents;
+    z-index: 500;
+    left: 0vw;
+	top: 0vw;
+    width: 40vw;
+    background: white;
+    border: 1px solid rgb(203, 203, 203);
+    border-radius: 3px;
+    padding-top: 12px;
+    transform: translateY(0%);
+}
+
+textarea[aria-label="Additional comments"] {
+	background: #b5dde5 !important;
+}
+
+HTML[data-doctype=true] .custom-form-group.form-group {
+	margin-top: 0px !important;
+    margin-bottom: 0px !important;
+}
+
+#close-messages-btn,
+HTML[data-doctype=true] #header_attachment_line {
+	display: none;
+}
+
+.process-breadcrumb {
+	height: auto !important;
+}
+
+.process-breadcrumb > li > a, .process-breadcrumb > li > a:visited, .process-breadcrumb > li > a:hover {
+	padding: 0px 15px 0px 15px;
+}
+
+.process-breadcrumb > li:after {
+	height: 14px !important;
+	width: 14px !important;
+	top: 3px !important;
+}
+
+.process-breadcrumb > li.active > a:before, .process-breadcrumb > li > a:hover:before {
+	left: 12px !important;
+	right: -12px !important;
+}
+
+.inc_copy_button {
+	position: absolute;
+	transform: translateX(-50%);
+	left: 50%;
+	background: transparent;
+	font-size: 25px;
+	line-height: 1;
+}
+
+HTML[data-doctype=true] .form-field-addons .btn {
+	margin: 0 !important;
+}
+
+.compact .navbar .btn-icon,
+HTML[data-doctype=true] BUTTON.header {
+	margin: 0;
+}
+
+HTML[data-doctype=true] .form-horizontal .control-label {
+	min-width: 11%;
+}
+
+HTML[data-doctype=true] .form-field-addons {
+	width: 24%;
+	padding: 0;
+}
+
+.col-xs-2.col-md-1_5.col-lg-2.form-field-addons {
+	width: unset;
+}
+
+.compact .row .form-field {
+	max-width: -webkit-fill-available;
 }

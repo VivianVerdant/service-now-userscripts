@@ -1,10 +1,12 @@
 // ==UserScript==
 // @name         Better Incident Page
-// @namespace    https://github.com/VivianVerdant/
+// @namespace    https://github.com/VivianVerdant/service-now-userscripts
 // @version      0.7
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
+// @homepageURL  https://github.com/VivianVerdant/service-now-userscripts
+// @supportURL   https://github.com/VivianVerdant/service-now-userscripts/issues
 // @resource     customCSS https://github.com/VivianVerdant/service-now-userscripts/raw/main/better_menu.css
 // @resource     better_incident_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_incident.css
 // @grant        GM_addStyle

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/
-// @version      0.5
+// @version      0.7
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*

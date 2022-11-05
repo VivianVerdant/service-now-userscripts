@@ -132,6 +132,15 @@ div[id="element.core_company.notes"] {
 
 /* Description boxes */
 
+html[data-doctype="true"] #item_table textarea.question_textarea_input.cat_item_option.form-control {
+	max-height: 2000px !important;
+}
+
+
+#multiple-input-journal-entry > div {
+	display: grid;
+}
+
 span.tabs2_section.tabs2_section_0.tabs2_section0 > span > div >  div:nth-child(3).row{
 	position: relative;
 }

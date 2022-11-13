@@ -1,21 +1,26 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      0.7
+// @version      0.8
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/issues
+// @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/find_or_observe_for_element.js
 // @resource     customCSS https://github.com/VivianVerdant/service-now-userscripts/raw/main/better_menu.css
 // @resource     better_incident_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_incident.css
 // @grant        GM_addStyle
 // @grant        GM_getResourceText
 // @grant        GM_setValue
 // @grant        GM_getValue
+// @run-at       document-start
 // ==/UserScript==
+/* globals find_or_observe_for_element createBetterSettingsMenu AJAXCompleter */
+
 
 /* Changelog
+v0.8 - Bugfixes
 v0.7 - refactor
 v0.6 - overhaul
 v0.5 - Made Incident fields that are mandatory but not filled out have a more prominent styling.
@@ -53,67 +58,6 @@ function kbToClipboard(e){
 	e.target.classList.add("icon-cog");
 	setTimeout(() => {e.target.classList.remove("icon-cog");}, 500);
 
-}
-
-function find_or_observe_for_element(query, func, parent_query, once) {
-
-	let parent_node;
-
-	if (parent_query === undefined) {
-		parent_node = document.body;
-	} else {
-		parent_node = document.querySelector(parent_query);
-	}
-
-	if (once === undefined) {
-		once = true;
-	}
-
-	const node_list = parent_node.querySelectorAll(query);
-	//console.log("node list: ", node_list);
-	if (node_list.length) {
-		for (const node of node_list) {
-			//console.log("found node already existing: ", node);
-			func(node);
-			if (once) {
-				//console.log("exiting early");
-				return;
-			}
-		}
-	}
-
-	const observer = new MutationObserver((mutations_list, observer) => {
-		//console.log("callback from: ", observer.original_query);
-		//console.log(mutations_list);
-		const mutation_fn = (n_list) => {
-			//console.log(n_list);
-			/*if (m_list.type !== "childList") {
-				return;
-			}*/
-			for (const added_node of n_list) {
-				//console.log("added node: ", added_node);
-				if (added_node.nodeType !== Node.ELEMENT_NODE) {
-					continue;
-				}
-				if (added_node.matches(query)) {
-					func(added_node);
-					if (once) {
-						observer.disconnect();
-						return;
-					}
-				}
-			}
-		}
-		for (const list of mutations_list) {
-			if (list.type == "childList") {
-				//console.log("child list: ", list);
-				mutation_fn(list.addedNodes);
-			}
-		}
-	});
-	Object.defineProperty(observer, "original_query", {value: query, writable: true});
-	observer.observe(parent_node, { subtree: true, childList: true });
-	//console.log("observer: ", observer);
 }
 
 function main(element) {
@@ -155,12 +99,23 @@ function main(element) {
 	find_or_observe_for_element(".activity-stream-textarea, #activity-stream-work_notes-textarea, .question_textarea_input", (node) => {
 		console.log('textarea has been added:-------------------------------------------');
 		console.log(node);
-		const text_area_fn = (e) => {e.target.style.height = "0px"; e.target.style.height = e.target.scrollHeight + 8 + "px";}
+		const text_area_fn = async (e) => {e.target.style.height = "0px"; e.target.style.height = e.target.scrollHeight + 8 + "px";}
 		node.addEventListener("change", text_area_fn);
 		node.addEventListener("keydown", text_area_fn);
 		node.addEventListener("click", text_area_fn);
 		setTimeout(() => {node.click();}, 250);
 	}, undefined, false);
+	find_or_observe_for_element(".section_header_content_no_scroll.touch_scroll.overflow_x_hidden-hotfix", (node) => {
+		console.log('datarows:-------------------------------------------');
+		console.log(node);
+        node.addEventListener("scroll", async (e) => {
+			const r = document.querySelector('body > div > form > span > span:not(.sn-stream-section) > div.section-content.with-overflow > div:nth-child(2)');
+			let x = "translateY(" + e.target.scrollTop + "px)";
+			r.style.setProperty("transform", x);
+			r.previousSibling.style.setProperty("transform", x);
+			//console.log(x);
+		}, { passive: true });
+	});
 }
 
 if (location.includes("b47514e26f122500a2fbff2f5d3ee4d0") || location.includes("incident.do")){

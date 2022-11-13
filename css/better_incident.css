@@ -1,9 +1,79 @@
 /* Overrides */
 
+:root {
+	--page-scroll: 0px;
+}
+
+
 nav.navbar.navbar-default.section_zero.ng-scope {
 
 }
 
+.section_header_content_no_scroll.touch_scroll.overflow_x_hidden-hotfix > div:not(.ac_dropdown) {
+	padding-left: 38vw;
+}
+
+form.form_body.form-horizontal.tabs_enabled{
+	display: grid;
+	grid-template-columns: 38% 62%;
+	grid-template-rows: auto 23px;
+	grid-auto-flow: column;
+}
+
+body > div > form > span > span > div.section-content.with-overflow {
+	display: grid;
+	grid-template-columns: 38% 62%;
+	grid-template-rows: auto auto;
+}
+
+body > div > form > span > span > div.section-content.with-overflow > div:nth-child(1) {
+	grid-area: 1 / 1 / span 1 / span 1;
+}
+
+body > div > form > span > span:not(.sn-stream-section) > div.section-content.with-overflow > div:nth-child(2) {
+	grid-area: 2 / 1 / span 1 / span 1;
+	max-height: 100px;
+	overflow-y: visible;
+}
+
+body > div > form > span > span > div.section-content.with-overflow > div:nth-child(3) {
+	grid-area: 2 / 2 / span 1 / span 1;
+	transform: translate(1px, -12px);
+}
+
+body > div > form > span > span.section.sn-stream-section > div.section-content.with-overflow {
+	width: 63vw;
+	display: block;
+    grid-template-columns: unset;
+    grid-template-rows: unset;
+}
+
+body > div > form > span > span.section.sn-stream-section > div.section-content.with-overflow > div:nth-child(2) {
+	grid-area: unset;
+	max-height: unset;
+	overflow-y: visible;
+	width: 100%;
+}
+
+body > div > form > span > span > div.section-content.with-overflow > .row {
+	/*width: 37vw;*/
+}
+
+
+form > span.tabs2_section.tabs2_section_0.tabs2_section0 {
+	grid-area: 1 / 1 / span 1 / span 2;
+	z-index: 100;
+}
+
+#tabs2_section.tabs2_strip {
+	grid-area: 2 / 1 / span 1 / span 2;
+	padding-left: 38vw;
+}
+
+.tabs2_section.tab_section {
+	grid-area: 3 / 1 / span 1 / span 2;
+	padding-left: 38vw;
+}
 
 .overflow_x_hidden-hotfix {
 	overflow-x: clip !important;
@@ -12,15 +82,15 @@ nav.navbar.navbar-default.section_zero.ng-scope {
 div[aria-label="Closure Information form section"],
 div[aria-label="Related Records form section"],
 form[name="incident.do"] {
-	flex-direction: column;
-    display: flex !important;
+	flex-direction: unset;
+    display: unset;
     column-count: 2;
-    float: left;
 }
 
+/*
 div.section_header_content_no_scroll.touch_scroll.overflow_x_hidden-hotfix {
 	margin-left: 37vw !important;
-}
+}*/
 
 
 div[id="incident.form_scroll"] > div,
@@ -29,14 +99,7 @@ form[name="incident.do"] > span{
 	position: relative;
 	/*margin-left: 37vw;*/
 }
-/*
-form[name="incident.do"] > span:first-of-type{
-	position: fixed;
-	margin-left: 0;
-	column-count: 2;
-	float: left;
-	left: 0;
-}*/
+
 
 
 HTML[data-doctype=true] .tab_section > span {
@@ -46,17 +109,17 @@ HTML[data-doctype=true] .tab_section > span {
 
 #header_attachment {
 	position: fixed !important;
-	width: 37% !important;
+	/*width: 37% !important;*/
 	bottom: 0px !important;
 	left: 0px;
 }
 
 /* Flow graph */
 .process-breadcrumb {
-	position: fixed !important;
-	top: 32px !important;
-	left: 0;
-	width: 37% !important;
+	/*sition: fixed !important;*/
+	/*top: 32px !important;*/
+	/*left: 0;*/
+	width: 37vw !important;
 	overflow: hidden !important;
 }
 
@@ -84,10 +147,11 @@ div[id="div_core_company"] > span > span > div > div:nth-of-type(2).row{
 }*/
 
 form > span.tabs2_section.tabs2_section_0.tabs2_section0  > span.section > div.section-content.with-overflow > div:nth-of-type(2).row {
-	position: fixed;
+	/*position: fixed;
 	left: 0px;
-	top: 60px;
-	max-width: 37%;
+	top: 60px;*/
+	/*max-width: 37vw;*/
+	break-after: column;
 
 }
 
@@ -111,6 +175,7 @@ div.row {
 /* Data Columns */
 div.row > div.vsplit.col-sm-6 {
 	width: 100%;
+	min-height: max-content;
 }
 
 div[id="label.incident.opened_at"] > label.control-label {
@@ -139,10 +204,6 @@ html[data-doctype="true"] #item_table textarea.question_textarea_input.cat_item_
 
 #multiple-input-journal-entry > div {
 	display: grid;
-}
-
-span.tabs2_section.tabs2_section_0.tabs2_section0 > span > div >  div:nth-child(3).row{
-	position: relative;
 }
 
 .col-xs-10.col-md-9.col-lg-8.form-field.input_controls {
@@ -186,7 +247,7 @@ textarea[id="incident.description"] {
 
 /* Notes Related Records and Close tabs */
 div#tabs2_section {
-	padding-top: 25px;
+	/*padding-top: 25px;*/
 }
 
 .section.sn-stream-section > div {
@@ -323,6 +384,7 @@ table.cxs_results_header.wide {
 	width: fit-content !important;
 }
 
+.section,
 HTML[data-doctype=true] .tab_section > span,
 td, tr,
 div#cxs_widget_container,
@@ -333,7 +395,9 @@ div#cxs_widget_container,
 .col-xs-12,
 .section_header_content_no_scroll,
 .process-breadcrumb > li > a,
-.compact, .row, .form-field,
+.compact,
+/*.row,*/
+.form-field,
 .compact .form-group,
 .inc_copy_button,
 HTML[data-doctype=true] .section-content {
@@ -345,6 +409,13 @@ HTML[data-doctype=true] .section-content {
     margin-right: 0px !important;
 	margin-top: 0px !important;
     margin-bottom: 0px !important;
+}
+
+.row {
+	padding-left: 0px !important;
+    padding-right: 0px !important;
+	margin-left: 0px !important;
+    margin-right: 0px !important;
 }
 
 .compact .form-horizontal .control-label {
@@ -454,3 +525,10 @@ HTML[data-doctype=true] .form-field-addons {
 .compact .row .form-field {
 	max-width: -webkit-fill-available;
 }
+/*
+.ac_dropdown {
+	display: block !important;
+	visibility: visible !important;
+	width: 100px !important;
+	height: 100px !important;
+}*/

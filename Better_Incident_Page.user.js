@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      0.8
+// @version      0.8.1
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -20,6 +20,7 @@
 
 
 /* Changelog
+v0.8.1 - More bugfixes
 v0.8 - Bugfixes
 v0.7 - refactor
 v0.6 - overhaul
@@ -113,7 +114,7 @@ function main(element) {
 			let x = "translateY(" + e.target.scrollTop + "px)";
 			r.style.setProperty("transform", x);
 			r.previousSibling.style.setProperty("transform", x);
-			//console.log(x);
+			console.log(x);
 		}, { passive: true });
 	});
 }

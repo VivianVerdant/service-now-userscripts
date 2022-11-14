@@ -118,7 +118,7 @@ async function main(element) {
 			//console.log(x);
 		}, { passive: true });
 	});
-	find_or_observe_for_element("a, button, input, textarea, select", async (node) => {
+	find_or_observe_for_element("a, button, input, select", async (node) => {
 		//console.log('form input added');
 		if ( node.id == "sys_readonly.incident.number") {
 			node.setAttribute("tabindex", 1);

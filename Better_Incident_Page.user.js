@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      0.8.1
+// @version      0.9
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -20,6 +20,7 @@
 
 
 /* Changelog
+v0.9 - Better tabbing navigation
 v0.8.1 - More bugfixes
 v0.8 - Bugfixes
 v0.7 - refactor
@@ -61,7 +62,7 @@ function kbToClipboard(e){
 
 }
 
-function main(element) {
+async function main(element) {
 	console.log("main");
 	if (run_once){
 		return
@@ -70,7 +71,7 @@ function main(element) {
 
 	GM_addStyle(GM_getResourceText("better_incident_css"));
 
-	find_or_observe_for_element(".outputmsg", (node) => {
+	find_or_observe_for_element(".outputmsg", async (node) => {
 		console.log('.outputmsg has been added:-------------------------------------------');
 		console.log(node);
 		node.firstElementChild.addEventListener("click", (e) => {
@@ -104,7 +105,7 @@ function main(element) {
 		node.addEventListener("change", text_area_fn);
 		node.addEventListener("keydown", text_area_fn);
 		node.addEventListener("click", text_area_fn);
-		setTimeout(() => {node.click();}, 250);
+		setTimeout(() => {node.click();}, 1000);
 	}, undefined, false);
 	find_or_observe_for_element(".section_header_content_no_scroll.touch_scroll.overflow_x_hidden-hotfix", (node) => {
 		console.log('datarows:-------------------------------------------');
@@ -114,9 +115,20 @@ function main(element) {
 			let x = "translateY(" + e.target.scrollTop + "px)";
 			r.style.setProperty("transform", x);
 			r.previousSibling.style.setProperty("transform", x);
-			console.log(x);
+			//console.log(x);
 		}, { passive: true });
 	});
+	find_or_observe_for_element("a, button, input, textarea, select", async (node) => {
+		//console.log('form input added');
+		if ( node.id == "sys_readonly.incident.number") {
+			node.setAttribute("tabindex", 1);
+		}else if (node.tagName == "A" || node.tagName == "BUTTON" || node.getAttribute("type") == "hidden" || node.getAttribute("readonly") == "readonly" || node.getAttribute("type") == "checkbox") {
+			node.setAttribute("tabindex", 100);
+		}else{
+			node.setAttribute("tabindex", 10);
+		}
+	}, "form", false);
+
 }
 
 if (location.includes("b47514e26f122500a2fbff2f5d3ee4d0") || location.includes("incident.do")){

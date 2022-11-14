@@ -1,8 +1,24 @@
 /* Overrides */
 
-:root {
-	--page-scroll: 0px;
-}
+/*
+.input-group,
+HTML[data-doctype=true] .form-group .form-field > .form-control,
+option,
+.navbar,
+.sn-widget-textblock-body,
+.sn-card-component_records span.sn-widget-list-table-cell,
+.sn-card-component_records span.sn-widget-list-table-cell:last-of-type,
+HTML[data-doctype=true].compact div.tabs2_strip span.tabs2_tab,
+HTML[data-doctype=true] .custom-form-group.form-group,
+.compact .btn, .compact .nav-segmented > li,
+.compact .nav-segmented > li,
+.compact .form-control,
+HTML[data-doctype=true] BODY,
+table[role="presentation"],
+li.h-card {
+    background-color: black;
+	color: white;
+}*/
 
 
 nav.navbar.navbar-default.section_zero.ng-scope {
@@ -10,7 +26,9 @@ nav.navbar.navbar-default.section_zero.ng-scope {
 }
 
 .section_header_content_no_scroll.touch_scroll.overflow_x_hidden-hotfix > div:not(.ac_dropdown) {
-	padding-left: 38vw;
+	margin-left: 38vw;
+	left: unset !important;
+
 }
 
 form.form_body.form-horizontal.tabs_enabled{
@@ -20,23 +38,23 @@ form.form_body.form-horizontal.tabs_enabled{
 	grid-auto-flow: column;
 }
 
-body > div > form > span > span > div.section-content.with-overflow {
+body > div > form > span.tabs2_section.tabs2_section_0.tabs2_section0 > span > div.section-content.with-overflow {
 	display: grid;
 	grid-template-columns: 38% 62%;
 	grid-template-rows: auto auto;
 }
 
-body > div > form > span > span > div.section-content.with-overflow > div:nth-child(1) {
+body > div > form > span.tabs2_section.tabs2_section_0.tabs2_section0 > span > div.section-content.with-overflow > div:nth-child(1) {
 	grid-area: 1 / 1 / span 1 / span 1;
 }
 
-body > div > form > span > span:not(.sn-stream-section) > div.section-content.with-overflow > div:nth-child(2) {
+body > div > form > span.tabs2_section.tabs2_section_0.tabs2_section0 > span > div.section-content.with-overflow > div:nth-child(2) {
 	grid-area: 2 / 1 / span 1 / span 1;
 	max-height: 100px;
 	overflow-y: visible;
 }
 
-body > div > form > span > span > div.section-content.with-overflow > div:nth-child(3) {
+body > div > form > span.tabs2_section.tabs2_section_0.tabs2_section0 > span > div.section-content.with-overflow > div:nth-child(3) {
 	grid-area: 2 / 2 / span 1 / span 1;
 	transform: translate(1px, -12px);
 }
@@ -78,14 +96,14 @@ form > span.tabs2_section.tabs2_section_0.tabs2_section0 {
 .overflow_x_hidden-hotfix {
 	overflow-x: clip !important;
 }
-
+/*
 div[aria-label="Closure Information form section"],
 div[aria-label="Related Records form section"],
 form[name="incident.do"] {
 	flex-direction: unset;
     display: unset;
     column-count: 2;
-}
+}*/
 
 /*
 div.section_header_content_no_scroll.touch_scroll.overflow_x_hidden-hotfix {
@@ -109,7 +127,7 @@ HTML[data-doctype=true] .tab_section > span {
 
 #header_attachment {
 	position: fixed !important;
-	/*width: 37% !important;*/
+	width: 38% !important;
 	bottom: 0px !important;
 	left: 0px;
 }
@@ -437,11 +455,15 @@ HTML[data-doctype=true] .section-content {
 }
 
 input[name="sys_display.incident.u_affected_user"] {
-	background: linear-gradient(90deg, white, #8e67cf);
+	background: linear-gradient(90deg, transparent, #b6a6d2);
 }
 
 input[name="sys_display.incident.company"] {
-	background: linear-gradient(90deg, white, #f4283a);
+	background: linear-gradient(90deg, transparent, #98e8f4);
+}
+
+input[name="sys_display.incident.assignment_group"] {
+	background: linear-gradient(90deg, transparent, #9af5b5);
 }
 
 #cxs_search_container {

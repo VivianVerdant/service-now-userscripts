@@ -1,15 +1,31 @@
-function find_or_observe_for_element(query, func, parent_query, once) {
+async function find_or_observe_for_element(query, func, parent_query, once) {
+	
+	setTimeout(() => {
+		if (document.body === undefined) {
+			console.error("No body found");
+			return;
+		}
+	}, 6000);
+	
+	while (document.body === undefined) {
+		setTimeout(() => {;}, 150);
+	}
 
 	let parent_node;
 
 	if (parent_query === undefined) {
 		parent_node = document.body;
 	} else {
-		parent_node = document.querySelector(parent_query);
-	}
-
-	if (once === undefined) {
-		once = true;
+        	setTimeout(() => {
+			if (document.body === undefined) {
+				console.warn("No custom parent found, falling back to body);
+				parent_node = document.body;
+			}
+		}, 3000);
+		while (parent_node === undefined) {
+		    parent_node = document.querySelector(parent_query);
+		    setTimeout(() => {;}, 150);
+        	}
 	}
 
 	const node_list = parent_node.querySelectorAll(query);

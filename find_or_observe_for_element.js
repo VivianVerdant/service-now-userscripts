@@ -18,7 +18,7 @@ async function find_or_observe_for_element(query, func, parent_query, once) {
 	} else {
         	setTimeout(() => {
 			if (document.body === undefined) {
-				console.warn("No custom parent found, falling back to body);
+				console.warn("No custom parent found, falling back to body");
 				parent_node = document.body;
 			}
 		}, 3000);

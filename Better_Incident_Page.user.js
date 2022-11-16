@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      0.9
+// @version      1.0
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -20,6 +20,7 @@
 
 
 /* Changelog
+v1.0 - Added ctrl+s to save, ctrl+d to resolve, fixed autocompleter bug
 v0.9 - Better tabbing navigation
 v0.8.1 - More bugfixes
 v0.8 - Bugfixes
@@ -118,7 +119,7 @@ async function main(element) {
 			//console.log(x);
 		}, { passive: true });
 	});
-	find_or_observe_for_element("a, button, input, select", async (node) => {
+	find_or_observe_for_element("a, button, textarea, input, select", async (node) => {
 		//console.log('form input added');
 		if ( node.id == "sys_readonly.incident.number") {
 			node.setAttribute("tabindex", 1);
@@ -126,9 +127,34 @@ async function main(element) {
 			node.setAttribute("tabindex", 100);
 		}else{
 			node.setAttribute("tabindex", 10);
+			node.classList.add("multiLinePill");
+			/*
+            node.addEventListener("keydown", (e) => {
+				if (!e.target.getAttribute("aria-activedescendant")){
+					return;
+				}
+				console.log(e);
+            	if (e.key === "ArrowRight" || e.keyCode == 39) {
+					//e.preventDefault();
+					const selected = document.body.querySelector("#" + e.target.getAttribute("aria-activedescendant"));
+					console.log(selected);
+					let evt = new MouseEvent("click", {bubbles: true, cancelable: true});
+					selected.dispatchEvent(evt);
+				}
+            });
+			*/
 		}
 	}, "form", false);
 
+	document.onkeydown = function(e) {
+		if(e.key === 's' && e.ctrlKey){
+			e.preventDefault();
+			document.querySelector("#sysverb_update_and_stay").click();
+		}else if(e.key === 'd' && e.ctrlKey){
+			e.preventDefault();
+			document.querySelector("#resolve_incident").click();
+        }
+	};
 }
 
 if (location.includes("b47514e26f122500a2fbff2f5d3ee4d0") || location.includes("incident.do")){

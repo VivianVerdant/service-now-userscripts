@@ -71,9 +71,10 @@ function getColorFromSeed(hue, sat, val) {
 		return [r * 255, g * 255, b * 255];
 	}
 	const rng = new PRNG();
-
-	sat = sat || rng.result(hue) / 4.0 + .75;
+	
+	hue = rng.result(hue);
+	sat = sat || rng.next() / 4.0 + .75;
 	val = val || rng.next() / 4.0 + .33;
 
-	return floatToHEX(rng.next(), sat, val);
+	return floatToHEX(hue, sat, val);
 }

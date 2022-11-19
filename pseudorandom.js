@@ -1,4 +1,4 @@
-function getColorFromSeed(value) {
+function getColorFromSeed(hue, sat, val) {
 	class PRNG {
 		seed = 0;
 
@@ -15,8 +15,8 @@ function getColorFromSeed(value) {
 		}
 	}
 
-	function floatToHEX(value) {
-		const res = hslToRgb(value, 0.9, 0.42);
+	function floatToHEX(h, s, v) {
+		const res = hslToRgb(h, s, v);
 		console.log(res);
 		let hexstr = "#";
 		for (const r of res) {
@@ -71,5 +71,9 @@ function getColorFromSeed(value) {
 		return [r * 255, g * 255, b * 255];
 	}
 	const rng = new PRNG();
-	return floatToHEX(rng.result(value));
+
+	sat = sat || rng.result(hue) / 4.0 + .75;
+	val = val || rng.next() / 4.0 + .33;
+
+	return floatToHEX(rng.next(), sat, val);
 }

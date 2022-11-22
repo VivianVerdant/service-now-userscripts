@@ -125,7 +125,7 @@ async function main(element) {
 	find_or_observe_for_element("input[id='incident.number']", (node) => {
 		console.log('#resolve_incident has been added:-------------------------------------------');
 		let btn = document.createElement("button");
-		btn.classList.add("inc_copy_button","btn");
+		btn.classList.add("inc_copy_button");
 		let header = document.querySelector("nav.navbar.navbar-default.section_zero > div.container-fluid");
 		header.appendChild(btn);
 		header.insertBefore(btn, btn.previousSibling);

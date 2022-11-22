@@ -453,7 +453,7 @@ HTML[data-doctype=true] #header_attachment_line {
     content: "\f150";
 	scale: 1.5;
     margin: 0 8px;
-	text-shadow: -1px -1px 1px #fff, 1px -1px 1px #fff, -1px 1px 0pc #fff, 1px 1px 1px #fff;
+	text-shadow: -1px -1px 1px #ffffff88, 1px -1px 1px #ffffff88, -1px 1px 0pc #ffffff88, 1px 1px 1px #ffffff88;
 }
 
 HTML[data-doctype=true] .form-field-addons .btn {

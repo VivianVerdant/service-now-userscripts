@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      1.0
+// @version      1.1
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/issues
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/find_or_observe_for_element.js
+// @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/pseudorandom.js
 // @resource     customCSS https://github.com/VivianVerdant/service-now-userscripts/raw/main/better_menu.css
 // @resource     better_incident_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_incident.css
 // @grant        GM_addStyle
@@ -16,10 +17,14 @@
 // @grant        GM_getValue
 // @run-at       document-start
 // ==/UserScript==
-/* globals find_or_observe_for_element createBetterSettingsMenu AJAXCompleter */
+/* globals find_or_observe_for_element createBetterSettingsMenu AJAXCompleter getColorFromSeed */
 
 
 /* Changelog
+v1.1 - Bugfixes with z-sorting
+	 - Added random color to header to differentiate tickets
+	 - Added Copy Permalink button to header
+	 - Cleaned up header
 v1.0 - Added ctrl+s to save, ctrl+d to resolve, fixed autocompleter bug
 v0.9 - Better tabbing navigation
 v0.8.1 - More bugfixes
@@ -37,6 +42,12 @@ v0.1 - Initial release
 */
 
 'use strict';
+
+var options = {
+	alt_layout: true,
+	create_page_cn: true,
+}
+
 
 var location = window.location.href;
 var run_once = false;
@@ -57,10 +68,34 @@ async function onClickResolveBtn(){
 
 function kbToClipboard(e){
 	const INC = document.getElementById('incident.number').value;
-	navigator.clipboard.writeText(INC);
-	e.target.classList.add("icon-cog");
-	setTimeout(() => {e.target.classList.remove("icon-cog");}, 500);
-
+	if (e.target.classList.contains("form_action_button")) {
+		let permurl = window.location;
+		permurl = permurl.protocol + "//" + permurl.hostname + "/incident.do?sys_id=" + new URLSearchParams(permurl.search).get("sys_id");
+		let link = document.createElement("a");
+		link.innerHTML = INC;
+		link.href = permurl;
+		let d = document.createElement("div");
+		d.appendChild(link);
+		d.setAttribute("style", "display: none;");
+		e.target.appendChild(d);
+		function copyToClip(str) {
+			function listener(e) {
+				e.clipboardData.setData("text/html", str);
+				e.clipboardData.setData("text/plain", str);
+				e.preventDefault();
+			}
+			document.addEventListener("copy", listener);
+			document.execCommand("copy");
+			document.removeEventListener("copy", listener);
+		};
+		copyToClip(d.innerHTML);
+	}else{
+		navigator.clipboard.writeText(INC);
+	}
+	const el = document.querySelector(".navbar-right");
+	el.classList.add("icon-clipboard");
+	setTimeout(() => {el.classList.remove("icon-clipboard");}, 500);
+	e.target.blur();
 }
 
 async function main(element) {
@@ -81,7 +116,7 @@ async function main(element) {
 			}
 		});
 		node.lastElementChild.classList.add("hidden");
-	}, "#output_messages", false);
+	}, undefined, false);
 	find_or_observe_for_element("#resolve_incident", (node) => {
 		console.log('#resolve_incident has been added:-------------------------------------------');
 		console.log(node);
@@ -90,7 +125,7 @@ async function main(element) {
 	find_or_observe_for_element("input[id='incident.number']", (node) => {
 		console.log('#resolve_incident has been added:-------------------------------------------');
 		let btn = document.createElement("button");
-		btn.classList.add("inc_copy_button","btn");
+		btn.classList.add("inc_copy_button");
 		let header = document.querySelector("nav.navbar.navbar-default.section_zero > div.container-fluid");
 		header.appendChild(btn);
 		header.insertBefore(btn, btn.previousSibling);
@@ -98,6 +133,16 @@ async function main(element) {
 		let inner = document.createElement("span");
 		inner.innerHTML = node.value;
 		btn.appendChild(inner);
+		const hue = parseInt(node.value.replace(/\D/g,''));
+		console.log("Num: ",hue);
+		document.querySelector(':root').style.setProperty('--header-color', getColorFromSeed(hue));
+		const doc_buttons = document.querySelector(".navbar_ui_actions");
+		let permalink = document.createElement("button");
+		permalink.classList.add("form_action_button", "header", "action_context", "btn", "btn-default");
+		permalink.innerHTML = "Permalink";
+		permalink.setAttribute("style", "white-space: nowrap;");
+		permalink.addEventListener("click", kbToClipboard);
+		doc_buttons.appendChild(permalink);
 	});
 	find_or_observe_for_element(".activity-stream-textarea, #activity-stream-work_notes-textarea, .question_textarea_input", (node) => {
 		console.log('textarea has been added:-------------------------------------------');

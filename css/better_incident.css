@@ -1,28 +1,22 @@
-/* Overrides */
+:root {
+	--header-color: #f5f5f5;
+}
 
-/*
-.input-group,
-HTML[data-doctype=true] .form-group .form-field > .form-control,
-option,
-.navbar,
-.sn-widget-textblock-body,
-.sn-card-component_records span.sn-widget-list-table-cell,
-.sn-card-component_records span.sn-widget-list-table-cell:last-of-type,
-HTML[data-doctype=true].compact div.tabs2_strip span.tabs2_tab,
-HTML[data-doctype=true] .custom-form-group.form-group,
-.compact .btn, .compact .nav-segmented > li,
-.compact .nav-segmented > li,
-.compact .form-control,
-HTML[data-doctype=true] BODY,
-table[role="presentation"],
-li.h-card {
-    background-color: black;
-	color: white;
-}*/
+.navbar.navbar-default.section_zero.ng-scope {
+	background: var(--header-color);
+}
 
+.container-fluid > .navbar-header,
+.navbar-right > span > a,
+div.form_title .record-paging-nowrap,
+button#generate_pin,
+button[data-action-name="sysverb_update"] {
+	display: none;
+}
 
-nav.navbar.navbar-default.section_zero.ng-scope {
-
+.popover-body,
+.popover-content {
+	z-index: 999;
 }
 
 .section_header_content_no_scroll.touch_scroll.overflow_x_hidden-hotfix > div:not(.ac_dropdown) {
@@ -73,14 +67,10 @@ body > div > form > span > span.section.sn-stream-section > div.section-content.
 	width: 100%;
 }
 
-body > div > form > span > span > div.section-content.with-overflow > .row {
-	/*width: 37vw;*/
-}
-
 
 form > span.tabs2_section.tabs2_section_0.tabs2_section0 {
 	grid-area: 1 / 1 / span 1 / span 2;
-	z-index: 100;
+	z-index: 20;
 }
 
 #tabs2_section.tabs2_strip {
@@ -96,33 +86,18 @@ form > span.tabs2_section.tabs2_section_0.tabs2_section0 {
 .overflow_x_hidden-hotfix {
 	overflow-x: clip !important;
 }
-/*
-div[aria-label="Closure Information form section"],
-div[aria-label="Related Records form section"],
-form[name="incident.do"] {
-	flex-direction: unset;
-    display: unset;
-    column-count: 2;
-}*/
-
-/*
-div.section_header_content_no_scroll.touch_scroll.overflow_x_hidden-hotfix {
-	margin-left: 37vw !important;
-}*/
 
 
 div[id="incident.form_scroll"] > div,
 form[name="incident.do"] > div,
 form[name="incident.do"] > span{
 	position: relative;
-	/*margin-left: 37vw;*/
 }
 
 
 
 HTML[data-doctype=true] .tab_section > span {
 	display: flex !important;
-	/*width: 63vw;*/
 }
 
 #header_attachment {
@@ -134,9 +109,6 @@ HTML[data-doctype=true] .tab_section > span {
 
 /* Flow graph */
 .process-breadcrumb {
-	/*sition: fixed !important;*/
-	/*top: 32px !important;*/
-	/*left: 0;*/
 	width: 37vw !important;
 	overflow: hidden !important;
 }
@@ -153,22 +125,8 @@ HTML[data-doctype=true] .tab_section > span {
 	transform: skew(-45deg) translateX(-15px);
 }
 
-/* Top half of INC page */
-/*
-div.section-content.with-overflow {
-	position: relative;
-}*/
-/*
-div[id="div_core_company"] > span > span > div > div:nth-of-type(2).row{
-	position: unset !important;
-	max-width: 100% !important;
-}*/
 
 form > span.tabs2_section.tabs2_section_0.tabs2_section0  > span.section > div.section-content.with-overflow > div:nth-of-type(2).row {
-	/*position: fixed;
-	left: 0px;
-	top: 60px;*/
-	/*max-width: 37vw;*/
 	break-after: column;
 
 }
@@ -289,21 +247,6 @@ span[tab_caption="Notes"] > span > div > div {
 	display: flex;
 }
 
-div[aria-label="Closure Information form section"] > div.row,
-div[aria-label="Notes form section"] > div.row {
-	/*width: 63vw !important;*/
-}
-
-div[aria-label="Closure Information form section"] > div.row > div.vsplit > div > div > label,
-div[aria-label="Closure Information form section"] > div.row > div.vsplit,
-div[aria-label="Notes form section"] > div.row > div.vsplit {
-	/*width: 50% !important;*/
-}
-
-.h-card-wrapper.activities-form {
-	/*width: 63vw !important;*/
-}
-
 .sn-form-inline-stream-entries {
 	float: initial;
 }
@@ -321,30 +264,6 @@ label[for="activity-stream-textarea"] {
 	max-width: 93px;
 }
 
-div[id="element.incident.watch_list"] {
-
-}
-
-span[tab_caption="Notes"] {
-
-}
-
-span[tab_caption="Related Records"] {
-
-}
-
-span[tab_caption="Closure Information"] {
-
-}
-
-.form_action_button_container {
-
-}
-
-.related-links-wrapper {
-
-}
-
 div[id="incident.incident.parent_list"] {
 	overflow-x: scroll;
 }
@@ -353,8 +272,6 @@ span.tabs2_section.tabs2_section_2.tabs2_section2.tab_section > span > div,
 span.tabs2_section.tabs2_section_3.tabs2_section3.tab_section > span > div {
 	width: 100%
 }
-
-
 
 .outputmsg_div {
 	position: absolute;
@@ -547,10 +464,3 @@ HTML[data-doctype=true] .form-field-addons {
 .compact .row .form-field {
 	max-width: -webkit-fill-available;
 }
-/*
-.ac_dropdown {
-	display: block !important;
-	visibility: visible !important;
-	width: 100px !important;
-	height: 100px !important;
-}*/

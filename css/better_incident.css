@@ -450,7 +450,7 @@ HTML[data-doctype=true] #header_attachment_line {
 }
 
 .icon-clipboard:before {
-    content: "\f1c0";
+    content: "\f150";
 	scale: 1.5;
     margin: 0 8px;
 	text-shadow: -1px -1px 1px #fff, 1px -1px 1px #fff, -1px 1px 0pc #fff, 1px 1px 1px #fff;

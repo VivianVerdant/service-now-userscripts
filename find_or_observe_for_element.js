@@ -8,7 +8,7 @@ async function find_or_observe_for_element(query, func, parent_query, once) {
 	}, 6000);
 	
 	while (document.body === undefined) {
-		setTimeout(() => {;}, 150);
+		await setTimeout(() => {return;}, 150);
 	}
 
 	let parent_node;
@@ -29,13 +29,10 @@ async function find_or_observe_for_element(query, func, parent_query, once) {
 	}
 
 	const node_list = parent_node.querySelectorAll(query);
-	//console.log("node list: ", node_list);
 	if (node_list.length) {
 		for (const node of node_list) {
-			//console.log("found node already existing: ", node);
 			func(node);
 			if (once) {
-				//console.log("exiting early");
 				return;
 			}
 		}
@@ -44,6 +41,9 @@ async function find_or_observe_for_element(query, func, parent_query, once) {
 	const observer = new MutationObserver((mutations_list, observer) => {
 		const mutation_fn = (n_list) => {
 			for (const added_node of n_list) {
+				if (added_node.children){
+					mutation_fn(added_node.children);
+				}
 				if (added_node.nodeType !== Node.ELEMENT_NODE) {
 					continue;
 				}

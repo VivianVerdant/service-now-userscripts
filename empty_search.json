@@ -1,0 +1,344 @@
+{
+  "params": {
+    "keyword": "",
+    "language": "en",
+    "portal_suffix": "kb",
+    "variables": {
+      "kb_category": {
+        "value": [],
+        "orderby": "label",
+        "table": "kb_knowledge",
+        "include_null": true,
+        "aggregate": false,
+        "title": "Category",
+        "treeData": false
+      },
+      "author": {
+        "value": [],
+        "orderby": "label",
+        "table": "kb_knowledge",
+        "include_null": false,
+        "aggregate": false,
+        "title": "Author",
+        "treeData": false
+      },
+      "tags": {
+        "value": [],
+        "orderby": "",
+        "table": "label_entry",
+        "include_null": false,
+        "aggregate": false,
+        "title": "",
+        "treeData": false
+      },
+      "kb_knowledge_base": {
+        "value": [],
+        "orderby": "label",
+        "table": "kb_knowledge",
+        "include_null": false,
+        "aggregate": true,
+        "title": "Knowledge Bases",
+        "treeData": false
+      },
+      "u_company": {
+        "value": [],
+        "orderby": "name",
+        "table": "kb_knowledge",
+        "include_null": false,
+        "aggregate": false,
+        "title": "Company",
+        "treeData": false
+      }
+    },
+    "query": {
+      "resources": {
+        "filters": "",
+        "value": "",
+        "dynamic": true,
+        "treeData": false
+      },
+      "rating": {
+        "filters": [
+          {
+            "label": "4+ Rating",
+            "id": "rating_5",
+            "order": 5,
+            "query": [
+              {
+                "table": "kb_knowledge",
+                "value": "rating>4",
+                "display_value": "rating=5"
+              },
+              {
+                "table": "kb_social_qa_question",
+                "value": "sys_id=123321"
+              }
+            ]
+          },
+          {
+            "label": "3+ Rating",
+            "id": "rating_4",
+            "order": 4,
+            "query": [
+              {
+                "table": "kb_knowledge",
+                "value": "rating>3",
+                "display_value": "rating=4"
+              },
+              {
+                "table": "kb_social_qa_question",
+                "value": "sys_id=123321"
+              }
+            ]
+          },
+          {
+            "label": "2+ Rating",
+            "id": "rating_3",
+            "order": 3,
+            "query": [
+              {
+                "table": "kb_knowledge",
+                "value": "rating>2",
+                "display_value": "rating=3"
+              },
+              {
+                "table": "kb_social_qa_question",
+                "value": "sys_id=123321"
+              }
+            ]
+          },
+          {
+            "label": "1+ Rating",
+            "id": "rating_2",
+            "order": 2,
+            "query": [
+              {
+                "table": "kb_knowledge",
+                "value": "rating>1",
+                "display_value": "rating=2"
+              },
+              {
+                "table": "kb_social_qa_question",
+                "value": "sys_id=123321"
+              }
+            ]
+          },
+          {
+            "label": "Rated",
+            "id": "rating_1",
+            "order": 1,
+            "query": [
+              {
+                "table": "kb_knowledge",
+                "value": "rating>0",
+                "display_value": "rating=1"
+              },
+              {
+                "table": "kb_social_qa_question",
+                "value": "sys_id=123321"
+              }
+            ]
+          },
+          {
+            "label": "Any Rating",
+            "id": "rating_0",
+            "order": 0,
+            "query": [
+              {
+                "table": "kb_knowledge",
+                "value": "ratingANYTHING",
+                "display_value": "ratingISEMPTY"
+              },
+              {
+                "table": "kb_social_qa_question",
+                "value": "sys_id=123321"
+              }
+            ]
+          }
+        ],
+        "value": "",
+        "dynamic": false,
+        "treeData": false
+      },
+      "modified": {
+        "filters": [
+          {
+            "label": "Past 2 Years",
+            "id": "more_ago",
+            "order": 5,
+            "query": [
+              {
+                "table": "",
+                "value": "sys_updated_onRELATIVEGT@year@ago@2",
+                "display_value": "sys_updated_onRELATIVEGT@year@ago@2^sys_updated_onRELATIVELT@year@ago@1"
+              }
+            ]
+          },
+          {
+            "label": "Past Year",
+            "id": "year_ago",
+            "order": 4,
+            "query": [
+              {
+                "table": "",
+                "value": "sys_updated_onRELATIVEGT@year@ago@1",
+                "display_value": "sys_updated_onRELATIVEGT@year@ago@1^sys_updated_onRELATIVELT@month@ago@1"
+              }
+            ]
+          },
+          {
+            "label": "Past Month",
+            "id": "month_ago",
+            "order": 3,
+            "query": [
+              {
+                "table": "",
+                "value": "sys_updated_onRELATIVEGT@month@ago@1",
+                "display_value": "sys_updated_onRELATIVEGT@month@ago@1^sys_updated_onRELATIVELT@dayofweek@ago@7"
+              }
+            ]
+          },
+          {
+            "label": "Past Week",
+            "id": "week_ago",
+            "order": 2,
+            "query": [
+              {
+                "table": "",
+                "value": "sys_updated_onRELATIVEGT@dayofweek@ago@7",
+                "display_value": "sys_updated_onRELATIVEGT@dayofweek@ago@2^sys_updated_onRELATIVELT@dayofweek@ago@1"
+              }
+            ]
+          },
+          {
+            "label": "Past 24 Hours",
+            "id": "day_ago",
+            "order": 1,
+            "query": [
+              {
+                "table": "",
+                "value": "sys_updated_onRELATIVEGT@dayofweek@ago@1",
+                "display_value": "sys_updated_onRELATIVEGT@dayofweek@ago@1"
+              }
+            ]
+          }
+        ],
+        "value": "",
+        "dynamic": false,
+        "treeData": false
+      },
+      "view_count": {
+        "filters": [
+          {
+            "label": "More Than 500",
+            "id": "more_than_500",
+            "order": 6,
+            "query": [
+              {
+                "table": "kb_knowledge",
+                "value": "sys_view_count>500",
+                "display_value": "sys_view_count>500"
+              },
+              {
+                "table": "kb_social_qa_question",
+                "value": "views>500",
+                "display_value": "views>500"
+              }
+            ]
+          },
+          {
+            "label": "More Than 200",
+            "id": "more_than_200",
+            "order": 5,
+            "query": [
+              {
+                "table": "kb_knowledge",
+                "value": "sys_view_count>200",
+                "display_value": "sys_view_count>200^sys_view_count<500"
+              },
+              {
+                "table": "kb_social_qa_question",
+                "value": "views>200",
+                "display_value": "views>200^views<500"
+              }
+            ]
+          },
+          {
+            "label": "More Than 100",
+            "id": "more_than_100",
+            "order": 4,
+            "query": [
+              {
+                "table": "kb_knowledge",
+                "value": "sys_view_count>100",
+                "display_value": "sys_view_count>100^sys_view_count<200"
+              },
+              {
+                "table": "kb_social_qa_question",
+                "value": "views>100",
+                "display_value": "views>100^views<200"
+              }
+            ]
+          },
+          {
+            "label": "More Than 50",
+            "id": "more_than_50",
+            "order": 3,
+            "query": [
+              {
+                "table": "kb_knowledge",
+                "value": "sys_view_count>50",
+                "display_value": "sys_view_count>50^sys_view_count<100"
+              },
+              {
+                "table": "kb_social_qa_question",
+                "value": "views>50",
+                "display_value": "views>50^views<100"
+              }
+            ]
+          },
+          {
+            "label": "More Than 10",
+            "id": "more_than_10",
+            "order": 2,
+            "query": [
+              {
+                "table": "kb_knowledge",
+                "value": "sys_view_count>10",
+                "display_value": "sys_view_count>10^sys_view_count<50"
+              },
+              {
+                "table": "kb_social_qa_question",
+                "value": "views>10",
+                "display_value": "views>10^views<50"
+              }
+            ]
+          },
+          {
+            "label": "Less Than 10",
+            "id": "less_than_10",
+            "order": 1,
+            "query": [
+              {
+                "table": "kb_knowledge",
+                "value": "sys_view_count<11",
+                "display_value": "sys_view_count<11"
+              },
+              {
+                "table": "kb_social_qa_question",
+                "value": "views<11",
+                "display_value": "views<11"
+              }
+            ]
+          }
+        ],
+        "value": "",
+        "dynamic": false,
+        "treeData": false
+      }
+    },
+    "order": "sys_view_count,true",
+    "paginationMinCount": 0
+  },
+  "timeout": {}
+}

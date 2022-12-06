@@ -1,0 +1,55 @@
+<html>
+<head>
+<title>Export HTML to Word Document with JavaScript</title>
+<style>
+body {
+    width: 550px;
+    font-family: Arial;
+    line-height: 25px;
+}
+
+#btn-export {
+    background: #484848;
+    color: #FFF;
+    border: #000 1px solid;
+    padding: 10px 20px;
+    font-size: 12px;
+    border-radius: 3px;
+}
+
+.content-footer {
+    text-align: center;
+}
+.source-html-outer {
+    border: #d0d0d0 1px solid;
+    border-radius: 3px;
+    padding: 10px 20px 20px 20px;
+}
+</style>
+</head>
+<body>
+<div class="source-html-outer">
+    <div id="source-html">
+        <h1>
+            <center>Export to Word</center>
+        </h1>
+		<div class="content-footer">
+			<a href="javascript:
+			   var header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' "+
+					"xmlns:w='urn:schemas-microsoft-com:office:word' "+
+					"xmlns='http://www.w3.org/TR/REC-html40'>"+
+					"<head><meta charset='utf-8'><title>Export HTML to Word Document with JavaScript</title></head><body>";
+			   var footer = "</body></html>";
+			   var sourceHTML = header+document.getElementById(".kb-article-wrapper").innerHTML+footer;
+			   
+			   var source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+			   var fileDownload = document.createElement("a");
+			   document.body.appendChild(fileDownload);
+			   fileDownload.href = source;
+			   fileDownload.download = 'document.doc';
+			   fileDownload.click();
+			   document.body.removeChild(fileDownload);">
+		</div>
+	</div>	   
+</body>
+</html>

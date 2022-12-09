@@ -1,15 +1,47 @@
-/* override css */
+/* kb search home */
+
+@font-face {
+	font-family: Noto Mono for Powerline;
+	src:url("https://github.com/VivianVerdant/service-now-userscripts/blob/main/Noto%20Mono%20for%20Powerline.ttf?raw=true") format("truetype");
+}
+
+:not(pre):not(code):not(textarea):not(tt):not(kbd):not(samp):not(var) {
+    font-family: monospace !important;
+    letter-spacing: -.1rem;
+}
+
+:root {
+	--search-offset: 0px;
+	--blue-highlight: #66afe9;
+
+}
+
+.search-bar {
+	transform: translateX( var(--search-offset) );
+}
+
+div.cm-search-box {
+	width: 98%;
+}
+
+div.container {
+
+}
+
+/* kb search results */
 section.page {
 	/*overflow-x: clip;*/
 	max-width: 100%;
 }
 
-.container {
-	width: 100% !important;
+.sp-loading-indicator.la-sm {
+	top: 20px;
+	right: 40px;
+    left: unset;
 }
 
-div.filter-icon-padding {
-	display: none !important;
+.container {
+	width: 100% !important;
 }
 
 .search-bar {
@@ -17,6 +49,13 @@ div.filter-icon-padding {
 	/*width: 100% !important;*/
 	/*z-index: 1000 !important;*/
 	width: 100% !important;
+}
+
+.sidefacets-no-padding > span:nth-child(1),
+.sidefacets-no-padding > span:nth-child(n+3),
+.kb-search-block > div:nth-child(3),
+div.filter-icon-padding {
+	display: none !important;
 }
 
 #kb_search_input {
@@ -37,32 +76,140 @@ div.filter-icon-padding {
 	max-width: 100%;
 }
 
-header,
-/*.input-group-btn,*/
-.kb-breadcrumb,
-.kb-about,
-.kb-description,
-.kb-detail,
-.kb_container-right,
-.kb-type,
-.kb-icon-pad,
-/*.navbar_fixed,*/
-.kb-sort-block,
-/*.navbar,*/
+/*
+.filter-class,
 .sidefacets-no-padding,
 .hidden-sm,
 .hidden-xs,
-.filter-class {
+*/
+header,
+.lang-icon,
+.kb-breadcrumb,
+.kb-about,/*
+.kb-description,
+.kb-detail,*/
+.attach-detail,
+.attach-icon,
+.kb_container-right,
+.kb-type,
+.kb-icon-pad,
+.kb-sort-block {
 	display: none !important;
 }
+
+.glyphicon {
+	padding-right: 5px;
+}
+
+.attach-title > a {
+	font-size: 1rem !important;
+}
+
+.kb-description {
+	word-break: unset !important;
+	font-size: 1rem !important;
+}
+
+.kb-detail > div > strong {
+	/*color: darkblue;*/
+}
+
+.kb-filter-block {
+    display: none;
+}
+
+.facet-search {
+    display: block !important;
+}
+
+.facet-detail.facet-scroll.ng-scope {
+    max-height: unset;
+}
+
+.facet-detail.facet-scroll.ng-scope > div:nth-child(1) {
+	display: block !important;
+	max-height: calc(100vh - 172px);
+	overflow-y: scroll;
+}
+
+.facet-detail.facet-scroll.ng-scope > div:nth-child(1) > div {
+	border-bottom: 0.1rem solid var(--light);
+}
+
+.facet-detail.facet-scroll.ng-scope > div:nth-child(2) {
+	display: none !important;
+}
+
+div.hide-filters,
+div[sn-atf-area="Company"] > div > div {
+	display: block !important;
+	width: 100%;
+}
+
 
 .kb_container-left{
 	width: 100%;
 }
 
+html > body > div > section > main > div > div > sp-page-row:nth-child(2) > div {
+	display: grid;
+	grid-template-columns: 300px 325px 880px;
+	grid-template-rows: calc(100vh - 60px);;
+	gap: 0px 0px;
+	grid-template-areas:
+    "filter results frame";
+}
+
+.search-bar {
+	grid-area: search;
+}
+
+html > body > div > section > main > div > div > sp-page-row:nth-child(2) > div > div:nth-child(1) {
+	/*display: none !important;*/
+	grid-area: filter;
+}
+
+li > label {
+	margin: .25rem;
+}
+
+li:has(input:checked) {
+	background: var(--blue-highlight);
+    /*outline: .4rem solid var(--blue-highlight);*/
+}
+
+
+.kb-facet-filter-block.ng-scope {
+	display: block !important;
+}
+
+html > body > div > section > main > div > div > sp-page-row > div > div:nth-child(2) {
+	grid-area: results;
+	max-height: calc(100vh - 58px);
+	overflow-y: scroll;
+}
+
+.panel.panel-default.knowledge-articles {
+	overflow-y: clip;
+}
+
+div.collapse.in {
+    display: block;
+}
+
+div.collapse {
+    display: block;
+}
+
+.facet-field-padding {
+	border-bottom: 0.1rem solid #DDDDDD;
+}
+
+.attach-results,
+.facet-field-padding,
 .panel-body,
 .pad-bottom,
-.kb-search-block,
+div.kb-search-block,
 .kb-article-summary,
 .kb-summary-block,
 .padding-top,
@@ -97,10 +244,17 @@ header,
 	border-bottom: 1px solid #939393;
 }
 
+.kbframe {
+	/*background: pink;*/
+	grid-area: frame;
+	width: 100%;
+	height: 100%;
+}
+
 h4,
 h4 a,
 .h4 {
-	color: #333 !important;
+	/*color: #333 !important;*/
 	font-size: 1.4rem !important;
 	margin-left: 0 !important;
 	margin-right: 0 !important;

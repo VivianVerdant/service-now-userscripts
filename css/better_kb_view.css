@@ -1,3 +1,56 @@
+* {
+	word-break: break-word;
+	max-width: 880px;
+}
+
+@font-face {
+	font-family: Noto Mono for Powerline;
+	src:url("https://github.com/VivianVerdant/service-now-userscripts/blob/main/Noto%20Mono%20for%20Powerline.ttf?raw=true") format("truetype");
+}
+
+:not(pre):not(code):not(textarea):not(tt):not(kbd):not(samp):not(var) {
+    font-family: monospace !important;
+    letter-spacing: -.1rem;
+}
+
+a {
+	/*line-break: anywhere;*/
+}
+
+td, th {
+	max-width: 680px !important;
+	min-width: 200px !important;
+	width: 100%;
+}
+
+strong > * > *,
+strong > *,
+strong {
+	font-size: 12pt !important;
+}
+
+img {
+	max-width: 550px;
+	object-fit: contain;
+}
+
+:root {
+	--header-color: #f5f5f5;
+}
+
+section > table {
+	width: 100% !important;
+}
+
+hr {
+	width: 100%;
+}
+
+.panel-default > .kb-panel-heading.panel-heading {
+	background: var(--header-color);
+}
+
+
 .better-kb-cbcopy {
 	display: block;
 	z-index: 150;
@@ -6,13 +59,50 @@
 	left: 50%;
 	position: absolute;
 	transform: translate(-50%, 0%);
+	top: 0;
 }
 
 
+.ng-scope.panel.panel-default.kb-desktop {
+	display: grid;
+	grid-template-columns: 100%;
+	grid-template-rows: 42px 100%;
+	gap: 0px 0px;
+	grid-template-areas:
+		"header"
+		"body";
+}
+
+.ng-scope.panel.panel-default.kb-desktop > div:nth-child(1) {
+	grid-area: header;
+}
+
+.ng-scope.panel.panel-default.kb-desktop > div:nth-child(2) {
+	grid-area: body;
+	/* Firefox */
+	max-height: -moz-calc(100vh - 45px);
+	/* WebKit */
+	max-height: -webkit-calc(100vh - 45px);
+	/* Opera */
+	max-height: -o-calc(100vh - 45px);
+	/* Standard */
+	max-height: calc(100vh - 45px);
+	height: min-content;
+	overflow-y: scroll;
+}
+
+.kb-container-column.kb_container-left > span:nth-child(n+2) {
+	display: none;
+}
+
+.kb-container-column.kb_container-right {
+	display: none;
+}
+
 /* override css */
 div.sp-page-root {
-	margin-top: 45px;
-	max-height: 100vh;
+	/*margin-top: 45px;
+	max-height: 100vh;*/
 }
 
 html {
@@ -76,6 +166,7 @@ div[sn-atf-area="Most Recent Tasks"] {
 	/*rotate: 45deg;*/
 }
 
+section > table,
 .panel-heading {
 	margin-left: 0 !important;
 	margin-right: 0 !important;
@@ -92,6 +183,7 @@ div[sn-atf-area="Most Recent Tasks"] {
     width: auto;
 }
 
+/*
 .kb-panel-heading {
 	position: fixed;
     width: 100%;
@@ -100,7 +192,7 @@ div[sn-atf-area="Most Recent Tasks"] {
     z-index: 100;
 	display: flex;
 	align-items: center;
-}
+}*/
 
 .kb-end-buttons {
 	position: fixed;
@@ -124,10 +216,7 @@ div[sn-atf-area="Most Recent Tasks"] {
 	width: fit-content;
 }
 
-.kb-title-header {
-	margin-top: 50px !important;
-}
-
+.ng-scope.panel.panel-default.kb-desktop,
 .btn,
 .kb-dropdown-button,
 .kb-panel-title-header,
@@ -150,14 +239,14 @@ div[sn-atf-area="Most Recent Tasks"] {
 .col-md-3,
 .kb-template,
 .row {
-	margin-left: 1px !important;
-	margin-right: 1px !important;
-	margin-top: 1px !important;
-	margin-bottom: 1px !important;
-	padding-top: 1px !important;
-	padding-bottom: 1px !important;
-	padding-left: 1px !important;
-	padding-right: 1px !important;
+	margin-left: 0px !important;
+	margin-right: 0px !important;
+	margin-top: 0px !important;
+	margin-bottom: 0px !important;
+	padding-top: 0px !important;
+	padding-bottom: 0px !important;
+	padding-left: 0px !important;
+	padding-right: 0px !important;
 	min-height: 0 !important;
 	min-width: 0 !important;
 }

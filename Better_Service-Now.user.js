@@ -3,13 +3,16 @@
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
-// @version      0.1
+// @version      0.2
 // @description  Suite of tools and improvements for Service-Now
 // @author       Vivian
 // @run-at       document-start
-// @match        https://*.service-now.com/*
+// @match        https://*.service-now.com/kb*
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/waitForKeyElements.js
+// @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/find_or_observe_for_element.js
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/better_settings_menu.js
+// @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/pseudorandom.js
+// @resource     empty_search https://github.com/VivianVerdant/service-now-userscripts/raw/main/empty_search.json
 // @resource     better_menu_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_settings_menu.css
 // @resource     better_kb_search_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_kb_search.css
 // @resource     better_kb_view_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_kb_view.css
@@ -19,7 +22,7 @@
 // @grant        GM_getValue
 // ==/UserScript==
 
-/* globals waitForKeyElements createBetterSettingsMenu */
+/* globals waitForKeyElements createBetterSettingsMenu empty_search getColorFromSeed find_or_observe_for_element */
 
 
 // .transaction_cancel
@@ -31,57 +34,78 @@ GM_addStyle(better_menu_css);
 // Company filter variables
 var companyRegex = /(?<=u_company=)\S{32}/;
 var queryRegex = /()/;
-var company;
+var companyList = [];
+var company = null;
+
+var XTransactionSource;
+var XUserToken;
 
 var run_once = false;
 
 function overrideAJAX(){
 	var open = window.XMLHttpRequest.prototype.open,
+		load = window.XMLHttpRequest.prototype.load,
 		send = window.XMLHttpRequest.prototype.send;
 
 	function openReplacement(method, url, async, user, password) {
-		if (url.includes("rectangle") && !url.includes("u_company")){
+		if (url.includes("rectangle") && company !== null){
 			url = url.concat("&u_company=" + company);
 		}
 		this._url = url;
+		//console.log(this, arguments);
 		return open.apply(this, arguments);
 	}
 
 	function sendReplacement(data) {
 		let d = JSON.parse(data);
 		//console.log(this);
-		if (this._url.includes("rectangle")){
+
+		if (this._url.includes("rectangle") && company !== null){
+			company = companyRegex.exec(window.location.href);
 			let p = JSON.parse(d.payload);
+			//p.start = 0;
+			//p.end = 50;
+			//console.log(p);
 			if (p.variables.u_company.length < 1){
 				p.variables.u_company = company;
 				d.payload = JSON.stringify(p);
 				const dd = JSON.stringify(d);
 				data = dd;
 			}
-		}else if(this._url.includes("facets")){
-			let p = (d.params);
-			if (p.variables.u_company.length == 0){
-				p.variables.u_company = company;
-			}
 		}
+
 		if(this.onreadystatechange) {
 			this._onreadystatechange = this.onreadystatechange;
 		}
-
 		this.onreadystatechange = onReadyStateChangeReplacement;
+
+		function loadEvent(data) {
+			let r = JSON.parse(data.currentTarget.response) || false;
+			r = r.result || false;
+			r = r.u_company || false;
+			if (r){
+				//console.log(r);
+				companyList.length > 1 ? companyList : companyList = r;
+				postCompanyList();
+			}
+		}
+		//this.addEventListener('load', loadEvent);
+
 		return send.apply(this, arguments);
+
 	}
 
 	function onReadyStateChangeReplacement() {
-		if (this.readyState == 4 && this._url.includes("rectangle")){
+		if (this.readyState == 4 && this._url.includes("rectangle" ) && company !== null){
 			let r = JSON.parse(this.response);
 			let q = r.result.data.results.request.query.freetext;
 			let c = r.result.data.results.request.query.variables.u_company;
-			if(q.length == 0){q = r.result.name;console.log(q);};
+			if(q.length == 0){q = r.result.name;/*console.log(q);*/};
 			const l = new URL(window.location);
 			document.title = q;
 			l.searchParams.set('u_company', c);
-			window.history.pushState({},"", l);
+			window.history.replaceState({},"", l);
+			company = companyRegex.exec(window.location.href);
 		}
 		if(this._onreadystatechange) {
 			return this._onreadystatechange.apply(this, arguments);
@@ -91,7 +115,43 @@ function overrideAJAX(){
 	window.XMLHttpRequest.prototype.open = openReplacement;
 	window.XMLHttpRequest.prototype.send = sendReplacement;
 
-	//this.addEventListener('load', function(e){waitForKeyElements("a[href*='id=kb_article_view']", replaceKBlinks, true)});
+}
+
+function postCompanyList() {
+
+	function onSelect(el) {
+		console.log(el);
+		el.querySelector("input").checked = true;
+	}
+
+	function addItem(p, i) {
+		console.log(i.label);
+		const row = document.createElement("li");
+		const btn = document.createElement("input");
+		const lab = document.createElement("label");
+		row.classList.add("facet-field-padding");
+		row.onclick = (e) => {onSelect(e.path.find(element => element.tagName == "LI"));};
+		row.setAttribute("style", "cursor: pointer;");
+		btn.setAttribute("name", "u_company");
+		btn.setAttribute("type", "radio");
+		btn.setAttribute("id", i.id);
+		btn.setAttribute("style", "display: none;");
+		row.appendChild(btn);
+		row.appendChild(lab);
+		lab.innerHTML = i.label;
+		lab.setAttribute("style", "cursor: pointer;");
+		p.appendChild(row);
+	}
+
+	const parent = document.querySelector("html > body > div > section > main > div > div > sp-page-row:nth-child(2) > div");
+	const col = document.createElement("ul");
+	col.setAttribute("style", "grid-area: filter; list-style-type: none; padding-inline-start: 1px;");
+	parent.appendChild(col);
+
+	addItem(col, {label: "None", id: ""});
+	for (const item of companyList) {
+		addItem(col, item);
+	}
 }
 
 function replaceKBlinks(){
@@ -126,21 +186,68 @@ function replaceKBlinks(){
 	}
 }
 
-function search_main() {
+async function search_main() {
 	if (run_once){
 		return;
 	}
 
 	run_once = true
-	company = companyRegex.exec(window.location.href);
+
+	find_or_observe_for_element("#kb_search_input", (node) => {
+		node.setAttribute("tabindex", 1);
+	}, ".search-bar", true);
+	find_or_observe_for_element("[aria-label='Filter Company']", (node) => {
+		node.setAttribute("tabindex", 2);
+	}, undefined, true);
+	find_or_observe_for_element(".sidefacets-no-padding", (node) => {
+		node.addEventListener('click', (e) => {
+			company = companyRegex.exec(window.location.href)
+		});
+	}, undefined, true);
+
+	const frame = document.createElement("iframe");
+	frame.setAttribute("name", "kbframe");
+	frame.classList.add("kbframe");
+	document.querySelector("html > body > div > section > main > div > div > sp-page-row:nth-child(2) > div").appendChild(frame);
+
+	find_or_observe_for_element(".facet-detail.facet-scroll > div > div > span", (node) => {
+		node.addEventListener('click', (e) => {
+			const target = document.querySelector(".knowledge-articles");
+			target.scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
+		});
+	}, undefined, true);
+
+	find_or_observe_for_element(".kb-info > div > h4", (node) => {
+		//console.log('open this in iframe:-------------------------------------------');
+		//console.log(node);
+		node.addEventListener('click', (e) => {
+			e.preventDefault();
+			const url = e.target.href;
+			const frame = document.querySelector(".kbframe");
+			frame.setAttribute("src", url);
+			frame.scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
+			//console.log(url);
+		});
+	}, undefined, false);
+
+	find_or_observe_for_element(".sp-scroll", (node) => {
+		node.addEventListener("scroll", (e) => {
+			//console.log(e.target.scrollLeft);
+				 document.documentElement.style.setProperty('--search-offset', e.target.scrollLeft + "px");
+		});
+	}, undefined, true);
+
+	//company = companyRegex.exec(window.location.href);
 }
 
-function view_main() {
+async function view_main() {
 	if (run_once){
 		return;
 	}
 
 	run_once = true
+
+
 
 	let kb_num = document.querySelector(".kb-number-info").children[0].innerHTML;
 	console.log(kb_num);
@@ -150,10 +257,209 @@ function view_main() {
 	document.querySelector(".kb-panel-heading").appendChild(btn);
 	btn.addEventListener("click", function() {navigator.clipboard.writeText(this.innerHTML);});
 	btn.innerHTML = kb_num;
-	console.log(btn)
+	//console.log(btn)
+
+	/*
+	setTimeout((e) => {
+		console.log("foo");
+		const icon = document.querySelector("link[rel='shortcut icon']");
+		console.log("favicon ", icon);
+		icon.href = "https://github.com/VivianVerdant/service-now-userscripts/raw/main/favicon.svg";
+	}, 300);*/
+
+	find_or_observe_for_element(".kb-article-content", async (node) => {
+		const txtnodes = document.querySelectorAll("tr");
+		//console.log(txtnodes);
+		for (const node of txtnodes) {
+			if (node.innerHTML) {
+				node.innerHTML = node.innerHTML.replaceAll("&nbsp;", " ");
+				//console.log(node.innerHTML);
+			}
+		}
+	}, undefined, true);
+
+	find_or_observe_for_element(".kb-permalink", async (node) => {
+		const header = document.querySelector(".kb-panel-heading > span > div");
+        console.log(header, node);
+        header.appendChild(node);
+	}, undefined, true);
+
+	find_or_observe_for_element(".kb-panel-title-header", (node) => {
+		//console.log(node);
+		const dl_btn = document.createElement("button");
+		//console.log(dl_btn);
+		dl_btn.innerHTML = "save doc";
+        dl_btn.setAttribute("style", "vertical-align: text-bottom;");
+		dl_btn.onclick = (e) => {Export2Doc(".kb-wrapper.panel-body.kb-desktop", kb_num);};
+		node.appendChild(dl_btn);
+	}, undefined, true);
+
+	//const hue = parseInt(kb_num.replace(/\D/g,''));
+	//console.log("Num: ",hue);
+	//document.querySelector(':root').style.setProperty('--header-color', getColorFromSeed(hue));
+
 }
 
+function toDataURL(url, callback) {
+  let xhRequest = new XMLHttpRequest();
+  xhRequest.onload = function () {
+    let reader = new FileReader();
+    reader.onloadend = function () {
+      callback(reader.result);
+    }
+    reader.readAsDataURL(xhRequest.response);
+  };
+  xhRequest.open('GET', url);
+  xhRequest.responseType = 'blob';
+  xhRequest.send();
+}
+
+function ExportToDoc(filename = ''){
+
+	const images = document.querySelectorAll("img");
+	for (let img of images) {
+		toDataURL(img.src, function (dataUrl) {img.src = dataUrl});
+	}
+
+    var HtmlHead = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
+
+    var EndHtml = "</body></html>";
+
+    //complete html
+    var html = HtmlHead + document.querySelector(".kb-article-wrapper").innerHTML + EndHtml;
+
+    //specify the type
+    var blob = new Blob(['\ufeff', html], {
+        type: 'application/msword'
+    });
+
+    // Specify link url
+    var url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
+
+    // Specify file name
+    filename = filename?filename+'.doc':'document.doc';
+
+    // Create download link element
+    var downloadLink = document.createElement("a");
+
+    document.body.appendChild(downloadLink);
+
+    if(navigator.msSaveOrOpenBlob ){
+        navigator.msSaveOrOpenBlob(blob, filename);
+    }else{
+        // Create a link to the file
+        downloadLink.href = url;
+
+        // Setting the file name
+        downloadLink.download = filename;
+
+        //triggering the function
+		downloadLink.click();
+	}
+	document.body.removeChild(downloadLink);
+}
+
+function Export2Doc(element, filename = '') {
+
+	element = document.querySelector(element);
+
+	const images64 = document.querySelectorAll("img");
+	for (let img of images64) {
+		toDataURL(img.src, function (dataUrl) {img.src = dataUrl});
+	}
+
+	//  _html_ will be replace with custom html
+	var meta= "Mime-Version: 1.0\nContent-Base: " + location.href + "\nContent-Type: Multipart/related; boundary=\"NEXT.ITEM-BOUNDARY\";type=\"text/html\"\n\n--NEXT.ITEM-BOUNDARY\nContent-Type: text/html; charset=\"utf-8\"\nContent-Location: " + location.href + "\n\n<!DOCTYPE html>\n<html>\n_html_</html>";
+	//  _styles_ will be replaced with custome css
+	var head= "<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n<style>\n_styles_\n</style>\n</head>\n";
+
+	var html = element.innerHTML ;
+
+	var blob = new Blob(['\ufeff', html], {
+		type: 'application/msword'
+	});
+
+	var css = (
+		   '<style>' +
+		   'img {width:300px;}table {border-collapse: collapse; border-spacing: 0;}td{padding: 6px;}' +
+		   '</style>'
+		  );
+//  Image Area %%%%
+	var options = { maxWidth: 624};
+	var images = Array();
+	var img = element.querySelectorAll("img");
+	for (let i = 0; i < img.length; i++) {
+		// Calculate dimensions of output image
+		var w = Math.min(img[i].width, options.maxWidth);
+		var h = img[i].height * (w / img[i].width);
+		// Create canvas for converting image to data URL
+		var canvas = document.createElement("CANVAS");
+		canvas.width = w;
+		canvas.height = h;
+		// Draw image to canvas
+		var context = canvas.getContext('2d');
+		context.drawImage(img[i], 0, 0, w, h);
+		// Get data URL encoding of image
+		var uri = canvas.toDataURL("image/png");
+		img[i].setAttribute("src", img[i].src);
+		img[i].width = w;
+		img[i].height = h;
+		// Save encoded image to array
+		images[i] = {
+			type: uri.substring(uri.indexOf(":") + 1, uri.indexOf(";")),
+			encoding: uri.substring(uri.indexOf(";") + 1, uri.indexOf(",")),
+			location: img[i].getAttribute("src"),
+			data: uri.substring(uri.indexOf(",") + 1)
+		};
+	}
+
+	// Prepare bottom of mhtml file with image data
+	var imgMetaData = "\n";
+	for (let i = 0; i < images.length; i++) {
+		imgMetaData += "--NEXT.ITEM-BOUNDARY\n";
+		imgMetaData += "Content-Location: " + images[i].location + "\n";
+		imgMetaData += "Content-Type: " + images[i].type + "\n";
+		imgMetaData += "Content-Transfer-Encoding: " + images[i].encoding + "\n\n";
+		imgMetaData += images[i].data + "\n\n";
+
+	}
+	imgMetaData += "--NEXT.ITEM-BOUNDARY--";
+// end Image Area %%
+
+	var output = meta.replace("_html_", head.replace("_styles_", css) + html) + imgMetaData;
+
+	var url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(output);
+
+
+	filename = filename ? filename + '.doc' : 'document.doc';
+
+
+	var downloadLink = document.createElement("a");
+
+	document.body.appendChild(downloadLink);
+
+	if (navigator.msSaveOrOpenBlob) {
+		navigator.msSaveOrOpenBlob(blob, filename);
+	} else {
+
+		downloadLink.href = url;
+		downloadLink.download = filename;
+		downloadLink.click();
+	}
+
+	document.body.removeChild(downloadLink);
+
+}
+
+// <span class="show-more" ng-show="c.showRange == c.options.min_scroll_count" ng-click="c.showRange = c.items.length" role="button" aria-hidden="false">Show More</span>
+
 const l = new URL(window.location);
+
+if (l.searchParams.get("u_company")){
+	company = companyRegex.exec(window.location.href);
+	console.warn(company);
+}
+
 if (l.searchParams.get("id") == "kb_search"){
 	// Load custom CSS
 	const better_kb_search_css = GM_getResourceText("better_kb_search_css");
@@ -162,7 +468,7 @@ if (l.searchParams.get("id") == "kb_search"){
 	overrideAJAX();
 	waitForKeyElements(".kb-info", search_main, true);
 }
-if (l.searchParams.get("id") == "kb_article_view"){
+if (l.searchParams.get("id") == "kb_article_view" || l.searchParams.has("sysparm_article")){
 	// Load custom CSS
 	const better_kb_view_css = GM_getResourceText("better_kb_view_css");
 	GM_addStyle(better_kb_view_css);

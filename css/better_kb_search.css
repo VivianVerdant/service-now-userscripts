@@ -16,6 +16,10 @@
 
 }
 
+* {
+    font-size: 12pt;
+}
+
 .search-bar {
 	transform: translateX( var(--search-offset) );
 }
@@ -153,8 +157,8 @@ div[sn-atf-area="Company"] > div > div {
 
 html > body > div > section > main > div > div > sp-page-row:nth-child(2) > div {
 	display: grid;
-	grid-template-columns: 300px 325px 880px;
-	grid-template-rows: calc(100vh - 60px);;
+	grid-template-columns: 275px 275px calc(100% - 275px);
+	grid-template-rows: calc(100vh - 60px);
 	gap: 0px 0px;
 	grid-template-areas:
     "filter results frame";

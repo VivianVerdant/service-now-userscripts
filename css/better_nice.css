@@ -1,8 +1,39 @@
 /* CSS */
-
+/*
 #uimanager_container .ui-manager .glance {
 	width: 345px !important;
+}*/
+
+.blinkey {
+	animation: blink 1s infinite;
+	min-height: 82px;
 }
+
+
+div.agent-state-ui[data-outstate="Lunch"],
+div.agentstateui[data-outstate="Lunch"] {
+    /*animation: blink 1s infinite;
+    min-height: 82px;*/
+}
+
+div.agentstateui.agent-state-ui[data-outstate="Lunch"] > div.state-bar > span.timer {
+    /*font-size: 80px;
+    font-weight: bold;
+    letter-spacing: 2px;*/
+}
+
+@keyframes blink{
+  0% {
+    background-color: #e85d46;
+  }
+  100% {
+    background-color: black;
+  }
+  /*100% {
+    background-color: #e85d46;
+  }*/
+}
+
 
 .skill-dots {
 	vertical-align: top;
@@ -20,4 +51,63 @@
 
 #contactContainer {
 	display: flex !important;
+}
+
+div#uimanager_container div.ui-manager div.glance {
+    left: 0;
+    width: 100%;
+    -webkit-transition: height .33333s ease;
+    -moz-transition: height .33333s ease;
+    -ms-transition: height .33333s ease;
+    -o-transition: height .33333s ease;
+    transition: height .33333s ease;
+    bottom: 0;
+    top: unset;
+}
+
+div.agent-state-ui ul.state-list li {
+    padding: 1px !important;
+}
+
+
+
+div#uimanager_container div.ui-manager div.glance.glance-preview:not([data-pinned="true"]) #agentStateSection {
+    left: 0;
+}
+
+div#uimanager_container div.ui-manager div.glance.glance-preview:not([data-pinned="true"]) #agentLegSection {
+    left: 0;
+}
+
+div#uimanager_container div.ui-manager div.glance.glance-preview:not([data-pinned="true"]) div.glance-foot {
+    margin-left: 0;
+}
+
+div#uimanager_container div.ui-manager div.glance.glance-preview:not([data-pinned="true"]) {
+    height: 202px;
+    left: 0;
+}
+
+div.agent-state-ui div.state-bar span.timer {
+    font-size: 40px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+button.call {
+    display: block;
+}
+
+button.call {
+    display: block;
+}
+
+div.advanced-address-book-ui li.agent-template div.entry div.call-controls button.call {
+    /* display: block; */
+}
+
+div#uimanager_container div.glance-only+.ui-frame,
+div#uimanager_container div.ui-frame {
+    margin-left: 0px !important;
+    padding-bottom: 205px;
 }

@@ -2,9 +2,26 @@
 	--header-color: #f5f5f5;
 }
 
+@font-face {
+	font-family: Noto Mono for Powerline;
+	src:url("https://github.com/VivianVerdant/service-now-userscripts/blob/main/Noto%20Mono%20for%20Powerline.ttf?raw=true") format("truetype");
+}
+
+:not(pre):not(code):not(textarea):not(tt):not(kbd):not(samp):not(var) {
+    font-family: monospace !important;
+    letter-spacing: -.1rem;
+	line-height: inherit;
+}
+
 .navbar.navbar-default.section_zero.ng-scope {
 	background: var(--header-color);
 }
+
+.fieldmsg-container:hover {
+	opacity: 50%;
+	cursor: pointer;
+}
+
 
 .container-fluid > .navbar-header,
 .navbar-right > span > a,
@@ -133,9 +150,37 @@ form > span.tabs2_section.tabs2_section_0.tabs2_section0  > span.section > div.s
 
 /* row objects */
 div.vsplit.col-sm-6 > div.form-group {
-    border-bottom: 1px solid #ddd;
+   	border-bottom: 1px solid #888;
+	display: grid;
+	grid-template-columns: 30% auto max-content;
+	grid-template-rows: auto;
+	gap: 0px 0px;
+	grid-template-areas:
+		"a b c";
 }
 
+div.vsplit.col-sm-6 > div.form-group > div:nth-of-type(1) {
+	grid-area: a;
+	margin: .2rem;
+}
+
+div.vsplit.col-sm-6 > div.form-group > div:nth-of-type(1) > * {
+	width: 100%;
+}
+
+div.vsplit.col-sm-6 > div.form-group > div:nth-of-type(2) {
+	grid-area: b;
+	width: 100%;
+	align-self: center;
+	margin: .2rem !important;
+}
+
+div.vsplit.col-sm-6 > div.form-group > div:nth-of-type(3) {
+	grid-area: c;
+	width: 100%;
+	margin: .2rem;
+	align-self: center;
+}
 
 /* Data boxes */
 div.section-content.with-overflow div.row {
@@ -273,6 +318,44 @@ span.tabs2_section.tabs2_section_3.tabs2_section3.tab_section > span > div {
 	width: 100%
 }
 
+.container {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: auto auto auto;
+  gap: 0px 0px;
+  grid-template-areas:
+    "A A"
+    "B C"
+    "D D";
+}
+.A { grid-area: A; }
+.B { grid-area: B; }
+.C { grid-area: C; }
+.D { grid-area: D; }
+
+
+body {
+
+}
+
+div[role="navigation"] {
+
+}
+
+
+
+.outputmsg_div {
+
+}
+
+#item_table {
+}
+
+table[role="navigation"] {
+
+}
+
+
 .outputmsg_div {
 	position: absolute;
 	right: 0px;
@@ -300,6 +383,7 @@ span .outputmsg_container {
 
 .outputmsg_text {
 	text-align: center;
+	line-height: 1.2rem;
 }
 
 HTML[data-doctype=true] .outputmsg.notification {
@@ -480,4 +564,20 @@ HTML[data-doctype=true] .form-field-addons {
 
 .compact .row .form-field {
 	max-width: -webkit-fill-available;
+}
+
+.col-md-1,
+.col-md-1,
+.col-md-2,
+.col-md-3,
+.col-md-4,
+.col-md-5,
+.col-md-6,
+.col-md-7,
+.col-md-8,
+.col-md-9,
+.col-md-10,
+.col-md-11,
+.col-md-12 {
+	width: unset;
 }

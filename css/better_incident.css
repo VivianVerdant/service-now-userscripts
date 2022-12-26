@@ -13,6 +13,36 @@
 	line-height: inherit;
 }
 
+.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+	cursor: unset !important;
+}
+
+/* Custom Company Notes */
+#custom_notes {
+	display: inline-flex;
+	margin: 2px;
+}
+
+textarea.disabled {
+	resize: none;
+	border: none;
+	overflow-y: auto;
+	background: transparent !important;
+}
+
+#toggle_notes_lock {
+	float: right;
+}
+
+#custom_notes_text {
+	background: white;
+}
+
+#custom_notes_div {
+	width: 100%;
+	height: fit-content;
+}
+
 .navbar.navbar-default.section_zero.ng-scope {
 	background: var(--header-color);
 }

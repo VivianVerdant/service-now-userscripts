@@ -2,6 +2,16 @@
 	--header-color: #f5f5f5;
 }
 
+* {
+	/*height: unset !important;*/
+}
+
+/* Header */
+.navbar.navbar-default.section_zero.ng-scope {
+	background: var(--header-color);
+}
+
+/* Font Set */
 @font-face {
 	font-family: Noto Mono for Powerline;
 	src:url("https://github.com/VivianVerdant/service-now-userscripts/blob/main/Noto%20Mono%20for%20Powerline.ttf?raw=true") format("truetype");
@@ -13,16 +23,123 @@
 	line-height: inherit;
 }
 
-.navbar.navbar-default.section_zero.ng-scope {
-	background: var(--header-color);
+/* General Overrides */
+.row,
+.sc-row,
+.section,
+HTML[data-doctype=true] .tab_section > span,
+td, tr,
+div#cxs_widget_container,
+.comment-box.container-fluid,
+.required-marker:before,
+.vsplit,
+.col-sm-6,
+.col-xs-12,
+.section_header_content_no_scroll,
+.process-breadcrumb > li > a,
+.compact,
+.form-field,
+.compact .form-group,
+.inc_copy_button,
+HTML[data-doctype=true] div.sc-row.sc-row-6,
+HTML[data-doctype=true] .section-content {
+	padding-left: 0px !important;
+    padding-right: 0px !important;
+	padding-top: 0px !important;
+    padding-bottom: 0px !important;
+	margin-left: 0px !important;
+    margin-right: 0px !important;
+	margin-top: 0px !important;
+    margin-bottom: 0px !important;
 }
 
-.fieldmsg-container:hover {
-	opacity: 50%;
-	cursor: pointer;
+/* Main layout */
+.outputmsg_div,
+#cat_item_view,
+#cat_item_view > div {
+	display: contents;
 }
 
+body {
+	height: 100vh;
+	display: grid;
+	grid-template-columns: 50% 50%;
+	grid-template-rows: max-content;
+	gap: 2px 0px;
+	grid-auto-flow: row;
+	grid-template-areas:
+		"a a"
+		"b c"
+		"d e";
+}
 
+div[role="navigation"]:has(.header) {
+	grid-area: a;
+}
+
+#item_table {
+	grid-area: b;
+	height: max-content;
+	align-self: flex-start;
+}
+
+#output_messages {
+	grid-area: c;
+}
+
+table[aria-label="Create a New Incident"] {
+	grid-area: d;
+	align-self: flex-start;
+}
+
+div.form-field.input_controls.sc-form-field  > textarea {
+	max-height: 500px !important;
+	height: 300px;
+}
+
+/* Data Form Inputs */
+.form-group.sc-row.sc-row-6 {
+	max-width: 100%;
+	display: grid;
+	grid-template-columns: auto min-content;
+	grid-template-rows: min-content 0;
+	gap: 0px 0px;
+	grid-template-areas:
+		"a a"
+		"b c";
+	border-top: 1px solid #888;
+	margin: .2rem !important;
+	margin-top: .6rem;
+}
+
+div.row:before,
+div.row:after {
+	content: " ";
+	display: inline-block;
+}
+
+.form-group.sc-row.sc-row-6 > *:nth-child(1) {
+	grid-area: a;
+	margin: .2rem !important;
+}
+
+.form-group.sc-row.sc-row-6 > *:nth-child(2) {
+	grid-area: b;
+	margin: .6rem !important;
+	height: max-content;
+	/*max-width: calc(100% - 20px);*/
+	width: -webkit-fill-available;
+}
+
+.form-group.sc-row.sc-row-6 > *:nth-child(3) {
+	grid-area: c;
+	margin: .6rem !important;
+	position: relative;
+	bottom: 1px;
+	/*width: -webkit-fill-available;*/
+}
+
+/*
 .container-fluid > .navbar-header,
 .navbar-right > span > a,
 div.form_title .record-paging-nowrap,
@@ -122,9 +239,10 @@ HTML[data-doctype=true] .tab_section > span {
 	width: 38% !important;
 	bottom: 0px !important;
 	left: 0px;
-}
+}*/
 
 /* Flow graph */
+/*
 .process-breadcrumb {
 	width: 37vw !important;
 	overflow: hidden !important;
@@ -146,9 +264,10 @@ HTML[data-doctype=true] .tab_section > span {
 form > span.tabs2_section.tabs2_section_0.tabs2_section0  > span.section > div.section-content.with-overflow > div:nth-of-type(2).row {
 	break-after: column;
 
-}
+}*/
 
 /* row objects */
+/*
 div.vsplit.col-sm-6 > div.form-group {
    	border-bottom: 1px solid #888;
 	display: grid;
@@ -181,8 +300,9 @@ div.vsplit.col-sm-6 > div.form-group > div:nth-of-type(3) {
 	margin: .2rem;
 	align-self: center;
 }
-
+*/
 /* Data boxes */
+/*
 div.section-content.with-overflow div.row {
 	break-inside: avoid-column;
 	flex-direction: column;
@@ -192,8 +312,9 @@ div.section-content.with-overflow div.row {
 div.row {
 	width: 100%;
 }
-
+*/
 /* Data Columns */
+/*
 div.row > div.vsplit.col-sm-6 {
 	width: 100%;
 	min-height: max-content;
@@ -215,9 +336,9 @@ div[id="label.incident.opened_at"] > label.control-label > span.label-text {
 div[id="element.core_company.notes"] {
 	display: none;
 }
-
+*/
 /* Description boxes */
-
+/*
 html[data-doctype="true"] #item_table textarea.question_textarea_input.cat_item_option.form-control {
 	max-height: 2000px !important;
 }
@@ -251,13 +372,13 @@ div[id="element.incident.short_description"] > div.col-xs-10.col-md-9.col-lg-8.f
 
 textarea[id="incident.description"] {
 	overflow-y: scroll !important;
-    /*height: 160px !important;*/
 	width: 100%;
     min-width: 55vw !important;
 }
-
+*/
 
 /* Knowledge results */
+/*
 .horizontal-rule {
 	display: none;
 }
@@ -265,18 +386,12 @@ textarea[id="incident.description"] {
 	float: left;
 	transform: translate(-100% -100%);
 }
-
+*/
 /* Notes Related Records and Close tabs */
-div#tabs2_section {
-	/*padding-top: 25px;*/
-}
+/*
 
 .section.sn-stream-section > div {
 	column-count: 1;
-}
-
-.tabs2_section.tabs2_section_1.tabs2_section1.tab_section {
-	/*width:  calc(100% - 1px);*/
 }
 
 div#sn_form_inline_stream_entries {
@@ -402,34 +517,9 @@ div.custom-form-group.is-wide.form-group.ng-scope,
 table.cxs_results_header.wide {
 	width: fit-content !important;
 }
+*/
 
-.section,
-HTML[data-doctype=true] .tab_section > span,
-td, tr,
-div#cxs_widget_container,
-.comment-box.container-fluid,
-.required-marker:before,
-.vsplit,
-.col-sm-6,
-.col-xs-12,
-.section_header_content_no_scroll,
-.process-breadcrumb > li > a,
-.compact,
-/*.row,*/
-.form-field,
-.compact .form-group,
-.inc_copy_button,
-HTML[data-doctype=true] .section-content {
-	padding-left: 0px !important;
-    padding-right: 0px !important;
-	padding-top: 0px !important;
-    padding-bottom: 0px !important;
-	margin-left: 0px !important;
-    margin-right: 0px !important;
-	margin-top: 0px !important;
-    margin-bottom: 0px !important;
-}
-
+/*
 .row {
 	padding-left: 0px !important;
     padding-right: 0px !important;
@@ -565,7 +655,8 @@ HTML[data-doctype=true] .form-field-addons {
 .compact .row .form-field {
 	max-width: -webkit-fill-available;
 }
-
+*/
+.col-xs-6,
 .col-md-1,
 .col-md-1,
 .col-md-2,
@@ -579,5 +670,5 @@ HTML[data-doctype=true] .form-field-addons {
 .col-md-10,
 .col-md-11,
 .col-md-12 {
-	width: unset;
+	width: 100%;
 }

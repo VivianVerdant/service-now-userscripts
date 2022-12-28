@@ -55,7 +55,7 @@ hr {
 .ng-scope.panel.panel-default.kb-desktop {
 	display: grid;
 	grid-template-columns: 100%;
-	grid-template-rows: 42px 100%;
+	grid-template-rows: 38px calc(100vh - 40px);
 	gap: 0px 0px;
 	grid-template-areas:
 		"header"
@@ -69,14 +69,14 @@ hr {
 .ng-scope.panel.panel-default.kb-desktop > div:nth-child(2) {
 	grid-area: body;
 	/* Firefox */
-	max-height: -moz-calc(100vh - 45px);
+	/*max-height: -moz-calc(100vh - 45px);*/
 	/* WebKit */
-	max-height: -webkit-calc(100vh - 45px);
+	/*max-height: -webkit-calc(100vh - 45px);*/
 	/* Opera */
-	max-height: -o-calc(100vh - 45px);
+	/*max-height: -o-calc(100vh - 45px);*/
 	/* Standard */
-	max-height: calc(100vh - 45px);
-	height: min-content;
+	/*max-height: calc(100vh - 45px);*/
+	/*height: min-content;*/
 	overflow-y: scroll;
 }
 
@@ -179,7 +179,7 @@ section > table,
 	padding-bottom: 0 !important;
 	padding-left: 0 !important;
 	padding-right: 0 !important;
-	max-height: 3.5rem !important;
+	height: -webkit-fill-available;
 }
 
 .kb_container-right {
@@ -221,6 +221,7 @@ section > table,
 	width: fit-content;
 }
 
+.ng-scope.panel.panel-default.kb-desktop > div:nth-child(2),
 .kb-view-content-wrapper,
 .kb-permalink,
 .ng-scope.panel.panel-default.kb-desktop,

@@ -3,16 +3,13 @@
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
-// @version      0.2
+// @version      0.3
 // @description  Suite of tools and improvements for Service-Now
 // @author       Vivian
 // @run-at       document-start
 // @match        https://*.service-now.com/kb*
-// @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/waitForKeyElements.js
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/find_or_observe_for_element.js
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/better_settings_menu.js
-// @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/pseudorandom.js
-// @resource     empty_search https://github.com/VivianVerdant/service-now-userscripts/raw/main/empty_search.json
 // @resource     better_menu_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_settings_menu.css
 // @resource     better_kb_search_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_kb_search.css
 // @resource     better_kb_view_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_kb_view.css
@@ -22,7 +19,7 @@
 // @grant        GM_getValue
 // ==/UserScript==
 
-/* globals waitForKeyElements createBetterSettingsMenu empty_search getColorFromSeed find_or_observe_for_element */
+/* globals createBetterSettingsMenu empty_search getColorFromSeed find_or_observe_for_element */
 
 
 // .transaction_cancel
@@ -36,11 +33,106 @@ var companyRegex = /(?<=u_company=)\S{32}/;
 var queryRegex = /()/;
 var companyList = [];
 var company = null;
+var company_name;
+
+var kb_num;
 
 var XTransactionSource;
 var XUserToken;
 
 var run_once = false;
+
+HTMLElement.prototype.addNode = function (type, id, classes) {
+	const new_node = document.createElement(type);
+	new_node.id = id;
+	if (classes) {
+		for (const clss of classes) {
+			new_node.classList.add(clss);
+		}
+	}
+	this.appendChild(new_node);
+	return new_node;
+};
+
+function save_note(company_name) {
+	const saved_notes = GM_getValue("saved_notes", new Object());
+	const notes_text = document.querySelector("#custom_notes_text").value;
+	const notes_div = document.querySelector("#custom_notes_div");
+
+	//console.log(notes_text);
+	notes_div.innerHTML = notes_text;
+
+	saved_notes[company_name] = notes_text;
+	GM_setValue("saved_notes", saved_notes);
+}
+
+function load_note(company_name) {
+	const saved_notes = GM_getValue("saved_notes", new Object());
+	let notes_text;
+	if (Object.keys(saved_notes).includes(company_name)){
+		notes_text = saved_notes[company_name];
+	} else {
+		notes_text = "Personal " + company_name + " notes:";
+		saved_notes[company_name] = notes_text;
+		GM_setValue("saved_notes", saved_notes);
+	}
+	document.querySelector("#custom_notes_text").value = notes_text;
+	document.querySelector("#custom_notes_div").innerHTML = notes_text;
+}
+
+// div[sn-atf-area='Company'] > div > div > div > div > div > div > div > div > div > div > span > a
+
+function create_notes(node) {
+	company_name = "generic";
+
+	find_or_observe_for_element("div[sn-atf-area='Company'] > div > div > div > div > div > div > div > div > div > div > span > a.ng-binding.active", (node) => {
+		if (node.innerText != company_name) {
+			console.log(node.innerText);
+			save_note(company_name);
+			company_name = node.innerText;
+			load_note(company_name);
+		}
+	}, undefined, false);
+
+	let saved_notes = GM_getValue("saved_notes", new Object());
+	console.log("company name: ", company_name);
+	let note;
+	//console.log(Object.keys(saved_notes));
+	if (Object.keys(saved_notes).includes(company_name)){
+		note = saved_notes[company_name];
+	} else {
+		note = "Personal " + company_name + " notes:";
+		saved_notes[company_name] = note;
+		GM_setValue("saved_notes", saved_notes);
+	}
+
+	const notes = node.addNode("div", "custom_notes", ["personalNotes", "notification"]);
+
+	const notes_text = notes.addNode("textarea", "custom_notes_text", ["personalNotesText", "form-control", "hidden"]);
+	notes_text.value = note;
+
+	const notes_div = notes.addNode("div", "custom_notes_div");
+	notes_div.innerHTML = note;
+
+	const lock_button = notes.addNode("button", "toggle_notes_lock", ["btn", "btn-default", "btn-ref"]);
+	lock_button.addNode("span", "", ["icon", "icon-locked"]);
+	lock_button.onclick = (e) => {
+		e.preventDefault();
+
+		const text_node = document.querySelector("#custom_notes_text");
+		text_node.classList.toggle("hidden");
+
+		const div_node = document.querySelector("#custom_notes_div");
+		div_node.classList.toggle("hidden");
+
+		const btn = document.querySelector("#toggle_notes_lock").firstChild;
+		btn.classList.toggle("icon-locked");
+		btn.classList.toggle("icon-unlocked");
+		save_note(company_name);
+	};
+
+	//icon icon-locked
+}
 
 function overrideAJAX(){
 	var open = window.XMLHttpRequest.prototype.open,
@@ -205,10 +297,12 @@ async function search_main() {
 		});
 	}, undefined, true);
 
-	const frame = document.createElement("iframe");
-	frame.setAttribute("name", "kbframe");
-	frame.classList.add("kbframe");
-	document.querySelector("html > body > div > section > main > div > div > sp-page-row:nth-child(2) > div").appendChild(frame);
+	find_or_observe_for_element("html > body > div > section > main > div > div > sp-page-row:nth-child(2) > div", (node) => {
+		const frame = document.createElement("iframe");
+		frame.setAttribute("name", "kbframe");
+		frame.classList.add("kbframe");
+		node.appendChild(frame);
+	}, undefined, true);
 
 	find_or_observe_for_element(".facet-detail.facet-scroll > div > div > span", (node) => {
 		node.addEventListener('click', (e) => {
@@ -231,10 +325,20 @@ async function search_main() {
 	}, undefined, false);
 
 	find_or_observe_for_element(".sp-scroll", (node) => {
+		console.log("scroller: ", node);
 		node.addEventListener("scroll", (e) => {
 			//console.log(e.target.scrollLeft);
-				 document.documentElement.style.setProperty('--search-offset', e.target.scrollLeft + "px");
+			document.documentElement.style.setProperty('--search-offset', e.target.scrollLeft + "px");
 		});
+	}, undefined, true);
+
+	find_or_observe_for_element(".search-bar > .pad-bottom", (node) => {
+		console.log('insert notes after:-------------------------------------------');
+		console.log(node);
+		create_notes(node);
+        /*
+		node.addEventListener("", async (e) => {
+		});*/
 	}, undefined, true);
 
 	//company = companyRegex.exec(window.location.href);
@@ -247,41 +351,29 @@ async function view_main() {
 
 	run_once = true
 
-
-
-	let kb_num = document.querySelector(".kb-number-info").children[0].innerHTML;
-	console.log(kb_num);
-	//transparent-button
-	let btn = document.createElement("button");
-	btn.classList.add("transparent-button", "ng-binding", "better-kb-cbcopy");
-	document.querySelector(".kb-panel-heading").appendChild(btn);
-	btn.addEventListener("click", function() {navigator.clipboard.writeText(this.innerHTML);});
-	btn.innerHTML = kb_num;
-	//console.log(btn)
-
-	/*
-	setTimeout((e) => {
-		console.log("foo");
-		const icon = document.querySelector("link[rel='shortcut icon']");
-		console.log("favicon ", icon);
-		icon.href = "https://github.com/VivianVerdant/service-now-userscripts/raw/main/favicon.svg";
-	}, 300);*/
+	find_or_observe_for_element(".kb-panel-heading", (node) => {
+		kb_num = document.querySelector(".kb-number-info").children[0].innerHTML;
+		console.log(kb_num);
+		let btn = document.createElement("button");
+		btn.classList.add("transparent-button", "ng-binding", "better-kb-cbcopy");
+		btn.innerHTML = kb_num;
+		btn.addEventListener("click", function() {navigator.clipboard.writeText(this.innerHTML);});
+		node.appendChild(btn);
+	}, undefined, true);
 
 	find_or_observe_for_element(".kb-article-content", async (node) => {
 		const txtnodes = document.querySelectorAll("tr");
-		//console.log(txtnodes);
 		for (const node of txtnodes) {
 			if (node.innerHTML) {
 				node.innerHTML = node.innerHTML.replaceAll("&nbsp;", " ");
-				//console.log(node.innerHTML);
 			}
 		}
 	}, undefined, true);
 
-	find_or_observe_for_element(".kb-permalink", async (node) => {
-		const header = document.querySelector(".kb-panel-heading > span > div");
-        console.log(header, node);
-        header.appendChild(node);
+	find_or_observe_for_element(".kb-panel-heading > span > div", async (node) => {
+		const link_node = document.querySelector(".kb-permalink");
+        console.log(node, link_node);
+        node.appendChild(link_node);
 	}, undefined, true);
 
 	find_or_observe_for_element(".kb-panel-title-header", (node) => {
@@ -294,10 +386,18 @@ async function view_main() {
 		node.appendChild(dl_btn);
 	}, undefined, true);
 
-	//const hue = parseInt(kb_num.replace(/\D/g,''));
-	//console.log("Num: ",hue);
-	//document.querySelector(':root').style.setProperty('--header-color', getColorFromSeed(hue));
+	function move_into_doc(node) {
+		const doc = document.querySelector(".ng-scope.panel.panel-default.kb-desktop > div:nth-child(2)");
+		doc.appendChild(node);
+	}
 
+	find_or_observe_for_element("sp-page-row > div > div.kb-container-column.kb_container-left.col-md-9 > span:nth-child(2)", (node) => {
+		move_into_doc(node);
+	}, undefined, true);
+
+	find_or_observe_for_element("sp-page-row > div > div.kb-container-column.kb_container-right.col-md-3", (node) => {
+		move_into_doc(node);
+	}, undefined, true);
 }
 
 function toDataURL(url, callback) {
@@ -459,18 +559,18 @@ if (l.searchParams.get("u_company")){
 	company = companyRegex.exec(window.location.href);
 	console.warn(company);
 }
-
-if (l.searchParams.get("id") == "kb_search"){
-	// Load custom CSS
-	const better_kb_search_css = GM_getResourceText("better_kb_search_css");
-	GM_addStyle(better_kb_search_css);
-
-	overrideAJAX();
-	waitForKeyElements(".kb-info", search_main, true);
+async function main() {
+	if (l.searchParams.get("id") == "kb_search"){
+		// Load custom CSS
+		const better_kb_search_css = GM_getResourceText("better_kb_search_css");
+		GM_addStyle(better_kb_search_css);
+		overrideAJAX();
+		search_main();
+	} else if (l.searchParams.get("id") == "kb_article_view" || l.searchParams.has("sysparm_article")){
+		// Load custom CSS
+		const better_kb_view_css = GM_getResourceText("better_kb_view_css");
+		GM_addStyle(better_kb_view_css);
+		view_main();
+	}
 }
-if (l.searchParams.get("id") == "kb_article_view" || l.searchParams.has("sysparm_article")){
-	// Load custom CSS
-	const better_kb_view_css = GM_getResourceText("better_kb_view_css");
-	GM_addStyle(better_kb_view_css);
-	waitForKeyElements(".kb-number-info", view_main, true);
-}
+main();

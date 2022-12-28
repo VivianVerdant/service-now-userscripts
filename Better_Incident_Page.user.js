@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      1.1
+// @version      1.2
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -11,6 +11,7 @@
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/pseudorandom.js
 // @resource     customCSS https://github.com/VivianVerdant/service-now-userscripts/raw/main/better_menu.css
 // @resource     better_incident_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_incident.css
+// @resource     better_new_incident_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_new_incident.css
 // @grant        GM_addStyle
 // @grant        GM_getResourceText
 // @grant        GM_setValue
@@ -53,6 +54,18 @@ var location = window.location.href;
 var run_once = false;
 var better_options_btn;
 
+HTMLElement.prototype.addNode = function (type, id, classes) {
+	const new_node = document.createElement(type);
+	new_node.id = id;
+	if (classes) {
+		for (const clss of classes) {
+			new_node.classList.add(clss);
+		}
+	}
+	this.appendChild(new_node);
+	return new_node;
+};
+
 async function onClickResolveBtn(){
 	let resolve_tab = document.querySelectorAll("div#tabs2_section > span:nth-child(3) > span:nth-child(1) > span:nth-child(2)")[0];
 	console.log("clicking reslove button: ", resolve_tab);
@@ -64,6 +77,59 @@ async function onClickResolveBtn(){
 	var close_field = document.getElementById("incident.close_notes");
 	close_field.innerHTML = close_field.innerHTML.concat(user_name.split(" ")[0] + " ");
 	console.log(close_field);
+}
+
+function saveNote() {
+	const company = document.querySelector("[id='sys_display.incident.company']").value;
+	const saved_notes = GM_getValue("saved_notes", new Object());
+	const notes_text = document.querySelector("#custom_notes_text").value;
+	const notes_div = document.querySelector("#custom_notes_div");
+
+	//console.log(notes_text);
+	notes_div.innerHTML = notes_text;
+
+	saved_notes[company] = notes_text;
+	GM_setValue("saved_notes", saved_notes);
+}
+
+function create_notes(node) {
+	let saved_notes = GM_getValue("saved_notes", new Object());
+	const company = document.querySelector("[id='sys_display.incident.company']").value;
+	let note;
+	//console.log(Object.keys(saved_notes));
+	if (Object.keys(saved_notes).includes(company)){
+		note = saved_notes[company];
+	} else {
+		note = "Personal " + company + " notes:";
+		saved_notes[company] = note;
+		GM_setValue("saved_notes", saved_notes);
+	}
+
+	const notes = node.addNode("div", "custom_notes", ["personalNotes", "notification-info", "notification"]);
+
+	const notes_text = notes.addNode("textarea", "custom_notes_text", ["personalNotesText", "form-control", "hidden"]);
+	notes_text.value = note;
+
+	const notes_div = notes.addNode("div", "custom_notes_div");
+	notes_div.innerHTML = note;
+
+	const lock_button = notes.addNode("button", "toggle_notes_lock", ["btn", "btn-default", "btn-ref"]);
+	lock_button.addNode("span", "", ["icon", "icon-locked"]);
+	lock_button.onclick = (e) => {
+		e.preventDefault();
+
+		const text_node = document.querySelector("#custom_notes_text");
+		text_node.classList.toggle("hidden");
+
+		const div_node = document.querySelector("#custom_notes_div");
+		div_node.classList.toggle("hidden");
+
+		e.target.classList.toggle("icon-locked");
+		e.target.classList.toggle("icon-unlocked");
+		saveNote();
+	};
+
+	//icon icon-locked
 }
 
 function kbToClipboard(e){
@@ -98,8 +164,36 @@ function kbToClipboard(e){
 	e.target.blur();
 }
 
-async function main(element) {
-	console.log("main");
+async function new_main(element) {
+	console.log("new main");
+	if (run_once){
+		return
+	}
+	run_once = true;
+
+	GM_addStyle(GM_getResourceText("better_new_incident_css"));
+
+	find_or_observe_for_element(".outputmsg", async (node) => {
+		console.log('.outputmsg has been added:-------------------------------------------');
+		console.log(node);
+		node.firstElementChild.addEventListener("click", (e) => {
+			if (e.target.classList.contains("icon-info")) {
+				e.target.nextSibling.classList.toggle("hidden");
+			}
+		});
+		//node.lastElementChild.classList.add("hidden");
+	}, undefined, false);
+
+	document.onkeydown = function(e) {
+		if( e.ctrlKey && (e.key === 's' || e.key === 'd') ){
+			e.preventDefault();
+			document.querySelector("#submit_button").click();
+		}
+	};
+}
+
+async function edit_main(element) {
+	console.log("edit main");
 	if (run_once){
 		return
 	}
@@ -117,6 +211,13 @@ async function main(element) {
 		});
 		node.lastElementChild.classList.add("hidden");
 	}, undefined, false);
+
+	find_or_observe_for_element(".fieldmsg-container", async (node) => {
+		node.addEventListener("click", (e) => {
+			node.classList.add("hidden");
+		});
+	}, undefined, false);
+
 	find_or_observe_for_element("#resolve_incident", (node) => {
 		console.log('#resolve_incident has been added:-------------------------------------------');
 		console.log(node);
@@ -191,6 +292,15 @@ async function main(element) {
 		}
 	}, "form", false);
 
+	find_or_observe_for_element("body > div > form > span.tabs2_section.tabs2_section_0.tabs2_section0 > span > div.section-content.with-overflow > div:nth-child(3)", (node) => {
+		console.log('insert notes after:-------------------------------------------');
+		console.log(node);
+		create_notes(node);
+        /*
+		node.addEventListener("", async (e) => {
+		});*/
+	});
+
 	document.onkeydown = function(e) {
 		if(e.key === 's' && e.ctrlKey){
 			e.preventDefault();
@@ -202,8 +312,12 @@ async function main(element) {
 	};
 }
 
-if (location.includes("b47514e26f122500a2fbff2f5d3ee4d0") || location.includes("incident.do")){
-	console.warn("Better Incidents Start");
-	main();
-	console.warn("Better Incidents End");
+console.warn("Better Incidents Start");
+if (location.includes("b47514e26f122500a2fbff2f5d3ee4d0")){
+	new_main();
 }
+
+if (location.includes("incident.do")){
+	edit_main();
+}
+console.warn("Better Incidents End");

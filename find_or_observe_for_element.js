@@ -67,6 +67,9 @@ async function find_or_observe_for_element(query, func, parent_query, once) {
 	function process() {
 		const child_observer = new MutationObserver((mutations_list, observer) => {
 			let match_list = [];
+			for(const node of document.querySelectorAll(query).values()) {
+				match_list.push(node);
+			}
 			//console.log("mutations_list: ", mutations_list);
 
 			const recursive_mutations = (obj) => {
@@ -91,37 +94,26 @@ async function find_or_observe_for_element(query, func, parent_query, once) {
 				} else {
 				}
 			}
+			if (match_list.length && once) {
 
-			recursive_mutations(mutations_list);
+			} else {
+				recursive_mutations(mutations_list);
+			}
+			//console.log(match_list)
 
 			if (once && match_list.length) {
+				//console.log(match_list[0]);
 				func(match_list[0]);
-				child_observer.disconnect();
-			} else {
+				child_observer.disconnect()
+			} else if (match_list.length) {
 				//console.log(match_list);
 				for (const node of match_list) {
-					main_list.push(node);
+					func(node);
 				}
-				process_main_list();
 			}
 		});
-
-		function process_main_list() {
-			for (const node of main_list) {
-				func(main_list.pop());
-			}
-		}
-
-		let main_list =[];
-		for(const node of document.querySelectorAll(query).values()) {
-			main_list.push(node);
-		}
-		if (once && main_list.length) {
-			func(main_list[0]);
-		} else {
-			process_main_list();
-			child_observer.observe(parent_node, { subtree: true, childList: true });
-		}
+		//console.log(child_observer);
+		child_observer.observe(parent_node, { subtree: true, childList: true });
 	}
 
 	if (parent_query === undefined) {

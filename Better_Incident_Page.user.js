@@ -114,7 +114,7 @@ function create_notes(node) {
 	notes_div.innerHTML = note;
 
 	const lock_button = notes.addNode("button", "toggle_notes_lock", ["btn", "btn-default", "btn-ref"]);
-	lock_button.addNode("span", "", ["icon", "icon-locked"]);
+	lock_button.addNode("span", "toggle_notes_img", ["icon", "icon-locked"]);
 	lock_button.onclick = (e) => {
 		e.preventDefault();
 
@@ -124,8 +124,9 @@ function create_notes(node) {
 		const div_node = document.querySelector("#custom_notes_div");
 		div_node.classList.toggle("hidden");
 
-		e.target.classList.toggle("icon-locked");
-		e.target.classList.toggle("icon-unlocked");
+        const img = document.querySelector("#toggle_notes_img");
+		img.classList.toggle("icon-locked");
+		img.classList.toggle("icon-unlocked");
 		saveNote();
 	};
 
@@ -222,7 +223,9 @@ async function edit_main(element) {
 		console.log('#resolve_incident has been added:-------------------------------------------');
 		console.log(node);
 		node.addEventListener("click", onClickResolveBtn);
-	});
+	}, undefined, false);
+
+
 	find_or_observe_for_element("input[id='incident.number']", (node) => {
 		console.log('#resolve_incident has been added:-------------------------------------------');
 		let btn = document.createElement("button");
@@ -244,7 +247,9 @@ async function edit_main(element) {
 		permalink.setAttribute("style", "white-space: nowrap;");
 		permalink.addEventListener("click", kbToClipboard);
 		doc_buttons.appendChild(permalink);
-	});
+	}, undefined, true);
+
+
 	find_or_observe_for_element(".activity-stream-textarea, #activity-stream-work_notes-textarea, .question_textarea_input", (node) => {
 		console.log('textarea has been added:-------------------------------------------');
 		console.log(node);
@@ -264,7 +269,8 @@ async function edit_main(element) {
 			r.previousSibling.style.setProperty("transform", x);
 			//console.log(x);
 		}, { passive: true });
-	});
+    }, undefined, true);
+
 	find_or_observe_for_element("a, button, textarea, input, select", async (node) => {
 		//console.log('form input added');
 		if ( node.id == "sys_readonly.incident.number") {
@@ -290,7 +296,7 @@ async function edit_main(element) {
             });
 			*/
 		}
-	}, "form", false);
+	}, "form", true);
 
 	find_or_observe_for_element("body > div > form > span.tabs2_section.tabs2_section_0.tabs2_section0 > span > div.section-content.with-overflow > div:nth-child(3)", (node) => {
 		console.log('insert notes after:-------------------------------------------');

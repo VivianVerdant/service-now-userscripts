@@ -1,5 +1,7 @@
 :root {
 	--header-color: #f5f5f5;
+	--required-color: #000;
+	--required-bgcolor: #ffb1ab;
 }
 
 @font-face {
@@ -75,7 +77,7 @@ button[data-action-name="sysverb_update"] {
 form.form_body.form-horizontal.tabs_enabled{
 	display: grid;
 	grid-template-columns: 38% 62%;
-	grid-template-rows: auto 23px;
+	grid-template-rows: auto 32px;
 	grid-auto-flow: column;
 }
 
@@ -234,7 +236,7 @@ div[id="label.incident.opened_at"] > label.control-label {
 }
 
 div[id="label.incident.opened_at"] > label.control-label > span.label-text {
-	font-size: xx-small;
+	font-size: 12px;
 }
 
 .label-text {
@@ -258,7 +260,7 @@ html[data-doctype="true"] #item_table textarea.question_textarea_input.cat_item_
 }
 
 .col-xs-10.col-md-9.col-lg-8.form-field.input_controls {
-	width: 100%	;
+	width: 100%	!important;
 }
 
 HTML[data-doctype=true] .col-md-1_5 {
@@ -396,6 +398,12 @@ table[role="navigation"] {
 span .outputmsg_container {
 	position: fixed;
     right: 16px;
+    top: 22px;
+}
+
+span .compact.outputmsg_container {
+	position: fixed;
+    right: 16px;
     top: 12px;
 }
 
@@ -444,10 +452,9 @@ div#cxs_widget_container,
 .col-xs-12,
 .section_header_content_no_scroll,
 .process-breadcrumb > li > a,
-.compact,
 /*.row,*/
 .form-field,
-.compact .form-group,
+.form-group,
 .inc_copy_button,
 HTML[data-doctype=true] .section-content {
 	padding-left: 0px !important;
@@ -467,7 +474,7 @@ HTML[data-doctype=true] .section-content {
     margin-right: 0px !important;
 }
 
-.compact .form-horizontal .control-label {
+.form-horizontal .control-label {
     text-align: right;
     margin-bottom: 0px;
 	margin
@@ -482,7 +489,8 @@ HTML[data-doctype=true] .section-content {
 .vsplit > div.is-required select,
 .vsplit > div.is-required textarea ,
 .vsplit > div.is-required input {
-	background: #ffb1ab;
+	background: var(--required-bgcolor);
+	color: var(--required-color);
 }
 
 input[name="sys_display.incident.u_affected_user"] {
@@ -574,7 +582,7 @@ HTML[data-doctype=true] .form-field-addons .btn {
 	margin: 0 !important;
 }
 
-.compact .navbar .btn-icon,
+.navbar .btn-icon,
 HTML[data-doctype=true] BUTTON.header {
 	margin: 0;
 }
@@ -592,7 +600,7 @@ HTML[data-doctype=true] .form-field-addons {
 	width: unset;
 }
 
-.compact .row .form-field {
+.row .form-field {
 	max-width: -webkit-fill-available;
 }
 

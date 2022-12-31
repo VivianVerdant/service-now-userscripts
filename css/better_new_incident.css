@@ -37,9 +37,8 @@ div#cxs_widget_container,
 .col-xs-12,
 .section_header_content_no_scroll,
 .process-breadcrumb > li > a,
-.compact,
 .form-field,
-.compact .form-group,
+.form-group,
 .inc_copy_button,
 HTML[data-doctype=true] div.sc-row.sc-row-6,
 HTML[data-doctype=true] .section-content {
@@ -102,7 +101,7 @@ div.form-field.input_controls.sc-form-field  > textarea {
 	max-width: 100%;
 	display: grid;
 	grid-template-columns: auto min-content;
-	grid-template-rows: min-content 0;
+	grid-template-rows: min-content 1.1rem;
 	gap: 0px 0px;
 	grid-template-areas:
 		"a a"
@@ -128,7 +127,7 @@ div.row:after {
 	margin: .6rem !important;
 	height: max-content;
 	/*max-width: calc(100% - 20px);*/
-	width: -webkit-fill-available;
+	width: 100%;
 }
 
 .form-group.sc-row.sc-row-6 > *:nth-child(3) {

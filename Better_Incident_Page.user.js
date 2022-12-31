@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      1.2
+// @version      1.3
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -22,10 +22,12 @@
 
 
 /* Changelog
-v1.1 - Bugfixes with z-sorting
-	 - Added random color to header to differentiate tickets
-	 - Added Copy Permalink button to header
-	 - Cleaned up header
+v1.3	- So many bug fixes
+	- Added custom company notes
+v1.1	- Bugfixes with z-sorting
+	- Added random color to header to differentiate tickets
+	- Added Copy Permalink button to header
+	- Cleaned up header
 v1.0 - Added ctrl+s to save, ctrl+d to resolve, fixed autocompleter bug
 v0.9 - Better tabbing navigation
 v0.8.1 - More bugfixes

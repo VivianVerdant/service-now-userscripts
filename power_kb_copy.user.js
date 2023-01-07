@@ -81,4 +81,4 @@ find_or_observe_for_element(".mce-container-body.mce-flow-layout", (node) => {
 	const pkbc_spn = pkbc_btn.addNode("span", "power_copy_btn", ["mce-txt"]);
 	pkbc_spn.innerHTML = "Power Copy";
 	pkbc_btn.onclick = powerCopy;
-}, undefined, false);
+}, undefined, true);

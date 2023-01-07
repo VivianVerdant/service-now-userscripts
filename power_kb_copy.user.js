@@ -55,25 +55,22 @@ function powerCopy(e) {
 	e.preventDefault();
 
     const doc = document.querySelector('iframe').contentDocument.documentElement;
-	console.log(doc)
 
     const tempBody = doc.cloneNode(true);
     document.body.appendChild(tempBody);
-	console.log(tempBody);
 
     const process = new Promise((resolve, reject) => {
 		const images = tempBody.querySelectorAll("img");
 		for (let img of images) {
 			toDataURL(img.src, function (dataUrl) {img.src = dataUrl;});
 		}
-		console.log(tempBody.querySelectorAll("img"))
 		setTimeout(() => {
 			resolve();
-		}, 1000);
+		}, 500);
 	});
 
-    process.then(() => {console.log(tempBody);copyToClip(tempBody.innerHTML);});
-    //tempBody.remove();
+    process.then(() => {copyToClip(tempBody.innerHTML);});
+    tempBody.remove();
 }
 
 find_or_observe_for_element(".mce-container-body.mce-flow-layout", (node) => {

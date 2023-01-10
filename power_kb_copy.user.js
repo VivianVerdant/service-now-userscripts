@@ -55,22 +55,37 @@ function powerCopy(e) {
 	e.preventDefault();
 
     const doc = document.querySelector('iframe').contentDocument.documentElement;
+	console.log(doc)
 
     const tempBody = doc.cloneNode(true);
     document.body.appendChild(tempBody);
+	console.log(tempBody);
 
     const process = new Promise((resolve, reject) => {
 		const images = tempBody.querySelectorAll("img");
 		for (let img of images) {
 			toDataURL(img.src, function (dataUrl) {img.src = dataUrl;});
 		}
+		console.log(tempBody.querySelectorAll("img"))
 		setTimeout(() => {
 			resolve();
-		}, 500);
+		}, 1000);
 	});
 
-    process.then(() => {copyToClip(tempBody.innerHTML);});
-    tempBody.remove();
+    process.then(() => {console.log(tempBody);copyToClip(tempBody.innerHTML);});
+    //tempBody.remove();
+}
+
+function add_row_btn(e) {
+	e.preventDefault();
+	const item = document.querySelector(".insert_row_after");
+	item.click();
+}
+
+function del_row_btn(e) {
+	e.preventDefault();
+	const item = document.querySelector(".delete_row");
+	item.click();
 }
 
 find_or_observe_for_element(".mce-container-body.mce-flow-layout", (node) => {
@@ -82,3 +97,31 @@ find_or_observe_for_element(".mce-container-body.mce-flow-layout", (node) => {
 	pkbc_spn.innerHTML = "Power Copy";
 	pkbc_btn.onclick = powerCopy;
 }, undefined, true);
+
+find_or_observe_for_element(".mce-text", (node) => {
+	if (node.outerText == "Insert row after"){
+		console.log(node);
+		node.classList.add("insert_row_after");
+		node.parentNode.nextSibling.lastChild.classList.add("delete_row");
+	}
+}, undefined, false);
+
+find_or_observe_for_element(".insert_row_after", (node) => {
+	const panel = document.querySelector(".mce-container-body.mce-flow-layout");
+
+	const container = panel.addNode("div", "", ["mce-container", "mce-flow-layout-item", "mce-btn-group"]);
+	const btn_group = container.addNode("div", "custom_button_group", []);
+
+	const insertr_after_btn = btn_group.addNode("div", "", ["mce-widget", "mce-btn", "mce-first", "mce-last"]);
+	const sub_divA = insertr_after_btn.addNode("button", "", []);
+	const sub_divB = sub_divA.addNode("span", "insert_row_after_btn", ["mce-txt"]);
+	sub_divB.innerHTML = "+";
+	sub_divA.onclick = add_row_btn;
+
+	const delete_row_btn = btn_group.addNode("div", "", ["mce-widget", "mce-btn", "mce-first", "mce-last"]);
+	const sub_divC = delete_row_btn.addNode("button", "", []);
+	const sub_divD = sub_divC.addNode("span", "del_row_btn", ["mce-txt"]);
+	sub_divD.innerHTML = "-";
+	sub_divC.onclick = del_row_btn;
+
+}, undefined, false);

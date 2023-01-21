@@ -62,7 +62,7 @@ padding: 5pt 5px 5px 5pt;
 vertical-align: top;
 }
 tr > td:nth-child(1) {
-max-width: 16%;
+max-width: 155px;
 word-break: break-word;
 font-weight: bold;
 width: auto !important;

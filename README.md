@@ -14,6 +14,3 @@ Always open KBs in new tabs and choose between viewing minimal and full versions
 
 ## [kb-keep-company-filter](https://github.com/VivianVerdant/service-now-userscripts/raw/main/KB%20-%20Keep%20company%20filter.user.js)
 Keep that pesky company filter from wandering off
-
-## [Finesse_Widgetify](https://github.com/VivianVerdant/service-now-userscripts/raw/main/Finesse_Widgetify.user.js)
-Make Finesse work with smaller window sizes. Initial version, likely last, will probably have to set some variables manually yourself based on your usage.

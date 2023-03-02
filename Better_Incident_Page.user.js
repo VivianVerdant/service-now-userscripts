@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      1.3
+// @version      1.4
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -9,7 +9,8 @@
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/issues
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/find_or_observe_for_element.js
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/pseudorandom.js
-// @resource     customCSS https://github.com/VivianVerdant/service-now-userscripts/raw/main/better_menu.css
+// @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/better_settings_menu.js
+// @resource     settings_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_settings_menu.css
 // @resource     better_incident_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_incident.css
 // @resource     better_new_incident_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_new_incident.css
 // @grant        GM_addStyle
@@ -18,7 +19,7 @@
 // @grant        GM_getValue
 // @run-at       document-start
 // ==/UserScript==
-/* globals find_or_observe_for_element createBetterSettingsMenu AJAXCompleter getColorFromSeed */
+/* globals find_or_observe_for_element createBetterSettingsMenu AJAXCompleter getColorFromSeed better_settings_menu */
 
 
 /* Changelog
@@ -46,11 +47,13 @@ v0.1 - Initial release
 
 'use strict';
 
-var options = {
-	alt_layout: true,
-	create_page_cn: true,
-}
+let default_settings = {
+    CustomCSS: false,
+    CustomNotes: false,
+    HeaderRandomColor: false,
+};
 
+var settings = GM_getValue("settings", default_settings);
 
 var location = window.location.href;
 var run_once = false;
@@ -67,6 +70,60 @@ HTMLElement.prototype.addNode = function (type, id, classes) {
 	this.appendChild(new_node);
 	return new_node;
 };
+
+function overrideAJAX(){
+	var open = window.XMLHttpRequest.prototype.open,
+		send = window.XMLHttpRequest.prototype.send;
+
+	function openReplacement(method, url, async, user, password) {
+		if (url.includes("rectangle")){
+			//url = url.concat("&u_company=");
+		}
+		this._url = url;
+		console.log(arguments);
+		return open.apply(this, arguments);
+	}
+
+	function sendReplacement(data) {
+		//console.log(data);
+
+        if (data && typeof data == "string") {
+            const i = data.indexOf("sysparm_chars");
+            console.log(i);
+            if (i >= 0) {
+                data = data.replace("sysparm_chars=", "sysparm_chars=*");
+                console.warn(data);
+            }
+
+            //let formData = new FormData(data);
+        }
+
+		if(this.onreadystatechange) {
+			this._onreadystatechange = this.onreadystatechange;
+		}
+		//this.onreadystatechange = onReadyStateChangeReplacement;
+
+		function loadEvent(data) {
+            console.log(data);
+		}
+		this.addEventListener('load', loadEvent);
+
+		return send.apply(this, arguments);
+	}
+
+	function onReadyStateChangeReplacement() {
+		if (this.readyState == 4 && this._url.includes("rectangle" )){
+
+		}
+		if(this._onreadystatechange) {
+			return this._onreadystatechange.apply(this, arguments);
+		}
+	}
+
+	window.XMLHttpRequest.prototype.open = openReplacement;
+	window.XMLHttpRequest.prototype.send = sendReplacement;
+
+}
 
 async function onClickResolveBtn(){
 	let resolve_tab = document.querySelectorAll("div#tabs2_section > span:nth-child(3) > span:nth-child(1) > span:nth-child(2)")[0];
@@ -107,7 +164,13 @@ function create_notes(node) {
 		GM_setValue("saved_notes", saved_notes);
 	}
 
-	const notes = node.addNode("div", "custom_notes", ["personalNotes", "notification-info", "notification"]);
+    let classlist;
+    if (settings.CustomCSS) {
+        classlist = ["personalNotes", "notification-info", "notification"];
+    } else {
+        classlist = ["personalNotes"];
+    }
+	const notes = node.addNode("div", "custom_notes", classlist);
 
 	const notes_text = notes.addNode("textarea", "custom_notes_text", ["personalNotesText", "form-control", "hidden"]);
 	notes_text.value = note;
@@ -202,31 +265,58 @@ async function edit_main(element) {
 	}
 	run_once = true;
 
-	GM_addStyle(GM_getResourceText("better_incident_css"));
+     //Will normally be pulled from userscript local storage
+    console.log(settings);
 
-	find_or_observe_for_element(".outputmsg", async (node) => {
-		console.log('.outputmsg has been added:-------------------------------------------');
-		console.log(node);
-		node.firstElementChild.addEventListener("click", (e) => {
-			if (e.target.classList.contains("icon-info")) {
-				e.target.nextSibling.classList.toggle("hidden");
-			}
-		});
-		node.lastElementChild.classList.add("hidden");
-	}, undefined, false);
+	find_or_observe_for_element(".navbar-right > span", async (node) => {
+        const menu = new better_settings_menu(node, settings, "Better Settings Menu", GM_getResourceText("settings_css"));
+        console.log(menu);
+        menu.main_button.classList.add("btn", "btn-default", "action_context", "header", "btn-icon", "icon-cog", "form_action_button");
+        menu.close_button.classList.add("btn", "btn-icon", "icon-connect-close-sm");
+        //menu.set_option_item("Bar", false);
+        GM_setValue("settings", menu.saved_options);
+	}, undefined, true);
 
-	find_or_observe_for_element(".fieldmsg-container", async (node) => {
-		node.addEventListener("click", (e) => {
-			node.classList.add("hidden");
-		});
-	}, undefined, false);
+    if (settings.CustomCSS) {
+        GM_addStyle(GM_getResourceText("better_incident_css"));
+
+        find_or_observe_for_element(".outputmsg", async (node) => {
+            console.log('.outputmsg has been added:-------------------------------------------');
+            console.log(node);
+            node.firstElementChild.addEventListener("click", (e) => {
+                if (e.target.classList.contains("icon-info")) {
+                    e.target.nextSibling.classList.toggle("hidden");
+                }
+            });
+            node.lastElementChild.classList.add("hidden");
+        }, undefined, false);
+
+        find_or_observe_for_element(".fieldmsg-container", async (node) => {
+            node.addEventListener("click", (e) => {
+                node.classList.add("hidden");
+            });
+        }, undefined, false);
+
+        find_or_observe_for_element(".section_header_content_no_scroll.touch_scroll.overflow_x_hidden-hotfix", (node) => {
+            console.log('datarows:-------------------------------------------');
+            console.log(node);
+            node.addEventListener("scroll", async (e) => {
+                const r = document.querySelector('body > div > form > span > span:not(.sn-stream-section) > div.section-content.with-overflow > div:nth-child(2)');
+                let x = "translateY(" + e.target.scrollTop + "px)";
+                r.style.setProperty("transform", x);
+                r.previousSibling.style.setProperty("transform", x);
+                //console.log(x);
+            }, { passive: true });
+        }, undefined, true);
+    } else {
+        //add css
+    }
 
 	find_or_observe_for_element("#resolve_incident", (node) => {
 		console.log('#resolve_incident has been added:-------------------------------------------');
 		console.log(node);
 		node.addEventListener("click", onClickResolveBtn);
 	}, undefined, false);
-
 
 	find_or_observe_for_element("input[id='incident.number']", (node) => {
 		console.log('#resolve_incident has been added:-------------------------------------------');
@@ -239,9 +329,13 @@ async function edit_main(element) {
 		let inner = document.createElement("span");
 		inner.innerHTML = node.value;
 		btn.appendChild(inner);
-		const hue = parseInt(node.value.replace(/\D/g,''));
-		console.log("Num: ",hue);
-		document.querySelector(':root').style.setProperty('--header-color', getColorFromSeed(hue));
+
+        if (settings.HeaderRandomColor) {
+            const hue = parseInt(node.value.replace(/\D/g,''));
+            console.log("Num: ",hue);
+            document.querySelector(':root').style.setProperty('--header-color', getColorFromSeed(hue));
+        }
+
 		const doc_buttons = document.querySelector(".navbar_ui_actions");
 		let permalink = document.createElement("button");
 		permalink.classList.add("form_action_button", "header", "action_context", "btn", "btn-default");
@@ -250,7 +344,6 @@ async function edit_main(element) {
 		permalink.addEventListener("click", kbToClipboard);
 		doc_buttons.appendChild(permalink);
 	}, undefined, true);
-
 
 	find_or_observe_for_element(".activity-stream-textarea, #activity-stream-work_notes-textarea, .question_textarea_input", (node) => {
 		console.log('textarea has been added:-------------------------------------------');
@@ -261,17 +354,6 @@ async function edit_main(element) {
 		node.addEventListener("click", text_area_fn);
 		setTimeout(() => {node.click();}, 1000);
 	}, undefined, false);
-	find_or_observe_for_element(".section_header_content_no_scroll.touch_scroll.overflow_x_hidden-hotfix", (node) => {
-		console.log('datarows:-------------------------------------------');
-		console.log(node);
-        node.addEventListener("scroll", async (e) => {
-			const r = document.querySelector('body > div > form > span > span:not(.sn-stream-section) > div.section-content.with-overflow > div:nth-child(2)');
-			let x = "translateY(" + e.target.scrollTop + "px)";
-			r.style.setProperty("transform", x);
-			r.previousSibling.style.setProperty("transform", x);
-			//console.log(x);
-		}, { passive: true });
-    }, undefined, true);
 
 	find_or_observe_for_element("a, button, textarea, input, select", async (node) => {
 		//console.log('form input added');
@@ -282,32 +364,19 @@ async function edit_main(element) {
 		}else{
 			node.setAttribute("tabindex", 10);
 			node.classList.add("multiLinePill");
-			/*
-            node.addEventListener("keydown", (e) => {
-				if (!e.target.getAttribute("aria-activedescendant")){
-					return;
-				}
-				console.log(e);
-            	if (e.key === "ArrowRight" || e.keyCode == 39) {
-					//e.preventDefault();
-					const selected = document.body.querySelector("#" + e.target.getAttribute("aria-activedescendant"));
-					console.log(selected);
-					let evt = new MouseEvent("click", {bubbles: true, cancelable: true});
-					selected.dispatchEvent(evt);
-				}
-            });
-			*/
 		}
 	}, "form", true);
 
-	find_or_observe_for_element("body > div > form > span.tabs2_section.tabs2_section_0.tabs2_section0 > span > div.section-content.with-overflow > div:nth-child(3)", (node) => {
-		console.log('insert notes after:-------------------------------------------');
-		console.log(node);
-		create_notes(node);
-        /*
+    if (settings.CustomNotes) {
+        find_or_observe_for_element("body > div > form > span.tabs2_section.tabs2_section_0.tabs2_section0 > span > div.section-content.with-overflow > div:nth-child(3)", (node) => {
+            console.log('insert notes after:-------------------------------------------');
+            console.log(node);
+            create_notes(node);
+            /*
 		node.addEventListener("", async (e) => {
 		});*/
-	});
+        });
+    }
 
 	document.onkeydown = function(e) {
 		if(e.key === 's' && e.ctrlKey){
@@ -322,10 +391,12 @@ async function edit_main(element) {
 
 console.warn("Better Incidents Start");
 if (location.includes("b47514e26f122500a2fbff2f5d3ee4d0")){
+    //overrideAJAX();
 	new_main();
 }
 
 if (location.includes("incident.do")){
+    //overrideAJAX();
 	edit_main();
 }
 console.warn("Better Incidents End");

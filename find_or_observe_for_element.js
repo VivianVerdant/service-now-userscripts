@@ -38,6 +38,7 @@ async function find_or_observe_for_element(query, func, parent_query, once) {
 	let match_list = [];
 	if (once && node_list.length) {
 		func(node_list[0]);
+        return;
 	}else if (node_list.length) {
 		for (const node of node_list) {
 			func(node);
@@ -49,7 +50,7 @@ async function find_or_observe_for_element(query, func, parent_query, once) {
 			if (added_node.matches(query)) {
 				return true;
 			}
-			return false
+			return false;
 		}
 		const mutation_fn = (n_list) => {
 			for (const added_node of n_list) {

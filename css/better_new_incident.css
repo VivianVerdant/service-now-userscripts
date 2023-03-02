@@ -124,7 +124,7 @@ div.row:after {
 
 .form-group.sc-row.sc-row-6 > *:nth-child(2) {
 	grid-area: b;
-	margin: .6rem !important;
+    padding: 0.23em !important;
 	height: max-content;
 	/*max-width: calc(100% - 20px);*/
 	width: 100%;

@@ -1,23 +1,104 @@
 /* kb search home */
 
-@font-face {
-	font-family: Noto Mono for Powerline;
-	src:url("https://github.com/VivianVerdant/service-now-userscripts/blob/main/Noto%20Mono%20for%20Powerline.ttf?raw=true") format("truetype");
-}
-
 :not(pre):not(code):not(textarea):not(tt):not(kbd):not(samp):not(var) {
     font-family: monospace !important;
-    letter-spacing: -.1rem;
+    /*letter-spacing: -.1rem !important;*/
+    /*font-size: 1rem !important;*/
+}
+
+HTML {
+   /* font-size: 7pt;*/
 }
 
 :root {
+    font-size: 12pt !important;
 	--search-offset: 0px;
 	--blue-highlight: #66afe9;
+    --seperater: grey;
 
+    --accent-color: #66afe9;
+    --background: #4f4f4f;
+    --text: white;
+    --faded-text: gray;
+    --link: lightblue;
+    --link-highlight: lightpink;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--background) var(--accent-color);
+}
+
+/* Chrome, Edge and Safari */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-track {
+  border-radius: 3px;
+  background-color: var(--background);
+}
+
+*::-webkit-scrollbar-track:hover {
+  background-color: var(--background);
+}
+
+*::-webkit-scrollbar-track:active {
+  background-color: var(--background);
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background-color: var(--accent-color);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--accent-color);
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background-color: var(--accent-color);
+}
+
+textarea::placeholder,
+input::placeholder {
+    color: var(--faded-text) !important;
+}
+
+
+span.ng-scope > div > div > div.kb-summary-block,
+span.panel-title > .transparent-button,
+.panel,
+.panel-default > .panel-heading,
+.form-control {
+    background: var(--background);
+    background-color: var(--background);
+    color: var(--text);
+}
+
+div.kb-info > div > div > div.kb-description.ng-binding {
+    color: var(--text);
+}
+
+a {
+    color: var(--link) !important;
+}
+
+a.active,
+a:hover {
+    color: var(--link-highlight) !important;
+}
+
+body {
+    font-size: 1rem !important;
+    background: var(--background);
+    color: var(--text);
 }
 
 * {
-    /*font-size: 12pt;*/
+    font-size: 1rem;
+    line-height: 1rem;
 }
 
 .search-bar {
@@ -36,7 +117,7 @@ div.cm-search-box {
 
 #custom_notes_div {
 	padding: 2px;
-	height: 63px;
+	height: 4rem;
 	width: -webkit-fill-available;
 	overflow-y: auto;
 	background: rgb(0 250 0 / 20%);
@@ -55,11 +136,15 @@ div.cm-search-box {
 
 }
 
+span.ng-scope > div > div > div.kb-summary-block {
+    height: -webkit-fill-available;
+}
+
 main.body > div > div {
 	display: grid;
 	grid-template-columns: auto;
-	max-height: calc(100vh - 17px);
-	grid-template-rows: 10rem calc(100% - 10rem);
+	max-height: calc(100vh - 6px);
+	grid-template-rows: 6rem calc(100% - 6rem);
 	gap: 0px 0px;
 }
 
@@ -76,8 +161,8 @@ main.body > div > div > sp-page-row:nth-child(2) {
 main.body > div > div > sp-page-row:nth-child(2) > div {
 	display: grid;
 	grid-auto-flow: column;
-	grid-template-columns: 275px 275px calc(100% - 275px) auto;
-	grid-template-rows: auto;
+	grid-template-columns: 15rem 15rem calc(100% - 15rem) auto;
+	grid-template-rows: calc(100vh - 6rem - 6px);
 	gap: 0px 0px;
 	grid-template-areas:
     "a b c";
@@ -93,6 +178,21 @@ html > body > div > section > main > div > div > sp-page-row:nth-child(2) > div 
 	grid-template-areas:
     "filter results frame";
 }*/
+
+div.kb-info > div > h4 > a.kb-title {
+    word-break: break-word;
+    font-size: 1rem;
+    height: unset;
+    display: flex;
+}
+
+div.kb-info > div > div > div.kb-description.ng-binding {
+    height: 3.8rem;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    font-size: .75rem;
+    line-height: .76rem;
+}
 
 html > body > div > section > main > div > div > sp-page-row:nth-child(2) > div > div:nth-child(1) {
 	grid-area: a;
@@ -153,9 +253,12 @@ div.filter-icon-padding {
 }
 
 #kb_search_input {
-	padding: 1rem;
-	height: 3.4rem;
-	border-radius: .4rem;
+    height: 2rem;
+}
+
+.input-group-btn:last-child  > .btn, .input-group-btn:last-child  > .btn-group {
+    height: 2rem;
+    padding-top: 0;
 }
 
 .fa-search::before {
@@ -170,6 +273,17 @@ div.filter-icon-padding {
 	max-width: 100%;
 }
 
+.panel.panel-default > div.collapse.in > div {
+    width: calc(15rem - 8px);
+}
+
+body > div > section > main > div > div > sp-page-row:nth-child(2) > div > div.sidefacets-no-padding.hide-filters.col-xs-12.col-sm-12.col-md-3.col-lg-3 > span:nth-child(2) {
+    display: block !important;
+}
+
+
+body > div > section > main > div > div > sp-page-row:nth-child(2) > div > div.sidefacets-no-padding.hide-filters.col-xs-12.col-sm-12.col-md-3.col-lg-3 > span:nth-child(2) > div > div > div > div > div.panel-heading,
+body > div > section > main > div > div > sp-page-row:nth-child(2) > div > div.sidefacets-no-padding.hide-filters.col-xs-12.col-sm-12.col-md-3.col-lg-3 > span,
 /*
 .filter-class,
 .sidefacets-no-padding,
@@ -196,12 +310,12 @@ header,
 }
 
 .attach-title > a {
-	font-size: 1rem !important;
+	/*font-size: 1rem !important;*/
 }
 
 .kb-description {
 	word-break: unset !important;
-	font-size: 1rem !important;
+	/*font-size: 1rem !important;*/
 }
 
 .kb-detail > div > strong {
@@ -218,16 +332,18 @@ header,
 
 .facet-detail.facet-scroll.ng-scope {
     max-height: unset;
+    overflow-x: hidden;
 }
 
 .facet-detail.facet-scroll.ng-scope > div:nth-child(1) {
 	display: block !important;
-	max-height: calc(100% - 172px);
-	overflow-y: auto;
+    width: 500px;
+	/*max-height: calc(100% - 172px);*/
+	/*overflow-y: auto;*/
 }
 
 .facet-detail.facet-scroll.ng-scope > div:nth-child(1) > div {
-	border-bottom: 0.1rem solid var(--light);
+	border-bottom: 0.1rem solid var(--seperater);
 }
 
 .facet-detail.facet-scroll.ng-scope > div:nth-child(2) {
@@ -318,7 +434,7 @@ h4,
 h4 a,
 .h4 {
 	/*color: #333 !important;*/
-	font-size: 1.4rem !important;
+	/*font-size: 1.4rem !important;*/
 	margin-left: 0 !important;
 	margin-right: 0 !important;
 	margin-top: 0 !important;

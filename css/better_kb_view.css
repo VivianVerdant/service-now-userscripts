@@ -3,6 +3,116 @@
 	/*max-width: 880px;*/
 }
 
+:root {
+    font-size: 12pt !important;
+	--header-color: #666;
+	--search-offset: 0px;
+	--blue-highlight: #66afe9;
+    --seperater: grey;
+
+    --accent-color: #66afe9;
+    --accent-background: #576f83;
+    --background: #4f4f4f;
+    --text: white;
+    --faded-text: gray;
+    --link: lightblue;
+    --link-highlight: lightpink;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--background) var(--accent-color);
+}
+
+/* Chrome, Edge and Safari */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-track {
+  border-radius: 3px;
+  background-color: var(--background);
+}
+
+*::-webkit-scrollbar-track:hover {
+  background-color: var(--background);
+}
+
+*::-webkit-scrollbar-track:active {
+  background-color: var(--background);
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background-color: var(--accent-color);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--accent-color);
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background-color: var(--accent-color);
+}
+
+textarea::placeholder,
+input::placeholder {
+    color: var(--faded-text) !important;
+}
+
+span.panel-title > .transparent-button,
+.panel,
+.panel-default > .panel-heading,
+.form-control {
+    background: var(--background);
+    color: var(--text);
+}
+
+
+a {
+    color: var(--link) !important;
+}
+
+a.active,
+a:hover {
+    color: var(--link-highlight) !important;
+}
+
+.alert,
+.alert-info,
+.alert-dismissible {
+	background-color: var(--accent-background) !important;
+    background: var(--accent-background) !important;
+    color: var(--text);
+}
+
+li,
+span,
+p,
+table {
+    background-color: transparent !important;
+    background: transparent !important;
+    color: var(--text);
+}
+
+
+.open > .dropdown-menu,
+.btn-default:hover,
+.btn-default,
+.list-group-item,
+body {
+    font-size: 1rem !important;
+    background: var(--background);
+    color: var(--text);
+}
+
+* {
+    color: var(--text);
+    font-size: 1rem;
+    line-height: 1rem;
+}
+
 @font-face {
 	font-family: Noto Mono for Powerline;
 	src:url("https://github.com/VivianVerdant/service-now-userscripts/blob/main/Noto%20Mono%20for%20Powerline.ttf?raw=true") format("truetype");
@@ -10,7 +120,7 @@
 
 :not(pre):not(code):not(textarea):not(tt):not(kbd):not(samp):not(var) {
     font-family: monospace !important;
-    letter-spacing: -.1rem;
+    letter-spacing: 0rem;
 }
 
 a {
@@ -23,9 +133,6 @@ strong {
 	font-size: 12pt !important;
 }
 
-:root {
-	--header-color: #f5f5f5;
-}
 
 section > table {
 	width: 100% !important;
@@ -37,8 +144,42 @@ hr {
 
 .panel-default > .kb-panel-heading.panel-heading {
 	background: var(--header-color);
+    /*height: 2.4rem;*/
 }
 
+.open > .dropdown-menu {
+    width: max-content;
+}
+
+.open > #kbVersionButton,
+#kbVersionButton:hover,
+#kbVersionButton:active,
+.btn-default:active, .btn-default.active, .open > .btn-default.dropdown-toggle:hover,
+.btn-default:active, .btn-default.active, .open > .btn-default.dropdown-toggle:active {
+  background-color: var(--background);
+
+}
+
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+	background: var(--header-color);
+
+}
+
+.alert,
+.alert-info,
+.alert-dismissible {
+    position: fixed;
+    top: 2.8rem;
+    right: 0.8rem;
+    width: 50%;
+    height: 2rem;
+    padding: .5rem;
+}
+
+.alert-dismissable .close, .alert-dismissible .close {
+    right: 1rem;
+    line-height: .5rem;
+}
 
 .better-kb-cbcopy {
 	display: block;
@@ -48,7 +189,30 @@ hr {
 	left: 50%;
 	position: absolute;
 	transform: translate(-50%, 0%);
-	top: 0;
+	top: .6rem;
+}
+
+#kbVersionButton {
+    height: 2.3rem;
+}
+
+.save_doc_btn {
+    position: relative;
+    top: -1rem;
+    background: var(--background);
+    display: none;
+}
+
+.kb-permalink {
+    position: relative;
+    top: .4rem;
+    right: 3rem;
+}
+
+.kb-end-buttons {
+    position: relative;
+    top: -.26rem;
+    right: 1rem;
 }
 
 
@@ -105,8 +269,8 @@ html {
 }
 
 section.page {
-	/*overflow-x: clip;*/
-	/*max-width: 100%;*/
+    /*overflow-x: clip;
+    max-width: 100%;*/
 }
 
 .kb-number-info {
@@ -185,6 +349,12 @@ section > table,
 .kb_container-right {
     width: auto;
 }
+
+.mce-toc > h2,
+.kb-title-header {
+    font-size: 1.5rem;
+}
+
 
 /*
 .kb-panel-heading {

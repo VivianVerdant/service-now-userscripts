@@ -12,7 +12,7 @@ async function find_or_observe_for_element(query, func, parent_query, once) {
 				resolve(node);
             }
         });
-        body_observer.observe(document.documentElement, {childList: true});
+        body_observer.observe(document.documentElement, {childList: true, attributes: true, subtree: true});
 		return;
 		const r = new Promise((resolve) => {
 			setTimeout(() => {

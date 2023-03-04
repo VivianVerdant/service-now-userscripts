@@ -3,7 +3,7 @@
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
-// @version      0.3
+// @version      0.4
 // @description  Suite of tools and improvements for Service-Now
 // @author       Vivian
 // @run-at       document-start
@@ -68,6 +68,7 @@ function save_note(company_name) {
 
 function load_note(company_name) {
 	const saved_notes = GM_getValue("saved_notes", new Object());
+    console.log(saved_notes);
 	let notes_text;
 	if (Object.keys(saved_notes).includes(company_name)){
 		notes_text = saved_notes[company_name];
@@ -85,13 +86,8 @@ function load_note(company_name) {
 function create_notes(node) {
 	company_name = "generic";
 
-	find_or_observe_for_element("div[sn-atf-area='Company'] > div > div > div > div > div > div > div > div > div > div > span > a.ng-binding.active", (node) => {
-		if (node.innerText != company_name) {
-			console.log(node.innerText);
-			save_note(company_name);
-			company_name = node.innerText;
-			load_note(company_name);
-		}
+	find_or_observe_for_element("div[sn-atf-area='Company'] > div > div > div > div > div > div > div > div > div > div > span > a.active", (node) => {
+		console.log("notes node", node);
 	}, undefined, false);
 
 	let saved_notes = GM_getValue("saved_notes", new Object());
@@ -306,14 +302,20 @@ async function search_main() {
 
 	find_or_observe_for_element(".facet-detail.facet-scroll > div > div > span", (node) => {
 		node.addEventListener('click', (e) => {
+            console.log('company:-------------------------------------------');
+            console.log(node);
 			const target = document.querySelector(".knowledge-articles");
 			target.scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
+            if (node.innerText != company_name) {
+                console.log(node.innerText);
+                save_note(company_name);
+                company_name = node.innerText;
+                load_note(company_name);
+            }
 		});
-	}, undefined, true);
+	}, undefined, false);
 
 	find_or_observe_for_element(".kb-info > div > h4", (node) => {
-		//console.log('open this in iframe:-------------------------------------------');
-		//console.log(node);
 		node.addEventListener('click', (e) => {
 			e.preventDefault();
 			const url = e.target.href;
@@ -323,6 +325,15 @@ async function search_main() {
 			//console.log(url);
 		});
 	}, undefined, false);
+
+    /*
+    find_or_observe_for_element(".kb-facet-filter-block", (node) => {
+		node.addEventListener('click', (e) => {
+            e.preventDefault();
+
+		});
+    }, undefined, true);
+    */
 
 	find_or_observe_for_element(".sp-scroll", (node) => {
 		console.log("scroller: ", node);
@@ -381,7 +392,7 @@ async function view_main() {
 		const dl_btn = document.createElement("button");
 		//console.log(dl_btn);
 		dl_btn.innerHTML = "save doc";
-        dl_btn.setAttribute("style", "vertical-align: text-bottom;");
+        dl_btn.classList.add("save_doc_btn");
 		dl_btn.onclick = (e) => {Export2Doc(".kb-wrapper.panel-body.kb-desktop", kb_num);};
 		node.appendChild(dl_btn);
 	}, undefined, true);

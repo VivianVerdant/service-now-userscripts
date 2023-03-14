@@ -276,11 +276,10 @@ div.filter-icon-padding {
 .panel.panel-default > div.collapse.in > div {
     width: calc(15rem - 8px);
 }
-
+body > div > section > main > div > div > sp-page-row:nth-child(2) > div > div.sidefacets-no-padding.hide-filters.col-xs-12.col-sm-12.col-md-3.col-lg-3 > span:nth-child(3),
 body > div > section > main > div > div > sp-page-row:nth-child(2) > div > div.sidefacets-no-padding.hide-filters.col-xs-12.col-sm-12.col-md-3.col-lg-3 > span:nth-child(2) {
     display: block !important;
 }
-
 
 body > div > section > main > div > div > sp-page-row:nth-child(2) > div > div.sidefacets-no-padding.hide-filters.col-xs-12.col-sm-12.col-md-3.col-lg-3 > span:nth-child(2) > div > div > div > div > div.panel-heading,
 body > div > section > main > div > div > sp-page-row:nth-child(2) > div > div.sidefacets-no-padding.hide-filters.col-xs-12.col-sm-12.col-md-3.col-lg-3 > span,

@@ -63,6 +63,19 @@ button[data-action-name="sysverb_update"] {
 	display: none;
 }
 
+.navbar .btn-icon {
+    background-color: rgba(255, 255, 255, 0.45);
+    border-color: #cbcbcb;
+}
+
+.navbar > span > button {
+    padding: 0;
+}
+
+.navbar_ui_actions > button {
+    height: 31px;
+}
+
 .popover-body,
 .popover-content {
 	z-index: 999;
@@ -563,6 +576,7 @@ HTML[data-doctype=true] #header_attachment_line {
 	margin: unset !important;
 	padding: 0px 4px!important;
 	min-height: unset !important;
+    height: 31px;
 }
 
 .btn-icon {

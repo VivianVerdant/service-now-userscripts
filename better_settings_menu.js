@@ -16,8 +16,8 @@ class better_settings_menu {
         this.name = title || "Better Service Now";
 
         this.modal = document.createElement("div");
+//        this.modal.classList.add("bsn-modal", );
         this.modal.classList.add("bsn-modal", "hidden");
-        //this.modal.classList.add("hidden");
         this.modal.onclick = this.close_modal;
         document.body.appendChild(this.modal);
 
@@ -49,7 +49,7 @@ class better_settings_menu {
         this.main_button.classList.add("open-bsn-modal-button");
         this.main_button.onclick = this.open_modal;
         //this.main_button.innerHTML = "Settings"
-        parent.appendChild(this.main_button);
+        parent.after(this.main_button);
 
         this.saved_options = saved_options;
 
@@ -64,6 +64,7 @@ class better_settings_menu {
         this.saved_options = options;
         //this.update_modal();
         GM_setValue("settings", this.saved_options);
+        console.log(this.saved_options);
         return this.saved_options;
     }
 
@@ -83,13 +84,31 @@ class better_settings_menu {
         }
         let setting = this.modal_container.addNode("div", key, ["bool_setting", "setting_entry"]);
         let name = setting.addNode("span", "");
-        name.innerHTML = key;
+        const readable = key.replace(/([a-z])(?=[A-Z])/g, "$1 ");
+        name.innerHTML = readable;
         let toggle = setting.addNode("input", "", ["checkbox_switch"]);
         toggle.setAttribute("type","checkbox");
         toggle.setAttribute("name",key);
 		toggle.checked = value;
         toggle.addEventListener("click", onclick)
         toggle.update = (val) => {this.set_option_item(toggle.name, val)};
+    }
+
+    create_string_setting = (key, value) => {
+        let onchange = (e) =>{
+            e.target.update(e.target.checked)
+        }
+        let setting = this.modal_container.addNode("div", key, ["string_setting", "setting_entry"]);
+        let name = setting.addNode("span", "");
+        const readable = key.replace(/([a-z])(?=[A-Z])/g, "$1 ");
+        name.innerHTML = readable;
+        let string = setting.addNode("input", "", ["string_field"]);
+        string.setAttribute("type","text");
+        string.setAttribute("placeholder","Hex Value");
+        string.setAttribute("name", key);
+        string.value = value;
+        string.addEventListener("change", onchange)
+        string.update = (val) => {this.set_option_item(string.name, val)};
     }
 
     update_modal = () => {
@@ -106,6 +125,9 @@ class better_settings_menu {
                 switch (typeof value){
                     case 'boolean':
                         this.create_bool_setting(key, value);
+                        break;
+                    case 'string':
+                        this.create_string_setting(key, value);
                         break;
                     default:
                         //default

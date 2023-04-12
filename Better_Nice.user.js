@@ -3,7 +3,7 @@
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
-// @version      0.2
+// @version      0.1
 // @description  try to take over the world!
 // @author       You
 // @match        https://*.niceincontact.com/*
@@ -70,6 +70,21 @@ async function keepAlive() {
 	}, 1800000);
 }
 
+const convertTime12to24 = (time12h) => {
+	const [time, modifier] = time12h.split(' ');
+
+	let [hours, minutes] = time.split(':');
+
+	if (hours === '12') {
+		hours = '00';
+	}
+
+	if (modifier === 'PM') {
+		hours = parseInt(hours, 10) + 12;
+	}
+
+	return `${hours}:${minutes}`;
+}
 
 find_or_observe_for_element("#agentstateui-0_container", (node) => {
 	console.log(node);
@@ -77,5 +92,18 @@ find_or_observe_for_element("#agentstateui-0_container", (node) => {
 });
 
 find_or_observe_for_element(".app-picker-panel", (node) => {
+	document.querySelector("[iconname='icon-sidebar_toggle']").click()
 	keepAlive();
 }, undefined, true);
+
+find_or_observe_for_element("[iconname='icon-sidebar_toggle']", (node) => {
+	node.click();
+}, undefined, true);
+
+
+find_or_observe_for_element("#consoleView", (node) => {
+	window.setTimeout( function() {
+		document.querySelector("#consoleView").click();
+	}, 1000);
+}, undefined, true);
+

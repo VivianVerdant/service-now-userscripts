@@ -4,36 +4,68 @@
 	width: 345px !important;
 }*/
 
+.glance-workspace {
+	background: #2861a8;
+}
+
+
 .blinkey {
 	animation: blink 1s infinite;
 	min-height: 82px;
 }
 
-
+/*
 div.agent-state-ui[data-outstate="Lunch"],
 div.agentstateui[data-outstate="Lunch"] {
     /*animation: blink 1s infinite;
     min-height: 82px;*/
 }
-
+/*
 div.agentstateui.agent-state-ui[data-outstate="Lunch"] > div.state-bar > span.timer {
     /*font-size: 80px;
     font-weight: bold;
     letter-spacing: 2px;*/
 }
-
+/*
 @keyframes blink{
   0% {
     background-color: #e85d46;
   }
   100% {
     background-color: black;
-  }
+  }*/
   /*100% {
     background-color: #e85d46;
-  }*/
+  }
 }
 
+.advanced-address-book-ui .external-template[data-call-state="chooseSkill"] .skill-list-container,
+.skill-list-container .ui-front {
+	display: block !important;
+}
+
+.advanced-address-book-ui .external-template .entry .call {
+    display: block !important;
+    margin-right: 5px;
+	height: 25px;
+    line-height: 25px;
+    width: 90px;
+    color: #fff;
+    background-color: #333;
+    border-radius: 2px;
+    font-family: "robotomedium","Helvetica Neue","Helvetica",Helvetica,Arial,sans-serif;
+    font-size: 10px;
+    font-weight: normal;
+    margin: 0;
+    outline: none;
+    padding: 0;
+}
+
+div.entry.left > div.call-controls {
+	display: inline-flex !important;
+	flex-flow: column;
+}
+*/
 
 .skill-dots {
 	vertical-align: top;

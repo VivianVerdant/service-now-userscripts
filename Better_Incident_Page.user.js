@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      1.4
+// @version      1.5
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -23,6 +23,7 @@
 
 
 /* Changelog
+v1.5 - Initial fixes for Utah release of SN
 v1.3	- So many bug fixes
 	- Added custom company notes
 v1.1	- Bugfixes with z-sorting

@@ -1,8 +1,14 @@
 :root {
-	--header-color: #e17ceb;
+	--header-color: #000;
 	--background-color: #fff;
 	--required-color: #000;
 	--required-bgcolor: #ffb1ab;
+}
+
+/* default color overrides */
+* {
+    --now-button--secondary--color: black !important;
+    --now-color_background--secondary: white !important;
 }
 
 :not(pre):not(code):not(textarea):not(tt):not(kbd):not(samp):not(var) {
@@ -74,10 +80,12 @@ button[data-action-name="sysverb_update"] {
 	display: none;
 }
 
+/*
 .navbar .btn-icon {
     background-color: rgba(255, 255, 255, 0.45);
     border-color: #cbcbcb;
 }
+*/
 
 .navbar > span > button {
     padding: 0;
@@ -93,13 +101,14 @@ button[data-action-name="sysverb_update"] {
 }
 
 .section_header_content_no_scroll.touch_scroll.overflow_x_hidden-hotfix > div:not(.ac_dropdown) {
-	margin-left: 38vw !important;
+	padding-left: 38vw !important;
 	left: unset !important;
 }
 
+/*
 #related_lists_wrapper {
 	width: 62vw;
-}
+}*/
 
 [id="incident.do"] {
 	display: grid;
@@ -116,7 +125,7 @@ button[data-action-name="sysverb_update"] {
 	display: grid;
 	grid-template-columns: 38% 62%;
 	grid-template-rows: auto auto;
-	width: 100vw;
+	width: 100%;
 }
 
 [id="incident.do"] > span.tabs2_section.tabs2_section_0.tabs2_section0 > span > div.section-content.with-overflow > div:nth-child(1) {
@@ -416,18 +425,25 @@ span.tabs2_section.tabs2_section_3.tabs2_section3.tab_section > span > div {
 	width: 100%
 }
 
+.outputmsg {
+    height: fit-content;
+    width: fit-content;
+    padding: 8px !important;
+    padding-inline-end: 8px !important;
+}
 
 .outputmsg_div {
-	position: absolute;
-	right: 0px;
-	top: 18px;
+    z-index: 10;
+    position: fixed;
+    right: 21px;
+    top: 34px;
 	max-width: 45vw;
 }
 
 span .outputmsg_container {
-	position: fixed;
-    right: 16px;
-    top: 22px;
+	position: unset;
+
+
 }
 
 span .compact.outputmsg_container {
@@ -441,6 +457,7 @@ span .compact.outputmsg_container {
 	min-height: 24px;
 }
 
+.notification-icon.icon-info,
 .notification .notification-icon {
 	scale: 1.4;
 	float: right;
@@ -459,6 +476,20 @@ HTML[data-doctype=true] .outputmsg.notification {
 	float: right;
 }
 
+
+#tabs2_list,
+#tabs2_spacer {
+    margin: 0 !important;
+}
+
+div.tabs2_strip::before {
+    display: none;
+}
+
+.context_menu,
+div[id="context_list_titleincident.task_time_worked.task"] {
+    position: fixed !important;
+}
 
 div[id="element.incident.watch_list"] > div.form-field {
 	width: -webkit-fill-available !important;
@@ -574,13 +605,17 @@ HTML[data-doctype=true] #header_attachment_line {
 	margin: unset !important;
 	padding: 0px 4px!important;
 	min-height: unset !important;
-    height: 31px;
+    height: 32px;
 }
 
-.btn-icon {
-	background-color: rgba(255, 255, 255, 0.45);
-	border: 1px solid #cbcbcb;
-	border-radius: 3px;
+
+.btn-icon,
+button.btn-default,
+button.calTodayText,
+button.link-btn-default {
+    background-color: RGBA(255, 255, 255, .25);
+    border: 1px solid;
+    border-color: RGB(var(--now-button--secondary--border-color,var(--now-color--neutral-7,135,147,148)));
 }
 
 .icon-clipboard:before {

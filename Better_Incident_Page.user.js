@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      1.5
+// @version      1.6
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -23,7 +23,8 @@
 
 
 /* Changelog
-v1.5 - Initial fixes for Utah release of SN
+v1.6 - More Utah fixes
+v1.5 - Fixes for Utah release of SN
 v1.3	- So many bug fixes
 	- Added custom company notes
 v1.1	- Bugfixes with z-sorting
@@ -47,6 +48,11 @@ v0.1 - Initial release
 */
 
 'use strict';
+
+function testAlert(e) {
+    e.preventDefault();
+    alert("foo");
+}
 
 let default_settings = {
     CustomCSS: false,
@@ -269,9 +275,9 @@ async function edit_main(element) {
      //Will normally be pulled from userscript local storage
     console.log(settings);
 
-	find_or_observe_for_element(".navbar-right > span", async (node) => {
+	find_or_observe_for_element(".navbar-right > span:first-child", async (node) => {
         const menu = new better_settings_menu(node, settings, "Better Settings Menu", GM_getResourceText("settings_css"));
-        console.log(menu);
+        console.warn(menu);
         menu.main_button.classList.add("btn", "btn-default", "action_context", "header", "btn-icon", "icon-cog", "form_action_button");
         menu.close_button.classList.add("btn", "btn-icon", "icon-connect-close-sm");
         //menu.set_option_item("Bar", false);
@@ -347,8 +353,8 @@ async function edit_main(element) {
 	}, undefined, true);
 
 	find_or_observe_for_element(".activity-stream-textarea, #activity-stream-work_notes-textarea, .question_textarea_input", (node) => {
-		console.log('textarea has been added:-------------------------------------------');
-		console.log(node);
+		//console.log('textarea has been added:-------------------------------------------');
+		//console.log(node);
 		const text_area_fn = async (e) => {e.target.style.height = "0px"; e.target.style.height = e.target.scrollHeight + 8 + "px";}
 		node.addEventListener("change", text_area_fn);
 		node.addEventListener("keydown", text_area_fn);

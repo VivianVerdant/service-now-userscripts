@@ -59,6 +59,15 @@ HTML[data-doctype=true] .section-content {
 	display: contents;
 }
 
+.outputmsg {
+    height: fit-content;
+    width: fit-content;
+    padding: 8px !important;
+    padding-inline-end: 8px !important;
+    position: absolute;
+    right: 2px;
+}
+
 body {
 	height: 100vh;
 	display: grid;
@@ -84,6 +93,7 @@ div[role="navigation"]:has(.header) {
 
 #output_messages {
 	grid-area: c;
+    overflow-y: visible;
 }
 
 table[aria-label="Create a New Incident"] {
@@ -487,7 +497,9 @@ span .outputmsg_container {
 	min-width: 24px;
 	min-height: 24px;
 }
+*/
 
+.notification-icon.icon-info,
 .notification .notification-icon {
 	scale: 1.4;
 	float: right;
@@ -495,6 +507,7 @@ span .outputmsg_container {
 	top: 7px;
 }
 
+/*
 .outputmsg_text {
 	text-align: center;
 	line-height: 1.2rem;
@@ -578,12 +591,13 @@ HTML[data-doctype=true] .custom-form-group.form-group {
 	margin-top: 0px !important;
     margin-bottom: 0px !important;
 }
+*/
 
-#close-messages-btn,
-HTML[data-doctype=true] #header_attachment_line {
+#close-messages-btn {
 	display: none;
 }
 
+/*
 .process-breadcrumb {
 	height: auto !important;
 }

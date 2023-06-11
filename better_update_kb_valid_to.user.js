@@ -3,7 +3,7 @@
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
-// @version      0.1
+// @version      0.2
 // @description  Suite of tools and improvements for Service-Now
 // @author       Vivian
 // @run-at       document-start
@@ -36,11 +36,19 @@ function escalation_action() {
 	const state_dropdown = document.querySelector("[id='kb_knowledge.valid_to']");
     state_dropdown.value = date_string;
 
+    const assignment_group = document.querySelector("[id='sys_display.kb_knowledge.u_assignment_group']");
+    if (assignment_group.value == '') {
+        assignment_group.value = "VRT-Service Desk";
+        assignment_group.focus()
+        setTimeout(assignment_group.blur(), 50);
+    }
+
 	if (date_string == state_dropdown.value){
 		setTimeout(() => {
             const save_btn = document.querySelector("[id='sysverb_update_and_stay']");
-            save_btn.click()
+            save_btn.dispatchEvent(new MouseEvent('click'));
         }, 250);
+
 	} else {
 		setTimeout(escalation_action(), 250);
 	}

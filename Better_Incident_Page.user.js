@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      1.6
+// @version      1.7
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -23,7 +23,7 @@
 
 
 /* Changelog
-v1.6 - More Utah fixes
+v1.7 - Initial Better Settings implementation
 v1.5 - Fixes for Utah release of SN
 v1.3	- So many bug fixes
 	- Added custom company notes
@@ -55,12 +55,22 @@ function testAlert(e) {
 }
 
 let default_settings = {
-    CustomCSS: false,
-    CustomNotes: false,
-    HeaderRandomColor: false,
+    custom_layout: false,
+    custom_notes: false,
+    header_random_color: false,
+    custom_color_theme: false,
+    background: "255,255,255",
+    primary_text: "0,0,0",
+    required: "255,0,0",
 };
 
 var settings = GM_getValue("settings", default_settings);
+
+for (const [key, value] of Object.entries(default_settings)) {
+    if (!settings[key]) {
+        settings[key] = value;
+    }
+}
 
 var location = window.location.href;
 var run_once = false;
@@ -172,7 +182,7 @@ function create_notes(node) {
 	}
 
     let classlist;
-    if (settings.CustomCSS) {
+    if (settings.custom_layout) {
         classlist = ["personalNotes", "notification-info", "notification"];
     } else {
         classlist = ["personalNotes"];
@@ -284,7 +294,7 @@ async function edit_main(element) {
         GM_setValue("settings", menu.saved_options);
 	}, undefined, true);
 
-    if (settings.CustomCSS) {
+    if (settings.custom_layout) {
         GM_addStyle(GM_getResourceText("better_incident_css"));
 
         find_or_observe_for_element(".outputmsg", async (node) => {
@@ -319,6 +329,29 @@ async function edit_main(element) {
         //add css
     }
 
+    if (settings.custom_color_theme) {
+        // insert custom colors
+        const custom_css = `
+.-polaris \{
+    --now-color_text--primary: ${settings.primary_text} !important;
+    --now-form-field--color: ${settings.primary_text} !important;
+    --now-button--bare_primary--color: ${settings.primary_text} !important;
+    --now-button--secondary--color: ${settings.primary_text} !important;
+    --now-color--primary-1: ${settings.primary_text} !important;
+    --now-color_text--secondary: ${settings.primary_text} !important;
+    --now-checkbox_label--color: ${settings.primary_text} !important;
+    --now-tabs--color: ${settings.primary_text} !important;
+
+    --now-color_background--primary: ${settings.background} !important;
+    --now-color_background--secondary: ${settings.background} !important;
+
+    --now-color_alert--critical-2: ${settings.required} !important;
+
+\}`;
+        console.warn(custom_css);
+        GM_addStyle(custom_css);
+    }
+
 	find_or_observe_for_element("#resolve_incident", (node) => {
 		console.log('#resolve_incident has been added:-------------------------------------------');
 		console.log(node);
@@ -337,7 +370,7 @@ async function edit_main(element) {
 		inner.innerHTML = node.value;
 		btn.appendChild(inner);
 
-        if (settings.HeaderRandomColor) {
+        if (settings.header_random_color) {
             const hue = parseInt(node.value.replace(/\D/g,''));
             console.log("Num: ",hue);
             document.querySelector(':root').style.setProperty('--header-color', getColorFromSeed(hue));
@@ -374,7 +407,7 @@ async function edit_main(element) {
 		}
 	}, "form", true);
 
-    if (settings.CustomNotes) {
+    if (settings.custom_notes) {
         find_or_observe_for_element("body > div > form > span.tabs2_section.tabs2_section_0.tabs2_section0 > span > div.section-content.with-overflow > div:nth-child(3)", (node) => {
             console.log('insert notes after:-------------------------------------------');
             console.log(node);

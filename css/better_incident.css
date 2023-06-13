@@ -1,16 +1,3 @@
-:root {
-	--header-color: #000;
-	--background-color: #fff;
-	--required-color: #000;
-	--required-bgcolor: #ffb1ab;
-}
-
-/* default color overrides */
-* {
-    --now-button--secondary--color: black !important;
-    --now-color_background--secondary: white !important;
-}
-
 :not(pre):not(code):not(textarea):not(tt):not(kbd):not(samp):not(var) {
     font-family: monospace !important;
     letter-spacing: -.1rem;
@@ -21,15 +8,27 @@
 	cursor: unset !important;
 }
 
+.form-control.readonly, .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+    background-color: RGBA(128,128,128,.25) !important;
+}
+
+.col-xs-12 > div.is-required select,
+.col-xs-12 > div.is-required textarea,
+.col-xs-12 > div.is-required input,
+.vsplit > div.is-required select,
+.vsplit > div.is-required textarea ,
+.vsplit > div.is-required input {
+	background: RGB(var(--now-color_alert--critical-2));
+}
+
+.is-required > div > label > .required-marker::before {
+	text-shadow: 0 0 1px black;
+}
+
 /* Custom Company Notes */
 #custom_notes {
 	display: inline-flex;
 	margin: 2px;
-}
-
-body.-polaris .section_header_content_no_scroll,
-.form_body {
-	background-color: var(--background-color ,255,255,255) !important;
 }
 
 textarea.disabled {
@@ -101,7 +100,7 @@ button[data-action-name="sysverb_update"] {
 }
 
 .section_header_content_no_scroll.touch_scroll.overflow_x_hidden-hotfix > div:not(.ac_dropdown) {
-	padding-left: 38vw !important;
+	padding-left: 38%;
 	left: unset !important;
 }
 
@@ -380,6 +379,21 @@ textarea[id="incident.description"] {
 	transform: translate(-100% -100%);
 }
 
+/* Popup windows */
+
+.popover.glide-popup.fade.bottom.in {
+    margin-left: 38%;
+	padding-left: unset;
+}
+
+div[aria-label="Company form section"] > div > div {
+    background: pink;
+}
+
+textarea[id='sys_readonly.core_company.u_service_desk_contact_information'] {
+    height: 200px !important;
+}
+
 /* Notes Related Records and Close tabs */
 
 .section.sn-stream-section > div {
@@ -543,17 +557,6 @@ HTML[data-doctype=true] .section-content {
     font-size: 12px;
 }
 
-
-.col-xs-12 > div.is-required select,
-.col-xs-12 > div.is-required textarea,
-.col-xs-12 > div.is-required input,
-.vsplit > div.is-required select,
-.vsplit > div.is-required textarea ,
-.vsplit > div.is-required input {
-	background: var(--required-bgcolor);
-	color: var(--required-color);
-}
-
 input[name="sys_display.incident.u_affected_user"] {
 	background: linear-gradient(90deg, transparent, #b6a6d2);
 }
@@ -573,15 +576,10 @@ input[name="sys_display.incident.assignment_group"] {
     left: 0vw;
 	top: 0vw;
     width: 40vw;
-    background: white;
     border: 1px solid rgb(203, 203, 203);
     border-radius: 3px;
     padding-top: 12px;
     transform: translateY(0%);
-}
-
-textarea[aria-label="Additional comments"] {
-	background: #b5dde5 !important;
 }
 
 HTML[data-doctype=true] .custom-form-group.form-group {

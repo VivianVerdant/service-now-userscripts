@@ -1,6 +1,17 @@
 class better_settings_menu {
     constructor(parent, saved_options, title, style) {
 
+        this.update_all_settings = () => {
+            const node_list = this.modal_container.querySelectorAll("INPUT");
+            for (const node of node_list) {
+                let val = node.value;
+                if (node.type === "checkbox") {
+                    val = node.checked;
+                }
+                this.set_option_item(node.name, val)
+            }
+        }
+
         this.open_modal = (event) => {
             console.log(this.modal)
             this.modal.classList.remove("hidden");
@@ -10,6 +21,7 @@ class better_settings_menu {
             if (event.target.classList.contains("bsn-modal") || event.target.classList.contains("close-bsn-modal-btn")) {
                 console.log(this._modal)
                 this.modal.classList.add("hidden");
+                this.update_all_settings();
             }
         }
 
@@ -78,37 +90,36 @@ class better_settings_menu {
         //- Create and attach event listeners
     }
 
-    create_bool_setting = (key, value) => {
-        let onclick = (e) =>{
-            e.target.update(e.target.checked)
+    make_readable = (str) => {
+        let result = str.replaceAll(/(_)/g, " ");
+        result = result.split(" ")
+        for (let i = 0; i < result.length; i++) {
+            result[i] = result[i][0].toUpperCase() + result[i].substr(1);
         }
+       return result.join(" ");
+    }
+
+    create_bool_setting = (key, value) => {
         let setting = this.modal_container.addNode("div", key, ["bool_setting", "setting_entry"]);
         let name = setting.addNode("span", "");
-        const readable = key.replace(/([a-z])(?=[A-Z])/g, "$1 ");
-        name.innerHTML = readable;
+        name.innerHTML = this.make_readable(key);
         let toggle = setting.addNode("input", "", ["checkbox_switch"]);
         toggle.setAttribute("type","checkbox");
         toggle.setAttribute("name",key);
 		toggle.checked = value;
-        toggle.addEventListener("click", onclick)
-        toggle.update = (val) => {this.set_option_item(toggle.name, val)};
+        toggle.addEventListener("input", this.update_all_settings());
     }
 
     create_string_setting = (key, value) => {
-        let onchange = (e) =>{
-            e.target.update(e.target.checked)
-        }
         let setting = this.modal_container.addNode("div", key, ["string_setting", "setting_entry"]);
         let name = setting.addNode("span", "");
-        const readable = key.replace(/([a-z])(?=[A-Z])/g, "$1 ");
-        name.innerHTML = readable;
+        name.innerHTML = this.make_readable(key);
         let string = setting.addNode("input", "", ["string_field"]);
         string.setAttribute("type","text");
         string.setAttribute("placeholder","Hex Value");
         string.setAttribute("name", key);
         string.value = value;
-        string.addEventListener("change", onchange)
-        string.update = (val) => {this.set_option_item(string.name, val)};
+        string.addEventListener("input", this.update_all_settings());
     }
 
     update_modal = () => {

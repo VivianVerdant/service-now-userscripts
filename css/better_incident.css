@@ -379,6 +379,16 @@ textarea[id="incident.description"] {
 	transform: translate(-100% -100%);
 }
 
+div[id='cxs_widget_container'] {
+    max-height: 11em;
+    overflow-y: scroll !important;
+}
+
+button.cxs_result,
+#cxs_results_data > thead {
+	display: none;
+}
+
 /* Popup windows */
 
 .popover.glide-popup.fade.bottom.in {

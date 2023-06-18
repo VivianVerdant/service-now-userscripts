@@ -227,7 +227,8 @@ HTML[data-doctype=true] .tab_section > span {
 
 .process-breadcrumb > li.active::after,
 .process-breadcrumb > li.disabled::after {
-	transform: rotate(45deg) translateY(5px)
+	/*transform: rotate(45deg) translateY(5px);*/
+	display: none;
 }
 
 /*
@@ -370,7 +371,6 @@ textarea[id="incident.description"] {
 	min-width: 55% !important;
 }
 
-
 /* Knowledge results */
 .horizontal-rule {
 	display: none;
@@ -380,9 +380,21 @@ textarea[id="incident.description"] {
 	transform: translate(-100% -100%);
 }
 
+div.custom-form-group.is-wide.form-group.ng-scope:has([id="cxs_widget_container"]) {
+	width: 100% !important;
+}
+
 div[id='cxs_widget_container'] {
     max-height: 11em;
     overflow-y: scroll !important;
+}
+
+label[for="cxs_related_search"] {
+	display: none !important;
+}
+
+div[id="cxs_related_search_only"] {
+	width: 100% !important;
 }
 
 button.cxs_result,

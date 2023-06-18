@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      1.7
+// @version      1.8
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -23,6 +23,7 @@
 
 
 /* Changelog
+v1.8 - Added KB search auto open, cleaned up CSS
 v1.7 - Initial Better Settings implementation
 v1.5 - Fixes for Utah release of SN
 v1.3	- So many bug fixes
@@ -59,6 +60,7 @@ let default_settings = {
     custom_notes: false,
     header_random_color: false,
     custom_color_theme: false,
+	auto_open_kb_search: false,
     background: "255,255,255",
     primary_text: "0,0,0",
     required: "255,0,0",
@@ -417,6 +419,14 @@ async function edit_main(element) {
 		});*/
         });
     }
+
+	if (settings.auto_open_kb_search) {
+		document.onreadystatechange = function () {
+			if (document.readyState == "complete") {
+				document.querySelector("[id='cxs_maximize_results']").click();
+			}
+		}
+	}
 
 	document.onkeydown = function(e) {
 		if(e.key === 's' && e.ctrlKey){

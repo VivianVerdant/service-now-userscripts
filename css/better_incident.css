@@ -114,6 +114,7 @@ button[data-action-name="sysverb_update"] {
 	grid-template-columns: 38% 62% 0%;
 	grid-template-rows: auto 32px;
 	grid-auto-flow: column;
+	max-width: 1390px;
 }
 
 [id="incident.do"] > *{
@@ -125,6 +126,7 @@ button[data-action-name="sysverb_update"] {
 	grid-template-columns: 38% 62%;
 	grid-template-rows: auto auto;
 	width: 100%;
+	max-width: 1390px;
 }
 
 [id="incident.do"] > span.tabs2_section.tabs2_section_0.tabs2_section0 > span > div.section-content.with-overflow > div:nth-child(1) {
@@ -364,9 +366,8 @@ div[id="element.incident.short_description"] > div.col-xs-10.col-md-9.col-lg-8.f
 
 textarea[id="incident.description"] {
 	overflow-y: scroll !important;
-    /*height: 160px !important;*/
 	width: 100%;
-    min-width: 55vw !important;
+	min-width: 55% !important;
 }
 
 
@@ -387,6 +388,14 @@ div[id='cxs_widget_container'] {
 button.cxs_result,
 #cxs_results_data > thead {
 	display: none;
+}
+
+table[id="cxs_results_header"] {
+	float: left;
+}
+
+div[id="cxs_related_search_container"] {
+	display: flow-root;
 }
 
 /* Popup windows */
@@ -603,17 +612,10 @@ HTML[data-doctype=true] #header_attachment_line {
 }
 
 .inc_copy_button {
-	position: absolute;
-	transform: translateX(-50%);
-	left: 50%;
-	background: transparent;
 	font-size: 25px;
 	line-height: 1 !important;
-	outline: unset !important;
-	margin: unset !important;
 	padding: 0px 4px!important;
 	min-height: unset !important;
-    height: 32px;
 }
 
 

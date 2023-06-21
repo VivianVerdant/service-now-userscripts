@@ -3,7 +3,7 @@
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
-// @version      0.1
+// @version      0.2
 // @description  Suite of tools and improvements for Service-Now
 // @author       Vivian
 // @run-at       document-start
@@ -15,13 +15,43 @@
 /* globals  find_or_observe_for_element GlideRecord g_form g_user */
 
 function main_action() {
+    // This is the part you'll want to actually edit
+
+    //                                  sys_id of record                    display name of record
     g_form.setValue("assignment_group", "d474fa996f07c100ad775ddd5d3ee452", "VRT-Service Desk");
+
+    /*
+        1 = "New"
+        2 = "Work in progress"
+        8 = "Pending Internal"
+        5 = "Pending Customer"
+        9 = "Approval needed"
+        3 = "Closed"
+    */
     g_form.setValue("state", 3);
+
+    /*
+        1 = "Updated article"
+        2 = "Created article"
+        3 = "Updated search configuration"
+        4 = "No action"
+        6 = "Duplicate"
+    */
     g_form.setValue("resolution_code", 1);
+
+    // Resolution notes
     g_form.setValue("close_notes", "Updated");
 
-    setTimeout(() => {g_form.setValue("assigned_to", g_user.sysID, g_user.fullName)}, 250)
+    // Need to wait a few ms after setting "assignment group" before you can set "assigned to"
+    setTimeout(() => {
+        //                             current user, display name
+        g_form.setValue("assigned_to", g_user.sysID, g_user.fullName)
+    }, 250)
 
+
+
+    // focus, then blur the "assigned to" field to workaround it not properly "submitting" the record to the form
+    // you can just ignore this part
     const assigned_to = document.querySelector("[id='sys_display.kb_feedback_task.assigned_to']");
     assigned_to.focus()
     setTimeout(() => {assigned_to.blur()}, 500);
@@ -42,7 +72,7 @@ HTMLElement.prototype.addNode = function (type, id, classes) {
 };
 
 let run_once = false;
-async function escalation_main() {
+async function main() {
 	'use strict';
 
 	if (run_once){
@@ -61,4 +91,4 @@ async function escalation_main() {
 	}, undefined, true);
 }
 
-escalation_main();
+main();

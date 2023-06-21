@@ -12,9 +12,22 @@
 // @grant        GM_getValue
 // ==/UserScript==
 
-/* globals  find_or_observe_for_element */
+/* globals  find_or_observe_for_element GlideRecord g_form g_user */
 
-let run_once = false;
+function main_action() {
+    g_form.setValue("assignment_group", "d474fa996f07c100ad775ddd5d3ee452", "VRT-Service Desk");
+    g_form.setValue("state", 3);
+    g_form.setValue("resolution_code", 1);
+    g_form.setValue("close_notes", "Updated");
+
+    setTimeout(() => {g_form.setValue("assigned_to", g_user.sysID, g_user.fullName)}, 250)
+
+    const assigned_to = document.querySelector("[id='sys_display.kb_feedback_task.assigned_to']");
+    assigned_to.focus()
+    setTimeout(() => {assigned_to.blur()}, 500);
+
+    setTimeout(() => {g_form.save();}, 1000);
+}
 
 HTMLElement.prototype.addNode = function (type, id, classes) {
 	const new_node = document.createElement(type);
@@ -28,23 +41,7 @@ HTMLElement.prototype.addNode = function (type, id, classes) {
 	return new_node;
 };
 
-function escalation_action() {
-    const state_dropdown = document.querySelector("[id='kb_feedback_task.state']");
-    const resolution_code = document.querySelector("[id='kb_feedback_task.resolution_code']");
-
-    while ( state_dropdown.value != 3 || resolution_code.value != 1) {
-        state_dropdown.value = 3;
-
-        resolution_code.value = 1;
-
-        const close_note = "Updated";
-        const close_notes = document.querySelector("[id='kb_feedback_task.close_notes']");
-        close_notes.value = close_note;
-    }
-		const save_btn = document.querySelector("[id='sysverb_update_and_stay']");
-		setTimeout(save_btn.click(),500);
-}
-
+let run_once = false;
 async function escalation_main() {
 	'use strict';
 
@@ -58,7 +55,7 @@ async function escalation_main() {
 		console.log(node);
 		const btn = node.addNode("button", "custom_btn", ["btn","btn-default"]); //btn btn-default btn-ref icon icon-info
 		btn.setAttribute("style", "float: left;");
-		btn.onclick = escalation_action;
+		btn.onclick = main_action;
 		const btn_label = btn.addNode("div", "btn_label");
 		btn_label.innerHTML = "Close as updated";
 	}, undefined, true);

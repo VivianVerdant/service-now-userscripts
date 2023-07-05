@@ -14,6 +14,10 @@
 
 /* globals  find_or_observe_for_element */
 
+/* Version History
+ 	v0.2 - Years no longer have more than 12 months
+*/
+
 let run_once = false;
 
 HTMLElement.prototype.addNode = function (type, id, classes) {
@@ -29,26 +33,18 @@ HTMLElement.prototype.addNode = function (type, id, classes) {
 };
 
 function escalation_action() {
-    const date = new Date()
+    const date = new Date(new Date().valueOf()+15770000000); // milliseconds in 6 months
 
-    const date_string = String(date.getFullYear()) + "-" + String(date.getMonth()+7) + "-01";
+    const date_string = String(date.getFullYear()) + "-" + String(date.getMonth()+1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
 
 	const state_dropdown = document.querySelector("[id='kb_knowledge.valid_to']");
     state_dropdown.value = date_string;
 
-    const assignment_group = document.querySelector("[id='sys_display.kb_knowledge.u_assignment_group']");
-    if (assignment_group.value == '') {
-        assignment_group.value = "VRT-Service Desk";
-        assignment_group.focus()
-        setTimeout(assignment_group.blur(), 50);
-    }
-
 	if (date_string == state_dropdown.value){
 		setTimeout(() => {
             const save_btn = document.querySelector("[id='sysverb_update_and_stay']");
-            save_btn.dispatchEvent(new MouseEvent('click'));
+            save_btn.click()
         }, 250);
-
 	} else {
 		setTimeout(escalation_action(), 250);
 	}

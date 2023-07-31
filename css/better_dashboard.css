@@ -1,5 +1,22 @@
 .grid-stack {
-    margin-bottom; 0 !important;
+    margin-bottom: 0 !important;
+}
+
+#header-container {
+    height: 45px;
+}
+
+div.date-calendar-short {
+    width: max-content !important;
+}
+
+div.date-timeago,
+div.date-calendar {
+    display: none !important;
+}
+
+body.-polaris .grid-stack .grid-stack-item .grid-stack-item-border {
+    border-radius: 0px !important;
 }
 
 .table td.col-small {
@@ -19,6 +36,92 @@ th.list-decoration-table {
     display: none;
 }
 
+.sn-canvas-main .dash-body .sn-canvas-left .sn-canvas-left-content .grid-stack-container {
+    padding: 0 !important;
+}
+
+.compact body {
+    --now-global-space--sm: 0px !important;
+    --now-global-space--md: 0px !important;
+    --now-global-space--lg: 0px !important;
+    --now-global-space--xl: 0px !important;
+    --now-global-space--xxl: 0px !important;
+    --now-global-space--3xl: 0px !important;
+}
+
+.list_div {
+    overflow-y: hidden !important;
+}
+
+.list-flavin {
+    background: url(https://github.com/VivianVerdant/service-now-userscripts/raw/main/img/crow.svg) !important;
+    width: 750px !important;
+    height: 450px !important;
+    margin: -150px !important;
+    transform: scale(.25);
+}
+
+.noc-frame,
+#noc-frame {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+body.non_standard_lists > table {
+    border-spacing: 0 !important;
+}
+
+html.date-calendar-short {
+    overflow-y: clip;
+}
+
+#agedemails_header,
+#agedevents_header,
+#new_header,
+#unassigned_header,
+#sla_header,
+#stale_header,
+#newemail_header,
+#newevent_header {
+    font-size: 40px !important;
+}
+
+#agedemails_footer,
+#agedevents_footer,
+#new_footer,
+#unassigned_footer,
+#sla_footer,
+#stale_footer,
+#newemail_footer,
+#newevent_footer {
+    font-size: 20px !important;
+}
+
+tr:has(#agedemails_header),
+tr:has(#agedemails_footer),
+tr:has(#agedevents_header),
+tr:has(#agedevents_footer),
+tr:has(#new_header),
+tr:has(#new_footer),
+tr:has(#unassigned_header),
+tr:has(#unassigned_footer),
+tr:has(#sla_header),
+tr:has(#sla_footer),
+tr:has(#stale_header),
+tr:has(#stale_footer),
+tr:has(#newemail_header),
+tr:has(#newemail_footer),
+tr:has(#newevent_header),
+tr:has(#newevent_footer) {
+ height: 50px;
+}
+
+.small-header {
+    height: 5px !important;
+}
+
+/*
 .sn-canvas-main .grid-stack .grid-stack-item {
     transform: translate(-10px, -10px);
 }
@@ -56,4 +159,4 @@ th.list-decoration-table {
 .grid-stack>.grid-stack-item[data-gs-width='12'] {
     width: calc(8.33333333% * 12 + 9px);
 }
-
+*/

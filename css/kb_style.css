@@ -1,73 +1,85 @@
 #article * {
-font-family: Arial, Verdana, Helvetica, sans-serif;
-font-size: 12pt;
-color: var(--now-color_text--primary,var(--now-color--neutral-18,22,27,28));
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 12pt;
+	color: var(--now-color_text--primary, var(--now-color--neutral-18, 22, 27, 28));
 }
-#article a:link {
-color: RGB(var(--now-color--secondary-1,1,119,142));;
-}
-.header {
-font-size: 18pt;
-line-height: 1em;
-}
-#article img {
-max-width: 100%;
-max-height: 400px;
-object-fit: contain;
-height: auto;
-width: auto;
-display: block;
-margin-left: auto;
-margin-right: auto;
-margin-top: 1rem;
-margin-bottom: 1rem;
-}
-#article h1 {
-font-family: Arial, sans-serif;
-font-weight: bold;
-margin: 0;
-padding: 0;
-line-height: 100%;
-font-size: 12pt;
-}
-#article p {
-margin: .5rem 0 2rem 0;
-}
-#article span {
-font-family: arial, helvetica, sans-serif;
-}
+
 #article {
-border-collapse: collapse;
-border: 1px;
+	border-collapse: collapse;
+	border: 1px;
 }
-/* Table Formatting */
+
 #article tbody {
-border: var(--now-color_text--primary,var(--now-color--neutral-18,22,27,28));
-border-width: 1px;
-border-style: solid;
+	border: var(--now-color_text--primary, var(--now-color--neutral-18, 22, 27, 28));
+	border-width: 1px;
+	border-style: solid;
 }
+
 #article tr {
-border: inherit;
+	border: inherit;
 }
+
 #article td {
-border: inherit;
-padding: 5pt 5px 5px 5pt;
-vertical-align: top;
+	border: inherit;
+	padding: 5pt 5px 5px 5pt;
+	vertical-align: top;
 }
+
 #article tr > td:nth-child(1) {
-max-width: 155px;
-font-weight: bold;
-width: auto !important;
-min-width: 100px;
-position: relative;
+	max-width: 155px;
+	font-weight: bold;
+	width: auto !important;
+	min-width: 100px;
+	position: relative;
 }
+
 #article tr > td:nth-child(2) {
-max-width: 775px;
-min-width: 500px;
-width: auto !important;
+	max-width: 775px;
+	min-width: 500px;
+	width: auto !important;
 }
+
+#article h1 {
+	font-family: Arial, sans-serif;
+	font-weight: bold;
+	margin: 0;
+	padding: 0;
+	line-height: 100%;
+	font-size: 12pt;
+}
+
+#article p {
+	margin: .5rem 0 2rem 0;
+}
+
+#article span {
+	font-family: arial, helvetica, sans-serif;
+}
+
+#article a:link {
+	color: RGB(var(--now-color--secondary-1, 1, 119, 142));
+}
+
+#article img {
+	max-width: 100%;
+	max-height: 400px;
+	object-fit: contain;
+	height: auto;
+	width: auto;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+}
+
+.header {
+	font-size: 18pt;
+	line-height: 1em;
+}
+
 .virteva {
-width: 100px;
-font-size: 8pt;
-margin-top: 10px;
+	width: 100px;
+	font-size: 8pt;
+	margin-top: 10px;
 }

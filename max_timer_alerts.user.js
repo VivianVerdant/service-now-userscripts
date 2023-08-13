@@ -71,7 +71,6 @@ const selected_audio_alert = audio_alerts.contact; // chose which audio alert yo
 
 // ------------------------------------------- You do not need to edit anything past here ----------------------
 
-// state to timer enum
 
 // Script variables
 var timer; // current timer as HHMMSS

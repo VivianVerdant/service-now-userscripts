@@ -105,7 +105,7 @@ async function on_timer_update() {
 			(timer >= alert_time_wrapup_research) ? blink_timer(true) : blink_timer(false);
 			break;
 		case "After Call Work":
-			(timer >= alert_time_aftercall) ? blink_timer(true) : blink_timer(false);
+			(timer <= alert_time_aftercall) ? blink_timer(true) : blink_timer(false);
 			break;
 		case undefined: // Empty
 			break;

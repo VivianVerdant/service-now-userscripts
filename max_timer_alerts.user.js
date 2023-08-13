@@ -15,7 +15,7 @@
 
 /*
     Changelog
-	v0.4 - set up enums instead of consts for state times, added state based audio alert option
+    v0.4 - set up enums instead of consts for state times, added state based audio alert option
     v0.3 - cleaned up code
     v0.2 - bugfixes
     v0.1 - Initial release

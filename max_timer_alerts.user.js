@@ -158,7 +158,7 @@ async function main() {
 			timer = this.timerSpan.innerText.replaceAll(":","");
 			agent_state = this.currentState.agentState;
 			agent_out_state = this.currentState.agentOutstate;
-			console.warn(agent_state, agent_out_state, timer);
+			//console.warn(agent_state, agent_out_state, timer);
 			on_timer_update();
 		}
 	};

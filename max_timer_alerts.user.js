@@ -3,7 +3,7 @@
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
-// @version      0.2
+// @version      0.3
 // @description  Set blinking backround and audio alert for timer over/under certain values
 // @author       Vivian
 // @match        https://max.niceincontact.com/*
@@ -13,25 +13,52 @@
 // @grant        GM_getResourceText
 // ==/UserScript==
 
-/* globals find_or_observe_for_element */
+/*
+    Changelog
+	v0.4 - set up enums instead of consts for state times, added state based audio alert option
+    v0.3 - cleaned up code
+    v0.2 - bugfixes
+    v0.1 - Initial release
+*/
+
+// ------------------------------------------- set your desired values here ----------------------------------
 
 // format your desired time to be HHMMSS
+const state_times = {
+	"Assisting Analyst": 999999,
+	"Board Mgmt": 999999,
+	"Break": 940,
+	"Lunch": 5940,
+	"Meeting": 999999,
+	"Outbound": 999999,
+	"Priority 1": 999999,
+	"Project": 999999,
+	"Remote Assistance": 999999,
+	"Training": 999999,
+	"Unscheduled": 30,
+	"Wrap-up Research": 500,
+	"After Call Work": 10,
+} // "After Call Work" timer counts down instead of up
 
-const alert_time_assisting_analyst = 999999;
-const alert_time_board_mgmt = 999999;
-const alert_time_break = 940;
-const alert_time_lunch = 5940;
-const alert_time_meeting = 999999;
-const alert_time_outbound = 999999;
-const alert_time_priority1 = 999999;
-const alert_time_project = 999999;
-const alert_time_remote_assistance = 999999;
-const alert_time_training = 999999;
-const alert_time_unscheduled = 500;
-const alert_time_wrapup_research = 500;
-const alert_time_aftercall = 10; // this timer counts down instead of up
+// do you want an audio alert to sound when the timer exceeds the value set above?
+const state_audio_alert = {
+	"Assisting Analyst": false,
+	"Board Mgmt": false,
+	"Break": true,
+	"Lunch": true,
+	"Meeting": false,
+	"Outbound": false,
+	"Priority 1": false,
+	"Project": false,
+	"Remote Assistance": false,
+	"Training": false,
+	"Unscheduled": true,
+	"Wrap-up Research": true,
+	"After Call Work": false,
+}
 
-var audio_alert = {
+// list of available, built-in audio alerts
+const audio_alerts = {
 	none: null,
 	contact: '/styles/audio/new-contact.wav',
 	ring1: '/styles/audio/ring1.wav',
@@ -39,25 +66,40 @@ var audio_alert = {
 	ring3: '/styles/audio/ring3.wav'
 }
 
-const selected_audio_alert = audio_alert.contact;
+const selected_audio_alert = audio_alerts.contact; // chose which audio alert you want, or none
 
+
+// ------------------------------------------- You do not need to edit anything past here ----------------------
+
+// state to timer enum
+
+// Script variables
 var timer; // current timer as HHMMSS
 var agent_state; // available or unavialable
 var agent_out_state; // reason for being unavailable, if not available
+var last_timer_state; // previous tick's agent out state
+
+// Element references
 var state_element; // main HTML div element for the state
-var last_timer_state;
-var utilities;
+
+// Module references
+var utilities; // reference to loaded utilities module
 
 async function blink_timer(state) {
+	// If state hasn't changed, do nothing
 	if (state === last_timer_state) {
 		return
 	}
+
+	// if new state is true, add the blinkey class to the state element and play a notification sound, else clear blinkey class
 	if (state) {
 		state_element.classList.add("blinkey");
-		utilities.playAudioNotification(selected_audio_alert); // new-contact.wav, Ring1.wav, Ring2.wav, Ring3.wav
+		(state_audio_alert[agent_out_state]) ? utilities.playAudioNotification(selected_audio_alert) : null;
 	} else {
 		state_element.classList.remove("blinkey");
 	}
+
+	// update last tick's state
 	last_timer_state = state;
 }
 
@@ -67,50 +109,11 @@ async function on_timer_update() {
 		return
 	}
 
-	switch(agent_out_state) {
-		case "Assisting Analyst":
-			(timer >= alert_time_assisting_analyst) ? blink_timer(true) : blink_timer(false);
-			break;
-		case "Board Mgmt":
-			(timer >= alert_time_board_mgmt) ? blink_timer(true) : blink_timer(false);
-			break;
-		case "Break":
-			(timer >= alert_time_break) ? blink_timer(true) : blink_timer(false);
-			break;
-		case "Lunch":
-			(timer >= alert_time_lunch) ? blink_timer(true) : blink_timer(false);
-			break;
-		case "Meeting":
-			(timer >= alert_time_meeting) ? blink_timer(true) : blink_timer(false);
-			break;
-		case "Outbound":
-			(timer >= alert_time_outbound) ? blink_timer(true) : blink_timer(false);
-			break;
-		case "Priority 1":
-			(timer >= alert_time_priority1) ? blink_timer(true) : blink_timer(false);
-			break;
-		case "Project":
-			(timer >= alert_time_project) ? blink_timer(true) : blink_timer(false);
-			break;
-		case "Remote Assistance":
-			(timer >= alert_time_remote_assistance) ? blink_timer(true) : blink_timer(false);
-			break;
-		case "Training":
-			(timer >= alert_time_training) ? blink_timer(true) : blink_timer(false);
-			break;
-		case "Unscheduled":
-			(timer >= alert_time_unscheduled) ? blink_timer(true) : blink_timer(false);
-			break;
-		case "Wrap-up Research":
-			(timer >= alert_time_wrapup_research) ? blink_timer(true) : blink_timer(false);
-			break;
-		case "After Call Work":
-			(timer <= alert_time_aftercall) ? blink_timer(true) : blink_timer(false);
-			break;
-		case undefined: // Empty
-			break;
+	if (agent_out_state === "After Call Work") {
+		(timer <= state_times[agent_out_state]) ? blink_timer(true) : blink_timer(false);
+	} else {
+		(timer >= state_times[agent_out_state]) ? blink_timer(true) : blink_timer(false);
 	}
-
 	//console.log(agent_state, agent_out_state, timer, last_timer_state);
 }
 

@@ -49,7 +49,7 @@ var last_timer_state;
 var utilities;
 
 async function blink_timer(state) {
-	if (state == last_timer_state) {
+	if (state === last_timer_state) {
 		return
 	}
 	if (state) {

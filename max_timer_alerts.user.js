@@ -3,7 +3,7 @@
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
-// @version      0.3
+// @version      0.4
 // @description  Set blinking backround and audio alert for timer over/under certain values
 // @author       Vivian
 // @match        https://max.niceincontact.com/*

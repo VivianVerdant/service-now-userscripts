@@ -3,7 +3,7 @@
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
-// @version      0.1
+// @version      0.2
 // @description  Set blinking backround and audio alert for timer over/under certain values
 // @author       Vivian
 // @match        https://max.niceincontact.com/*
@@ -110,6 +110,8 @@ async function on_timer_update() {
 		case undefined: // Empty
 			break;
 	}
+
+	//console.log(agent_state, agent_out_state, timer, last_timer_state);
 }
 
 
@@ -124,24 +126,65 @@ async function main() {
     GM_addStyle(GM_getResourceText("better_max_css"));
 
 	// Get incontact app base
-	let app = null;
+	let app = undefined;
     let i = 0;
-    while (i < 10 && app == null){
+    while (i < 10 && app === undefined){
 		app = document.defaultView.inContactAppBase;
         await sleep(1000);
 		console.warn(app);
 		i++;
     }
 
-	utilities = app.api.ModuleManager.instances["icappbase-0"].util;
+	// Get module manager
+	let moduleManager = undefined;
+    i = 0;
+    while (i < 10 && moduleManager === undefined){
+		moduleManager = app.api.ModuleManager;
+        await sleep(1000);
+		console.warn(moduleManager);
+		i++;
+    }
 
-	const moduleManager = app.api.ModuleManager;
-    moduleManager.stop("resizemanager-0");
+	// get utilities module
+	utilities = undefined;
+    i = 0;
+    while (i < 10 && utilities === undefined){
+		utilities = app.api.ModuleManager.instances["icappbase-0"].util;
+        await sleep(1000);
+		console.warn(utilities);
+		i++;
+    }
 
-	const agent_state_ui = app.api.ModuleManager.instances["agentstateui-0"];
+	// get resize module
+	let resize_manager = undefined;
+    i = 0;
+    while (i < 10 && moduleManager === undefined){
+		resize_manager = app.api.ModuleManager.instances["resizemanager-0"];
+        await sleep(1000);
+		console.warn(resize_manager);
+		i++;
+    }
+    moduleManager.stop("resizemanager-0"); // stop the resize manager
 
+	// get agent state ui module
+	let agent_state_ui = undefined;
+    i = 0;
+    while (i < 10 && agent_state_ui === undefined){
+		agent_state_ui = app.api.ModuleManager.instances["agentstateui-0"];
+        await sleep(1000);
+		console.warn(agent_state_ui);
+		i++;
+    }
 	state_element = agent_state_ui.stateBar;
 
+	// get prototype upddateStateTime function
+    i = 0;
+    while (i < 10 && agent_state_ui.updateStateTime === undefined){
+        await sleep(1000);
+		console.warn(agent_state_ui.updateStateTime);
+		i++;
+    }
+	// replace upddateStateTime function in active instance
 	agent_state_ui.updateStateTime = function () {
 		var startDate = null;
 
@@ -158,7 +201,6 @@ async function main() {
 			timer = this.timerSpan.innerText.replaceAll(":","");
 			agent_state = this.currentState.agentState;
 			agent_out_state = this.currentState.agentOutstate;
-			//console.warn(agent_state, agent_out_state, timer);
 			on_timer_update();
 		}
 	};

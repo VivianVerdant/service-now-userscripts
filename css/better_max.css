@@ -1,0 +1,149 @@
+/* CSS */
+/*
+#uimanager_container .ui-manager .glance {
+	width: 345px !important;
+}*/
+
+.glance-workspace {
+	background: #2861a8;
+}
+
+@keyframes blink{
+  0% {
+    background-color: #e85d46;
+  }
+  100% {
+    background-color: black;
+  }*/
+  100% {
+    background-color: #e85d46;
+  }
+}
+
+.blinkey {
+	animation: blink 1s infinite;
+}
+
+/*
+div.agent-state-ui[data-outstate="Lunch"],
+div.agentstateui[data-outstate="Lunch"] {
+    /*animation: blink 1s infinite;
+    min-height: 82px;*/
+}
+/*
+div.agentstateui.agent-state-ui[data-outstate="Lunch"] > div.state-bar > span.timer {
+    /*font-size: 80px;
+    font-weight: bold;
+    letter-spacing: 2px;*/
+}
+
+/*
+.advanced-address-book-ui .external-template[data-call-state="chooseSkill"] .skill-list-container,
+.skill-list-container .ui-front {
+	display: block !important;
+}
+
+.advanced-address-book-ui .external-template .entry .call {
+    display: block !important;
+    margin-right: 5px;
+	height: 25px;
+    line-height: 25px;
+    width: 90px;
+    color: #fff;
+    background-color: #333;
+    border-radius: 2px;
+    font-family: "robotomedium","Helvetica Neue","Helvetica",Helvetica,Arial,sans-serif;
+    font-size: 10px;
+    font-weight: normal;
+    margin: 0;
+    outline: none;
+    padding: 0;
+}
+
+div.entry.left > div.call-controls {
+	display: inline-flex !important;
+	flex-flow: column;
+}
+*/
+
+.skill-dots {
+	vertical-align: top;
+}
+
+.glance-pin {
+	display: none;
+}
+
+.external-template {
+	display: flow-root !important;
+	line-height: 1rem !important;
+	height: 126px !important;
+}
+
+#contactContainer {
+	display: flex !important;
+}
+
+div#uimanager_container div.ui-manager div.glance {
+    left: 0;
+    width: 100%;
+    -webkit-transition: height .33333s ease;
+    -moz-transition: height .33333s ease;
+    -ms-transition: height .33333s ease;
+    -o-transition: height .33333s ease;
+    transition: height .33333s ease;
+    bottom: 0;
+    top: unset;
+}
+
+div.agent-state-ui ul.state-list li {
+    padding: 1px !important;
+}
+
+
+
+div#uimanager_container div.ui-manager div.glance.glance-preview:not([data-pinned="true"]) #agentStateSection {
+    left: 0;
+}
+
+div#uimanager_container div.ui-manager div.glance.glance-preview:not([data-pinned="true"]) #agentLegSection {
+    left: 0;
+}
+
+div#uimanager_container div.ui-manager div.glance.glance-preview:not([data-pinned="true"]) div.glance-foot {
+    margin-left: 0;
+}
+
+div#uimanager_container div.ui-manager div.glance.glance-preview:not([data-pinned="true"]) {
+    height: 202px;
+    left: 0;
+}
+
+div.agent-state-ui div.state-bar span.timer {
+    font-size: 40px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+button.call {
+    display: block;
+}
+
+button.call {
+    display: block;
+}
+
+div.advanced-address-book-ui li.agent-template div.entry div.call-controls button.call {
+    /* display: block; */
+}
+
+div#uimanager_container div.glance-only+.ui-frame,
+div#uimanager_container div.ui-frame {
+    margin-left: 0px !important;
+    padding-bottom: 205px;
+}
+
+.acw-ui[data-is-child-element="true"]:not([data-media-type="WorkItem"]) {
+    bottom: 210px;
+    left: 10px;
+}

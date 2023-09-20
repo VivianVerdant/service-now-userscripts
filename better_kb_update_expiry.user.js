@@ -54,9 +54,9 @@ function main_action() {
     // you can just ignore this part
     const assigned_to = document.querySelector("[id='sys_display.kb_feedback_task.assigned_to']");
     assigned_to.focus()
-    setTimeout(() => {assigned_to.blur()}, 500);
+    setTimeout(() => {assigned_to.blur()}, 750);
 
-    setTimeout(() => {g_form.save();}, 1000);
+    setTimeout(() => {g_form.save();}, 2000);
 }
 
 HTMLElement.prototype.addNode = function (type, id, classes) {

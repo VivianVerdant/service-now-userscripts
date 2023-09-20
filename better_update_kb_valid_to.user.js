@@ -33,7 +33,7 @@ HTMLElement.prototype.addNode = function (type, id, classes) {
 };
 
 function escalation_action() {
-    const date = new Date(new Date().valueOf()+15770000000); // milliseconds in 6 months
+    const date = new Date(new Date().valueOf()+31540000000); // milliseconds in 6 months
 
     const date_string = String(date.getFullYear()) + "-" + String(date.getMonth()+1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
 

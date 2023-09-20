@@ -3,7 +3,7 @@
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
-// @version      0.2
+// @version      0.3
 // @description  Suite of tools and improvements for Service-Now
 // @author       Vivian
 // @run-at       document-start
@@ -72,7 +72,7 @@ HTMLElement.prototype.addNode = function (type, id, classes) {
 };
 
 let run_once = false;
-async function main() {
+async function escalation_main() {
 	'use strict';
 
 	if (run_once){
@@ -80,6 +80,16 @@ async function main() {
 	}
 
 	run_once = true
+
+    find_or_observe_for_element("[id='kb_feedback_task.feedback.article_label']", (node) => {
+		console.log(node);
+		const btn = node.parentNode.addNode("a", "custom_btn", ["icon-info"]); //btn btn-default btn-ref icon icon-info
+		btn.setAttribute("style", "float: right;");
+        const sys_id = document.querySelector("[id='kb_feedback_task.feedback.article']").value;
+        btn.href = "https://virteva.service-now.com/kb_knowledge.do?sys_id=" + sys_id + "&sysparm_view=";
+		btn.innerHTML = "Open";
+        btn.target = "_blank";
+	}, undefined, true);
 
 	find_or_observe_for_element(".navbar-right", (node) => {
 		console.log(node);
@@ -91,4 +101,4 @@ async function main() {
 	}, undefined, true);
 }
 
-main();
+escalation_main();

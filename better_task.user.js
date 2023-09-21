@@ -7,6 +7,7 @@
 // @description  try to take over the world!
 // @author       Vivian
 // @match        https://*.service-now.com/sc_task.do*
+// @run-at       document-start
 // @grant        GM_addStyle
 // ==/UserScript==
 

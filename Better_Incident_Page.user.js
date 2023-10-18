@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      1.8
+// @version      1.9
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -19,11 +19,10 @@
 // @grant        GM_getValue
 // @run-at       document-start
 // ==/UserScript==
-/* globals find_or_observe_for_element createBetterSettingsMenu AJAXCompleter getColorFromSeed better_settings_menu */
+/* globals find_or_observe_for_element createBetterSettingsMenu AJAXCompleter getColorFromSeed better_settings_menu GlideRecord g_form */
 
 
 /* Changelog
-v1.8 - Added KB search auto open, cleaned up CSS
 v1.7 - Initial Better Settings implementation
 v1.5 - Fixes for Utah release of SN
 v1.3	- So many bug fixes
@@ -275,6 +274,20 @@ async function new_main(element) {
 			document.querySelector("#submit_button").click();
 		}
 	};
+
+	if (settings.custom_notes) {
+        find_or_observe_for_element("[id='ac.status']", (node) => {
+            console.log('insert notes after:-------------------------------------------');
+            console.log(node);
+			const observer = new MutationObserver((mutations_list) => {
+				create_notes(node);
+			});
+			observer.observe(document, { subtree: true, childList: true });
+			/*
+		node.addEventListener("", async (e) => {
+		});*/
+        });
+    }
 }
 
 async function edit_main(element) {
@@ -420,13 +433,44 @@ async function edit_main(element) {
         });
     }
 
-	if (settings.auto_open_kb_search) {
-		document.onreadystatechange = function () {
-			if (document.readyState == "complete") {
+
+	document.onreadystatechange = function () {
+		if (document.readyState == "complete") {
+			if (settings.auto_open_kb_search) {
 				document.querySelector("[id='cxs_maximize_results']").click();
 			}
+
+			/* kb name testing */
+
+			const get_record = (id) => {
+				let test = new GlideRecord('kb_knowledge');
+				test.get(id);
+				console.log("return: ", test);
+				return test
+			}
+
+			const updater = (field_name, original_value, new_value) => {
+				if (field_name === "incident.u_kb_article") {
+					console.log('The field ('+ field_name + ') has a new value of: ' + new_value);
+					g_form.hideFieldMsg(field_name, true);
+					let kb = get_record(new_value);
+					console.log(kb);
+					g_form.showFieldMsg(field_name, kb.short_description, "info")
+				}
+			}
+
+			//g_form.showFieldMsg("u_kb_article", "Foobar", "info");
+			let init_kb = g_form.getValue("incident.u_kb_article");
+			console.log(init_kb);
+			let init_name = get_record(init_kb).short_description;
+			g_form.showFieldMsg("incident.u_kb_article", init_name, "info");
+
+			g_form.onUserChangeValue(updater);
+
+			/* kb name testing */
 		}
 	}
+
 
 	document.onkeydown = function(e) {
 		if(e.key === 's' && e.ctrlKey){
@@ -437,6 +481,16 @@ async function edit_main(element) {
 			document.querySelector("#resolve_incident").click();
         }
 	};
+
+    find_or_observe_for_element("[id='sys_display.incident.u_kb_article']", (node) => {
+		console.log(node);
+		const btn = node.parentNode.addNode("a", "custom_btn", ["icon-info"]); //btn btn-default btn-ref icon icon-info
+		btn.setAttribute("style", "float: right;");
+        const sys_id = node.value.split(' ')[0];
+        btn.href = "https://virteva.service-now.com/kb_view.do?sysparm_article=" + sys_id;
+		btn.innerHTML = "Open";
+        btn.target = "_blank";
+	}, undefined, true);
 }
 
 console.warn("Better Incidents Start");

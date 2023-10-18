@@ -25,6 +25,10 @@
 	text-shadow: 0 0 1px black;
 }
 
+[id="vrt_show_related_task_records_link_list"] {
+	flex-flow: nowrap !important;
+}
+
 /* Custom Company Notes */
 #custom_notes {
 	display: inline-flex;
@@ -416,10 +420,10 @@ div[id="cxs_related_search_container"] {
     margin-left: 38%;
 	padding-left: unset;
 }
-
+/*
 div[aria-label="Company form section"] > div > div {
     background: pink;
-}
+}*/
 
 textarea[id='sys_readonly.core_company.u_service_desk_contact_information'] {
     height: 200px !important;

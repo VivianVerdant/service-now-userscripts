@@ -137,7 +137,7 @@ async function update_inbox(num) {
 		utilities.playAudioNotification(selected_audio_alert);
 	}
 	inbox_count = num;
-	document.querySelector(".digital-workspace-container").add("inbox-alert");
+	document.querySelector(".digital-workspace-container").classList.add("inbox-alert");
 }
 
 async function main() {
@@ -241,7 +241,7 @@ async function main() {
 				if (mutation.addedNodes[0].textContent.startsWith("0")) {
 					// We have no inbox count
 					// Clear all inbox alerts
-					document.querySelector(".digital-workspace-container").remove("inbox-alert");
+					document.querySelector(".digital-workspace-container").classList.remove("inbox-alert");
 				} else {
 					// We have inbox count
 					update_inbox(mutation.addedNodes[0].textContent.split(" ")[0]);

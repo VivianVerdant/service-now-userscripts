@@ -13,3 +13,23 @@
 .blinkey {
 	animation: blink 1s infinite;
 }
+
+.selectmenu-container .selectmenu-menu-list {
+    max-height: 370px !important;
+}
+
+@keyframes inboxanim{
+  0% {
+    background-color: #2b3139;
+  }
+  50% {
+    background-color: mediumseagreen;
+  }
+  100% {
+    background-color: #2b3139;
+  }
+}
+
+.inbox-alert {
+	animation: inboxanim 3s infinite;
+}

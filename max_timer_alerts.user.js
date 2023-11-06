@@ -3,7 +3,7 @@
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
-// @version      0.4
+// @version      0.5
 // @description  Set blinking backround and audio alert for timer over/under certain values
 // @author       Vivian
 // @match        https://max.niceincontact.com/*
@@ -15,6 +15,7 @@
 
 /*
     Changelog
+	v0.5 - added visual and audio notifications for when an inbox item (support chat) comes in
     v0.4 - set up enums instead of consts for state times, added state based audio alert option
     v0.3 - cleaned up code
     v0.2 - bugfixes
@@ -37,6 +38,7 @@ const state_times = {
 	"Training": 999999,
 	"Unscheduled": 30,
 	"Wrap-up Research": 500,
+	"WORKING": 999999,
 	"After Call Work": 10,
 } // "After Call Work" timer counts down instead of up
 
@@ -54,6 +56,7 @@ const state_audio_alert = {
 	"Training": false,
 	"Unscheduled": true,
 	"Wrap-up Research": true,
+	"WORKING": false,
 	"After Call Work": false,
 }
 
@@ -74,9 +77,12 @@ const selected_audio_alert = audio_alerts.contact; // chose which audio alert yo
 
 // Script variables
 var timer; // current timer as HHMMSS
-var agent_state; // available or unavialable
+var agent_state; // available, unavialable, or working
 var agent_out_state; // reason for being unavailable, if not available
 var last_timer_state; // previous tick's agent out state
+
+var inbox_count = 0;
+var inbox_node;
 
 // Element references
 var state_element; // main HTML div element for the state
@@ -108,10 +114,15 @@ async function on_timer_update() {
 		return
 	}
 
-	if (agent_out_state === "After Call Work") {
+	if (agent_state === "WORKING") {
 		(timer <= state_times[agent_out_state]) ? blink_timer(true) : blink_timer(false);
+		return
+	}
+
+	if (agent_out_state === "After Call Work") {
+		blink_timer(timer <= state_times[agent_out_state]);
 	} else {
-		(timer >= state_times[agent_out_state]) ? blink_timer(true) : blink_timer(false);
+		blink_timer(timer >= state_times[agent_out_state]);
 	}
 	//console.log(agent_state, agent_out_state, timer, last_timer_state);
 }
@@ -119,6 +130,14 @@ async function on_timer_update() {
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function update_inbox(num) {
+	if (num > inbox_count) {
+		utilities.playAudioNotification(selected_audio_alert);
+	}
+	inbox_count = num;
+	document.querySelector(".digital-workspace-container").add("inbox-alert");
 }
 
 async function main() {
@@ -206,6 +225,36 @@ async function main() {
 			on_timer_update();
 		}
 	};
+
+
+	// Select the node that will be observed for mutations
+	inbox_node = document.querySelector(".inbox-counter");
+
+	// Options for the observer (which mutations to observe)
+	const config = { attributes: true, childList: true, subtree: true };
+
+	// Callback function to execute when mutations are observed
+	const callback = (mutationList, observer) => {
+		for (const mutation of mutationList) {
+			//console.log(mutation);
+			try {
+				if (mutation.addedNodes[0].textContent.startsWith("0")) {
+					// We have no inbox count
+					// Clear all inbox alerts
+					document.querySelector(".digital-workspace-container").remove("inbox-alert");
+				} else {
+					// We have inbox count
+					update_inbox(mutation.addedNodes[0].textContent.split(" ")[0]);
+				}
+			} catch {}
+		}
+	};
+
+	// Create an observer instance linked to the callback function
+	const observer = new MutationObserver(callback);
+
+	// Start observing the target node for configured mutations
+	observer.observe(inbox_node, config);
 }
 
 main();

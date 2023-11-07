@@ -3,7 +3,7 @@
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
-// @version      0.5
+// @version      0.6
 // @description  Set blinking backround and audio alert for timer over/under certain values
 // @author       Vivian
 // @match        https://max.niceincontact.com/*
@@ -15,7 +15,8 @@
 
 /*
     Changelog
-	v0.5 - added visual and audio notifications for when an inbox item (support chat) comes in
+    v0.6 - Fixed bugs with previous new code
+    v0.5 - added visual and audio notifications for when an inbox item (support chat) comes in
     v0.4 - set up enums instead of consts for state times, added state based audio alert option
     v0.3 - cleaned up code
     v0.2 - bugfixes
@@ -242,6 +243,7 @@ async function main() {
 					// We have no inbox count
 					// Clear all inbox alerts
 					document.querySelector(".digital-workspace-container").classList.remove("inbox-alert");
+					inbox_count = 0;
 				} else {
 					// We have inbox count
 					update_inbox(mutation.addedNodes[0].textContent.split(" ")[0]);

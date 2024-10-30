@@ -1,15 +1,16 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      1.9
+// @version      2.0
 // @description  Description
 // @author       Vivian
-// @match        https://*.service-now.com/*
+// @match        https://virteva.service-now.com/*
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/issues
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/find_or_observe_for_element.js
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/pseudorandom.js
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/better_settings_menu.js
+// @require      https://github.com/VivianVerdant/chronomouse/raw/refs/heads/master/chronomouse.2.4.0.min.js
 // @resource     settings_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_settings_menu.css
 // @resource     better_incident_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_incident.css
 // @resource     better_new_incident_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_new_incident.css
@@ -19,10 +20,11 @@
 // @grant        GM_getValue
 // @run-at       document-start
 // ==/UserScript==
-/* globals find_or_observe_for_element createBetterSettingsMenu AJAXCompleter getColorFromSeed better_settings_menu GlideRecord g_form */
+/* globals find_or_observe_for_element createBetterSettingsMenu AJAXCompleter getColorFromSeed better_settings_menu GlideRecord g_form getLocalInfo */
 
 
 /* Changelog
+v2.0 - Added local time to phone field based off areacode or country code
 v1.7 - Initial Better Settings implementation
 v1.5 - Fixes for Utah release of SN
 v1.3	- So many bug fixes
@@ -214,6 +216,49 @@ function create_notes(node) {
 	};
 
 	//icon icon-locked
+}
+
+async function create_localtime(node) {
+    console.warn("foobar time");
+    console.warn(node);
+    let addons_node = node.querySelector(".form-field-addons");
+    // class="btn btn-default btn-ref reference_decoration icon-alert-triangle"
+    let local_time_button = addons_node.addNode("a", "local_time_button", ["btn", "btn-default", "reference_decoration"]);
+
+    let input_field_node = node.querySelector("[id='incident.u_phone']") || node.querySelector("[id='incident.u_contact_phone']");
+    console.warn(input_field_node);
+    input_field_node.addEventListener("blur", phone_string_input);
+    local_time_button.addEventListener("click", phone_string_input);
+
+    let teststr = input_field_node.value;
+    //teststr = parse_phone_string(teststr) || "NA";
+
+    let time_string = getLocalInfo(teststr,{military: false}).time.display || "NA";
+
+    local_time_button.innerHTML = time_string;
+}
+
+async function phone_string_input(event) {
+    let button = document.querySelector("#local_time_button");
+    let input = document.querySelector("[id='incident.u_phone']") || document.querySelector("[id='incident.u_contact_phone']");
+    let str = input.value;
+    //str = parse_phone_string(input.value) || "NA";
+    let time_string = getLocalInfo(str,{military: false}).time.display || "NA";
+
+    button.innerHTML = time_string;
+}
+
+function parse_phone_string(str) {
+    let country_code_regex = /(\+\d{1,3})/g;
+    let usarea_code_regex = /(\d{3})/g;
+    let result = null;
+    result = country_code_regex.exec(str);
+    result = ( result ? result[0] : null );
+    if (result) {return result}
+
+    result = usarea_code_regex.exec(str);
+    result = ( result ? result[0] : null );
+    return result;
 }
 
 function kbToClipboard(e){
@@ -433,6 +478,27 @@ async function edit_main(element) {
         });
     }
 
+    if (settings.custom_notes) {
+        find_or_observe_for_element("[id='element.incident.u_phone']", (node) => {
+            console.log('insert local time:-------------------------------------------');
+            console.log(node);
+            create_localtime(node);
+            /*
+		node.addEventListener("", async (e) => {
+		});*/
+        });
+    }
+
+    if (settings.custom_notes) {
+        find_or_observe_for_element("[id='element.incident.u_contact_phone']", (node) => {
+            console.log('insert local time:-------------------------------------------');
+            console.log(node);
+            create_localtime(node);
+            /*
+		node.addEventListener("", async (e) => {
+		});*/
+        });
+    }
 
 	document.onreadystatechange = function () {
 		if (document.readyState == "complete") {
@@ -491,6 +557,25 @@ async function edit_main(element) {
 		btn.innerHTML = "Open";
         btn.target = "_blank";
 	}, undefined, true);
+
+    /*
+    find_or_observe_for_element("li.h-card.h-card_md.h-card_comments", (node) => {
+        const is_system_msg = node.querySelector("div.sn-card-component_accent-bar:not(.sn-card-component_accent-bar_dark)");
+		if (is_system_msg) {
+            console.warn(node);
+            const created_by = node.querySelector(".sn-card-component-createdby");
+            if (created_by) {
+                console.warn(created_by.innerText);
+            }
+            for (const n in node.querySelectorAll("*")) {
+                console.warn(n.classList || "");
+                if (n.classList && n.classList.contains("sn-widget-list-table-cell")) {
+                    console.warn(n.innerText);
+                }
+            }
+        }
+	}, undefined, false);
+    */
 }
 
 console.warn("Better Incidents Start");

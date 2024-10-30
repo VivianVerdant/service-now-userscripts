@@ -1,3 +1,7 @@
+div[id="element.incident.u_device_asset"]::after {
+    content: none !important;
+}
+
 :not(pre):not(code):not(textarea):not(tt):not(kbd):not(samp):not(var) {
     font-family: monospace !important;
     letter-spacing: -.1rem;

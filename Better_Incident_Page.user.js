@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      2.0
+// @version      2.1
 // @description  Description
 // @author       Vivian
 // @match        https://virteva.service-now.com/*
@@ -24,6 +24,7 @@
 
 
 /* Changelog
+v2.1 - Added Company Domain and Short description to the Permalink copy button
 v2.0 - Added local time to phone field based off areacode or country code
 v1.7 - Initial Better Settings implementation
 v1.5 - Fixes for Utah release of SN
@@ -78,6 +79,8 @@ for (const [key, value] of Object.entries(default_settings)) {
 var location = window.location.href;
 var run_once = false;
 var better_options_btn;
+
+var company_domain;
 
 HTMLElement.prototype.addNode = function (type, id, classes) {
 	const new_node = document.createElement(type);
@@ -263,14 +266,22 @@ function parse_phone_string(str) {
 
 function kbToClipboard(e){
 	const INC = document.getElementById('incident.number').value;
+    console.log("domain: ", company_domain);
 	if (e.target.classList.contains("form_action_button")) {
 		let permurl = window.location;
 		permurl = permurl.protocol + "//" + permurl.hostname + "/incident.do?sys_id=" + new URLSearchParams(permurl.search).get("sys_id");
+        let dom = document.createElement("div");
+        dom.innerHTML = company_domain + " ";
 		let link = document.createElement("a");
 		link.innerHTML = INC;
 		link.href = permurl;
 		let d = document.createElement("div");
+        //d.appendChild(dom);
+        d.innerText = company_domain + " ";
 		d.appendChild(link);
+        let desc = document.createElement("span");
+        desc.innerText = " " + document.getElementById("incident.short_description").value;
+        d.appendChild(desc);
 		d.setAttribute("style", "display: none;");
 		e.target.appendChild(d);
 		function copyToClip(str) {
@@ -534,6 +545,12 @@ async function edit_main(element) {
 			g_form.onUserChangeValue(updater);
 
 			/* kb name testing */
+
+            let comp = new GlideRecord('core_company');
+            comp.get(g_form.getValue("incident.company"));
+            company_domain = comp.u_id;
+            console.log("domain: ", company_domain);
+
 		}
 	}
 

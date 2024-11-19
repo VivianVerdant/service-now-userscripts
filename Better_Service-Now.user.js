@@ -3,7 +3,7 @@
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
-// @version      0.4
+// @version      0.5
 // @description  Suite of tools and improvements for Service-Now
 // @author       Vivian
 // @run-at       document-start
@@ -13,6 +13,7 @@
 // @resource     better_menu_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_settings_menu.css
 // @resource     better_kb_search_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_kb_search.css
 // @resource     better_kb_view_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_kb_view.css
+// @resource     better_kb_edit_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_kb_edit.css
 // @grant        GM_addStyle
 // @grant        GM_getResourceText
 // @grant        GM_setValue
@@ -304,8 +305,8 @@ async function search_main() {
 		node.addEventListener('click', (e) => {
             console.log('company:-------------------------------------------');
             console.log(node);
-			const target = document.querySelector(".knowledge-articles");
-			target.scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
+			//const target = document.querySelector(".knowledge-articles");
+			//target.scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
             if (node.innerText != company_name) {
                 console.log(node.innerText);
                 save_note(company_name);
@@ -315,7 +316,8 @@ async function search_main() {
 		});
 	}, undefined, false);
 
-	find_or_observe_for_element(".kb-info > div > h4", (node) => {
+/*
+	find_or_observe_for_element(".kb-info > div > h3", (node) => {
 		node.addEventListener('click', (e) => {
 			e.preventDefault();
 			const url = e.target.href;
@@ -324,6 +326,11 @@ async function search_main() {
 			frame.scrollIntoView({behavior: "smooth", block: "nearest", inline: "start"});
 			//console.log(url);
 		});
+	}, undefined, false);
+*/
+
+	find_or_observe_for_element(".kb-info > div > h3 > a", (node) => {
+        node.setAttribute("target", "_blank");
 	}, undefined, false);
 
     /*
@@ -393,7 +400,7 @@ async function view_main() {
 		//console.log(dl_btn);
 		dl_btn.innerHTML = "save doc";
         dl_btn.classList.add("save_doc_btn");
-		dl_btn.onclick = (e) => {Export2Doc(".kb-wrapper.panel-body.kb-desktop", kb_num);};
+		dl_btn.onclick = (e) => {ExportToDoc(".kb-wrapper.panel-body.kb-desktop", kb_num);};
 		node.appendChild(dl_btn);
 	}, undefined, true);
 
@@ -562,6 +569,24 @@ function Export2Doc(element, filename = '') {
 
 }
 
+async function edit_main() {
+    console.warn("edit main");
+    /*
+	find_or_observe_for_element("button.tox-tbtn--disabled", async (node) => {
+        console.warn(node, node["aria-disabled"]);
+        node["aria-disabled"] = "false";
+	}, undefined, false);*/
+
+    document.addEventListener("pointerover", (e) => {
+        if (e.target.classList.contains("tox-tbtn--disabled")) {
+            //console.warn(e.target);
+            e.target.classList.remove("tox-tbtn--disabled");
+            e.target.ariaDisabled = "false";
+        }
+    });
+
+}
+
 // <span class="show-more" ng-show="c.showRange == c.options.min_scroll_count" ng-click="c.showRange = c.items.length" role="button" aria-hidden="false">Show More</span>
 
 const l = new URL(window.location);
@@ -582,6 +607,11 @@ async function main() {
 		const better_kb_view_css = GM_getResourceText("better_kb_view_css");
 		GM_addStyle(better_kb_view_css);
 		view_main();
+	}else if (l.pathname === "/kb_knowledge.do"){
+		// Load custom CSS
+		const better_kb_edit_css = GM_getResourceText("better_kb_edit_css");
+		GM_addStyle(better_kb_edit_css);
+        edit_main();
 	}
 }
 main();

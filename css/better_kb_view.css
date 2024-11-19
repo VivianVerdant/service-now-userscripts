@@ -12,7 +12,7 @@
 
     --accent-color: #66afe9;
     --accent-background: #576f83;
-    --background: #4f4f4f;
+    --background: #716a66;
     --text: white;
     --faded-text: gray;
     --link: lightblue;
@@ -101,7 +101,7 @@ table {
 .btn-default:hover,
 .btn-default,
 .list-group-item,
-body {
+body:has(div) {
     font-size: 1rem !important;
     background: var(--background);
     color: var(--text);
@@ -200,7 +200,7 @@ hr {
     position: relative;
     top: -1rem;
     background: var(--background);
-    display: none;
+    /*display: none;*/
 }
 
 .kb-permalink {

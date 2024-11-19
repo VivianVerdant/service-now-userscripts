@@ -11,17 +11,21 @@ HTML {
 }
 
 :root {
-    font-size: 12pt !important;
+    font-size: 14pt !important;
 	--search-offset: 0px;
 	--blue-highlight: #66afe9;
     --seperater: grey;
 
     --accent-color: #66afe9;
-    --background: #4f4f4f;
+    --background: #716a66;
     --text: white;
     --faded-text: gray;
     --link: lightblue;
     --link-highlight: lightpink;
+    --column-A-width: 16rem;
+    --scrollbar-width: 6px;
+
+    --display-kb-description: none;
 }
 
 /* Firefox */
@@ -32,8 +36,8 @@ HTML {
 
 /* Chrome, Edge and Safari */
 *::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-width);
 }
 *::-webkit-scrollbar-track {
   border-radius: 3px;
@@ -98,7 +102,7 @@ body {
 
 * {
     font-size: 1rem;
-    line-height: 1rem;
+    line-height: 1.2rem;
 }
 
 .search-bar {
@@ -161,7 +165,7 @@ main.body > div > div > sp-page-row:nth-child(2) {
 main.body > div > div > sp-page-row:nth-child(2) > div {
 	display: grid;
 	grid-auto-flow: column;
-	grid-template-columns: 15rem 15rem calc(100% - 15rem) auto;
+	grid-template-columns: var(--column-A-width) calc( 100% - var(--column-A-width) );
 	grid-template-rows: calc(100vh - 6rem - 6px);
 	gap: 0px 0px;
 	grid-template-areas:
@@ -179,11 +183,22 @@ html > body > div > section > main > div > div > sp-page-row:nth-child(2) > div 
     "filter results frame";
 }*/
 
-div.kb-info > div > h4 > a.kb-title {
+.kb-article-summary {
+    margin: 0rem !important;
+}
+
+
+div.kb-info > div > h3 {
+    margin: 0px;
+}
+
+div.kb-info > div > h3 > a.kb-title {
     word-break: break-word;
     font-size: 1rem;
     height: unset;
     display: flex;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
 }
 
 div.kb-info > div > div > div.kb-description.ng-binding {
@@ -224,7 +239,7 @@ html > body > div > section > main > div > div > sp-page-row > div > div:nth-chi
 
 /* kb search results */
 section.page {
-	/*overflow-x: clip;*/
+	overflow-x: clip;
 	max-width: 100%;
 }
 
@@ -274,27 +289,22 @@ div.filter-icon-padding {
 }
 
 .panel.panel-default > div.collapse.in > div {
-    width: calc(15rem - 8px);
+    width: calc( var(--column-A-width) - 8px);
 }
 body > div > section > main > div > div > sp-page-row:nth-child(2) > div > div.sidefacets-no-padding.hide-filters.col-xs-12.col-sm-12.col-md-3.col-lg-3 > span:nth-child(3),
 body > div > section > main > div > div > sp-page-row:nth-child(2) > div > div.sidefacets-no-padding.hide-filters.col-xs-12.col-sm-12.col-md-3.col-lg-3 > span:nth-child(2) {
     display: block !important;
 }
 
+
+
+.container.kb-fixed-facet-column,
 body > div > section > main > div > div > sp-page-row:nth-child(2) > div > div.sidefacets-no-padding.hide-filters.col-xs-12.col-sm-12.col-md-3.col-lg-3 > span:nth-child(2) > div > div > div > div > div.panel-heading,
 body > div > section > main > div > div > sp-page-row:nth-child(2) > div > div.sidefacets-no-padding.hide-filters.col-xs-12.col-sm-12.col-md-3.col-lg-3 > span,
-/*
-.filter-class,
-.sidefacets-no-padding,
-.hidden-sm,
-.hidden-xs,
-*/
 header,
 .lang-icon,
 .kb-breadcrumb,
-.kb-about,/*
-.kb-description,
-.kb-detail,*/
+.kb-about,
 .attach-detail,
 .attach-icon,
 .kb_container-right,
@@ -336,7 +346,7 @@ header,
 
 .facet-detail.facet-scroll.ng-scope > div:nth-child(1) {
 	display: block !important;
-    width: 500px;
+    width: var(--column-A-width);
 	/*max-height: calc(100% - 172px);*/
 	/*overflow-y: auto;*/
 }
@@ -395,7 +405,6 @@ div.collapse {
 .panel-body,
 .pad-bottom,
 div.kb-search-block,
-.kb-article-summary,
 .kb-summary-block,
 .padding-top,
 .container,
@@ -429,6 +438,7 @@ div.kb-search-block,
 	border-bottom: 1px solid #939393;
 }
 
+h3,
 h4,
 h4 a,
 .h4 {
@@ -444,4 +454,8 @@ h4 a,
 	padding-right: 0rem !important;
 	min-height: 0 !important;
 	min-width: 0 !important;
+}
+
+div.kb-info > div > div > div.kb-description.ng-binding {
+    display: var(--display-kb-description);
 }

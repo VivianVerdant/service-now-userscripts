@@ -3,16 +3,16 @@
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
-// @version      0.1
+// @version      0.2
 // @description  Suite of tools and improvements for Service-Now
 // @author       Vivian
-// @run-at       document-start
+// @run-at       document-idle
 // @match        https://*.service-now.com/*
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/find_or_observe_for_element.js
 // @grant        GM_getValue
 // ==/UserScript==
 
-/* globals  find_or_observe_for_element */
+/* globals  find_or_observe_for_element g_form g_user */
 
 let run_once = false;
 
@@ -28,26 +28,12 @@ HTMLElement.prototype.addNode = function (type, id, classes) {
 	return new_node;
 };
 
-function escalation_action() {
-	console.log("foo");
-	const ATM_btn = document.querySelector("[data-original-title='Assign to me']");
-	console.log(ATM_btn);
-	if(ATM_btn){ATM_btn.click();};
+async function escalation_action() {
 
-	const state_listbox = document.querySelector("[id='u_escalations.state']");
-	state_listbox.value = 7;
+    g_form.setValue("assigned_to", g_user.userID, g_user.fullName)
+    g_form.setValue("state", 7)
+    setTimeout(() => {g_form.save();}, 200);
 
-	const me = document.defaultView.NOW.user_display_name;
-	const assigned_to = document.querySelector("[id='sys_display.u_escalations.assigned_to']").value;
-
-	if (assigned_to == me && state_listbox.value ==7){
-		const save_btn = document.querySelector("[id='sysverb_update_and_stay']");
-		save_btn.click();
-	} else {
-		console.log(assigned_to);
-		console.log(me);
-		console.log(state_listbox.value);
-	}
 }
 
 async function escalation_main() {
@@ -59,8 +45,9 @@ async function escalation_main() {
 
 	run_once = true
 
+    console.log("foo");
 	find_or_observe_for_element(".navbar-right", (node) => {
-		console.log(node);
+		//console.warn(node);
 		const btn = node.addNode("button", "custom_btn", ["btn","btn-default"]); //btn btn-default btn-ref icon icon-info
 		btn.setAttribute("style", "float: left;");
 		btn.onclick = escalation_action;
@@ -69,9 +56,9 @@ async function escalation_main() {
 	}, undefined, true);
 }
 
-const l = new URL(window.location);
-console.log("better escalations start");
-if (l.searchParams.get("sysparm_record_target") == "u_escalations") {
+//const l = new URL(window.location);
+console.warn("better escalations start");
+if (g_form.tableName == "u_escalations") {
 	escalation_main();
 }
-console.log("better escalations end");
+console.warn("better escalations end");

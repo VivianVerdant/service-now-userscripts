@@ -3,7 +3,7 @@
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
-// @version      0.1
+// @version      0.2
 // @description  Suite of tools and improvements for Service-Now
 // @author       Vivian
 // @run-at       document-start
@@ -15,78 +15,37 @@
 /* globals  find_or_observe_for_element GlideRecord g_form g_user */
 
 const auto_cleared = () => {
-    // This is the part you'll want to actually edit
-
-    //                                  sys_id of record                    display name of record
-   // g_form.setValue("assignment_group", "d474fa996f07c100ad775ddd5d3ee452", "VRT-Service Desk");
-
-    /*
-        1 = "New"
-        2 = "Active"
-        3 = "Cleared"
-    */
     g_form.setValue("state", 3);
-
-    /*
-        "-- None --"
-        "Auto-Cleared"
-        "Resolved by Parent"
-        "Caused by Change"
-    */
     g_form.setValue("u_close_code", "Auto-Cleared");
+    setTimeout(() => {g_form.save();}, 200);
+}
 
-    // Resolution notes
-    //g_form.setValue("close_notes", "Updated");
-
-    // Need to wait a few ms after setting "assignment group" before you can set "assigned to"
-    /*
-    setTimeout(() => {
-        //                             current user, display name
-        g_form.setValue("assigned_to", g_user.sysID, g_user.fullName)
-    }, 250)*/
-
-
-
-    // focus, then blur the "assigned to" field to workaround it not properly "submitting" the record to the form
-    // you can just ignore this part
-    /*
-    const assigned_to = document.querySelector("[id='sys_display.kb_feedback_task.assigned_to']");
-    assigned_to.focus()
-    setTimeout(() => {assigned_to.blur()}, 500);*/
-
-    setTimeout(() => {g_form.save();}, 1000);
+const informational = () => {
+    g_form.setValue("u_category", "Informational");
+    g_form.setValue("u_subcategory", "Escalation");
+    g_form.setValue("u_trouble_code", "96b743276fdc8a001ef4eef11c3ee4c9", "Informational");
+    setTimeout(() => {g_form.save();}, 200);
 }
 
 const switch_offline = () => {
-    // This is the part you'll want to actually edit
-
-    //                                  sys_id of record                    display name of record
-    g_form.setValue("u_trouble_code", "fd8128276fd31100ad775ddd5d3ee401", "Switch Offline");
-
-
     g_form.setValue("u_category", 3);
     g_form.setValue("u_subcategory", 3);
+    g_form.setValue("u_trouble_code", "fd8128276fd31100ad775ddd5d3ee401", "Switch Offline");
+    setTimeout(() => {g_form.save();}, 200);
+}
 
-    // Resolution notes
-    //g_form.setValue("close_notes", "Updated");
+const vm_offline = () => {
+    g_form.setValue("u_category", "Infrastructure");
+    g_form.setValue("u_subcategory", "Vmware");
+    g_form.setValue("u_trouble_code", "c51164276fd31100ad775ddd5d3ee4b1", "Host Offline");
+    setTimeout(() => {g_form.save();}, 200);
+}
 
-    // Need to wait a few ms after setting "assignment group" before you can set "assigned to"
-    /*
-    setTimeout(() => {
-        //                             current user, display name
-        g_form.setValue("assigned_to", g_user.sysID, g_user.fullName)
-    }, 250)*/
-
-
-
-    // focus, then blur the "assigned to" field to workaround it not properly "submitting" the record to the form
-    // you can just ignore this part
-    /*
-    const assigned_to = document.querySelector("[id='sys_display.kb_feedback_task.assigned_to']");
-    assigned_to.focus()
-    setTimeout(() => {assigned_to.blur()}, 500);*/
-
-    setTimeout(() => {g_form.save();}, 1000);
+const server_perf = () => {
+    g_form.setValue("u_category", "Infrastructure");
+    g_form.setValue("u_subcategory", "Server");
+    g_form.setValue("u_trouble_code", "a90011346f32f9006f41cf30be3ee46d", "Performance");
+    setTimeout(() => {g_form.save();}, 200);
 }
 
 HTMLElement.prototype.addNode = function (type, id, classes) {
@@ -112,7 +71,6 @@ async function add_header_button(name, func) {
 	}, undefined, true);
 }
 
-
 let run_once = false;
 async function escalation_main() {
 	'use strict';
@@ -121,7 +79,10 @@ async function escalation_main() {
 	}
 	run_once = true
 
+    add_header_button("VM Offline", vm_offline);
     add_header_button("Switch Offline", switch_offline);
+    add_header_button("Informational", informational);
+    add_header_button("Server Perf", server_perf);
     add_header_button("Auto-Cleared", auto_cleared);
 
 }

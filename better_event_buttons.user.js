@@ -3,7 +3,7 @@
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
-// @version      0.2
+// @version      0.3
 // @description  Suite of tools and improvements for Service-Now
 // @author       Vivian
 // @run-at       document-start
@@ -28,8 +28,8 @@ const informational = () => {
 }
 
 const switch_offline = () => {
-    g_form.setValue("u_category", 3);
-    g_form.setValue("u_subcategory", 3);
+    g_form.setValue("u_category", "Network");
+    g_form.setValue("u_subcategory", "Switch");
     g_form.setValue("u_trouble_code", "fd8128276fd31100ad775ddd5d3ee401", "Switch Offline");
     setTimeout(() => {g_form.save();}, 200);
 }

@@ -1,6 +1,9 @@
 // ==UserScript==
 // @name         Quick Emails
-// @version      2025-03-02
+// @version      2025-02-03
+// @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
+// @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
+// @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @description  Buttons for quick email closing
 // @author       Ziggy
 // @run-at       document-start

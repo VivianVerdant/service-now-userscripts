@@ -3,7 +3,7 @@
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
-// @version      0.3
+// @version      0.4
 // @description  Suite of tools and improvements for Service-Now
 // @author       Vivian
 // @run-at       document-start
@@ -13,6 +13,8 @@
 // ==/UserScript==
 
 /* globals  find_or_observe_for_element GlideRecord g_form g_user */
+
+const url_regex = /^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)([\/]{0,1}[^?#]*)(\?[^#]*|)(#.*|)$/gmi
 
 const auto_cleared = () => {
     g_form.setValue("state", 3);
@@ -62,7 +64,7 @@ HTMLElement.prototype.addNode = function (type, id, classes) {
 
 async function add_header_button(name, func) {
     	find_or_observe_for_element(".navbar-right", (node) => {
-		console.log(node);
+		//console.log(node);
 		const btn = node.addNode("button", "custom_btn", ["btn","btn-default"]); //btn btn-default btn-ref icon icon-info
 		btn.setAttribute("style", "float: left;");
 		btn.onclick = func;
@@ -84,6 +86,32 @@ async function escalation_main() {
     add_header_button("Informational", informational);
     add_header_button("Server Perf", server_perf);
     add_header_button("Auto-Cleared", auto_cleared);
+/*
+    window.addEventListener('load', function () {
+        const node = document.querySelector("[name='u_event.description']");
+        console.log(node.innerHTML);
+    })
+*/
+
+    find_or_observe_for_element("[name='u_event.description']", (node) => {
+		const text = node.value;
+        console.log(node.value);
+        const results = text.match(url_regex);
+        const addons_node = document.querySelector("[id='element.u_event.description']"); //.querySelector(".form-field-addons");
+        if (results) {
+            for (const url of results) {
+                console.log(url);
+                console.log(addons_node);
+                let link_button = addons_node.addNode("a", "local_time_button", ["btn", "btn-default", "compact", "icon-info"]);
+                link_button.innerHTML = "Link"
+                link_button.style.width = "64px";
+                link_button.href = url;
+                link_button.target = "_blank"
+            }
+        } else {
+            console.log("no urls");
+        }
+	}, undefined, true);
 
 }
 

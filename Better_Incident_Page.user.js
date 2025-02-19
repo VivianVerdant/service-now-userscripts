@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      2.1
+// @version      2.2
 // @description  Description
 // @author       Vivian
-// @match        https://virteva.service-now.com/*
+// @match        https://*.service-now.com/*
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/issues
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/find_or_observe_for_element.js
@@ -20,10 +20,11 @@
 // @grant        GM_getValue
 // @run-at       document-start
 // ==/UserScript==
-/* globals find_or_observe_for_element createBetterSettingsMenu AJAXCompleter getColorFromSeed better_settings_menu GlideRecord g_form getLocalInfo */
+/* globals find_or_observe_for_element createBetterSettingsMenu AJAXCompleter getColorFromSeed better_settings_menu GlideRecord g_form assignToMe getLocalInfo */
 
 
 /* Changelog
+v2.2 - Added function to reopen button that will assign yourself to the ticket if the assignment group is VRT-Service Desk
 v2.1 - Added Company Domain and Short description to the Permalink copy button
 v2.0 - Added local time to phone field based off areacode or country code
 v1.7 - Initial Better Settings implementation
@@ -159,6 +160,14 @@ async function onClickResolveBtn(){
 	var close_field = document.getElementById("incident.close_notes");
 	close_field.innerHTML = close_field.innerHTML.concat(user_name.split(" ")[0] + " ");
 	console.log(close_field);
+}
+
+async function onClickReopenBtn(){
+    const current_assignment_group = g_form.getValue("sys_display.incident.assignment_group");
+    if (current_assignment_group == "VRT-Service Desk") {
+        assignToMe();
+    }
+    g_form.getElement("activity-stream-comments-textarea").focus();
 }
 
 function saveNote() {
@@ -429,6 +438,12 @@ async function edit_main(element) {
 		node.addEventListener("click", onClickResolveBtn);
 	}, undefined, false);
 
+	find_or_observe_for_element("#reopen_incident", (node) => {
+		console.log('#reopen_incident has been added:-------------------------------------------');
+		console.log(node);
+		node.addEventListener("click", onClickReopenBtn);
+	}, undefined, false);
+
 	find_or_observe_for_element("input[id='incident.number']", (node) => {
 		console.log('#resolve_incident has been added:-------------------------------------------');
 		let btn = document.createElement("button");
@@ -575,6 +590,8 @@ async function edit_main(element) {
         btn.target = "_blank";
 	}, undefined, true);
 
+
+
     /*
     find_or_observe_for_element("li.h-card.h-card_md.h-card_comments", (node) => {
         const is_system_msg = node.querySelector("div.sn-card-component_accent-bar:not(.sn-card-component_accent-bar_dark)");
@@ -595,6 +612,12 @@ async function edit_main(element) {
     */
 }
 
+async function pick_group_main(element) {
+    find_or_observe_for_element("IMG", (node) => {
+		console.log(node);
+	}, undefined, false);
+}
+
 console.warn("Better Incidents Start");
 if (location.includes("b47514e26f122500a2fbff2f5d3ee4d0")){
     //overrideAJAX();
@@ -605,4 +628,10 @@ if (location.includes("incident.do")){
     //overrideAJAX();
 	edit_main();
 }
+
+if (location.includes("sys_user_group_list.do")){
+    //overrideAJAX();
+	pick_group_main();
+}
+
 console.warn("Better Incidents End");

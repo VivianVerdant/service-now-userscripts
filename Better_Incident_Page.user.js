@@ -4,7 +4,7 @@
 // @version      2.2
 // @description  Description
 // @author       Vivian
-// @match        https://*.service-now.com/*
+// @match        https://virteva.service-now.com/*
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/issues
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/find_or_observe_for_element.js
@@ -20,11 +20,13 @@
 // @grant        GM_getValue
 // @run-at       document-start
 // ==/UserScript==
-/* globals find_or_observe_for_element createBetterSettingsMenu AJAXCompleter getColorFromSeed better_settings_menu GlideRecord g_form assignToMe getLocalInfo */
+/* globals find_or_observe_for_element showRelatedRecList createBetterSettingsMenu AJAXCompleter getColorFromSeed better_settings_menu GlideRecord g_form getLocalInfo */
 
 
 /* Changelog
-v2.2 - Added function to reopen button that will assign yourself to the ticket if the assignment group is VRT-Service Desk
+v2.2 - Added settings for new incident screen and button in header to access
+         - Custom layout enable
+		 - Auto open related icidents window
 v2.1 - Added Company Domain and Short description to the Permalink copy button
 v2.0 - Added local time to phone field based off areacode or country code
 v1.7 - Initial Better Settings implementation
@@ -59,7 +61,9 @@ function testAlert(e) {
 }
 
 let default_settings = {
-    custom_layout: false,
+    custom_new_layout: false,
+	auto_open_related_incidents: false,
+	custom_edit_layout: false,
     custom_notes: false,
     header_random_color: false,
     custom_color_theme: false,
@@ -162,14 +166,6 @@ async function onClickResolveBtn(){
 	console.log(close_field);
 }
 
-async function onClickReopenBtn(){
-    const current_assignment_group = g_form.getValue("sys_display.incident.assignment_group");
-    if (current_assignment_group == "VRT-Service Desk") {
-        assignToMe();
-    }
-    g_form.getElement("activity-stream-comments-textarea").focus();
-}
-
 function saveNote() {
 	const company = document.querySelector("[id='sys_display.incident.company']").value;
 	const saved_notes = GM_getValue("saved_notes", new Object());
@@ -197,7 +193,7 @@ function create_notes(node) {
 	}
 
     let classlist;
-    if (settings.custom_layout) {
+    if (settings.custom_edit_layout) {
         classlist = ["personalNotes", "notification-info", "notification"];
     } else {
         classlist = ["personalNotes"];
@@ -313,6 +309,15 @@ function kbToClipboard(e){
 	e.target.blur();
 }
 
+async function create_settings_menu(node) {
+        const menu = new better_settings_menu(node, settings, "Better Settings Menu", GM_getResourceText("settings_css"));
+        console.warn(menu);
+        menu.main_button.classList.add("btn", "btn-default", "action_context", "header", "btn-icon", "icon-cog", "form_action_button");
+        menu.close_button.classList.add("btn", "btn-icon", "icon-connect-close-sm");
+        //menu.set_option_item("Bar", false);
+        GM_setValue("settings", menu.saved_options);
+}
+
 async function new_main(element) {
 	console.log("new main");
 	if (run_once){
@@ -320,7 +325,17 @@ async function new_main(element) {
 	}
 	run_once = true;
 
-	GM_addStyle(GM_getResourceText("better_new_incident_css"));
+	find_or_observe_for_element("#sc_attachment_button", async (node) => {
+		console.log('header has been added:-------------------------------------------');
+		const button_section = node.parentNode;
+		console.warn(button_section);
+		create_settings_menu(button_section);
+		//button_section.addNode("button", "newincsettingsbutton", ["open-bsn-modal-button", "btn", "btn-default", "action_context", "header", "btn-icon", "icon-cog", "form_action_button"]);
+	}, undefined, true);
+
+	if (settings.custom_new_layout) {
+		GM_addStyle(GM_getResourceText("better_new_incident_css"));
+	}
 
 	find_or_observe_for_element(".outputmsg", async (node) => {
 		console.log('.outputmsg has been added:-------------------------------------------');
@@ -333,6 +348,28 @@ async function new_main(element) {
 		//node.lastElementChild.classList.add("hidden");
 	}, undefined, false);
 
+	if (settings.auto_open_related_incidents) {
+		const observer = new MutationObserver((mutations_list) => {
+			for (const n of mutations_list) {
+				if (n.addedNodes.length > 0){
+					console.warn(n.addedNodes);
+					for (const m of n.addedNodes) {
+						console.warn(m.data);
+						if (m.data != "(0)") {
+							showRelatedRecList('incident');
+						}
+					}
+				}
+			}
+		});
+
+		find_or_observe_for_element("#vrt_show_related_task_records_link_incident_count", async (node) => {
+			console.warn('related incidents node:-------------------------------------------');
+			console.warn(node);
+			observer.observe(document.querySelector("#vrt_show_related_task_records_link_incident_count"), { subtree: true, childList: true });
+		}, undefined, false);
+	}
+
 	document.onkeydown = function(e) {
 		if( e.ctrlKey && (e.key === 's' || e.key === 'd') ){
 			e.preventDefault();
@@ -340,6 +377,7 @@ async function new_main(element) {
 		}
 	};
 
+	/*
 	if (settings.custom_notes) {
         find_or_observe_for_element("[id='ac.status']", (node) => {
             console.log('insert notes after:-------------------------------------------');
@@ -348,11 +386,10 @@ async function new_main(element) {
 				create_notes(node);
 			});
 			observer.observe(document, { subtree: true, childList: true });
-			/*
 		node.addEventListener("", async (e) => {
-		});*/
+		});
         });
-    }
+    }*/
 }
 
 async function edit_main(element) {
@@ -366,15 +403,10 @@ async function edit_main(element) {
     console.log(settings);
 
 	find_or_observe_for_element(".navbar-right > span:first-child", async (node) => {
-        const menu = new better_settings_menu(node, settings, "Better Settings Menu", GM_getResourceText("settings_css"));
-        console.warn(menu);
-        menu.main_button.classList.add("btn", "btn-default", "action_context", "header", "btn-icon", "icon-cog", "form_action_button");
-        menu.close_button.classList.add("btn", "btn-icon", "icon-connect-close-sm");
-        //menu.set_option_item("Bar", false);
-        GM_setValue("settings", menu.saved_options);
+        create_settings_menu(node);
 	}, undefined, true);
 
-    if (settings.custom_layout) {
+    if (settings.custom_edit_layout) {
         GM_addStyle(GM_getResourceText("better_incident_css"));
 
         find_or_observe_for_element(".outputmsg", async (node) => {
@@ -436,12 +468,6 @@ async function edit_main(element) {
 		console.log('#resolve_incident has been added:-------------------------------------------');
 		console.log(node);
 		node.addEventListener("click", onClickResolveBtn);
-	}, undefined, false);
-
-	find_or_observe_for_element("#reopen_incident", (node) => {
-		console.log('#reopen_incident has been added:-------------------------------------------');
-		console.log(node);
-		node.addEventListener("click", onClickReopenBtn);
 	}, undefined, false);
 
 	find_or_observe_for_element("input[id='incident.number']", (node) => {
@@ -590,8 +616,6 @@ async function edit_main(element) {
         btn.target = "_blank";
 	}, undefined, true);
 
-
-
     /*
     find_or_observe_for_element("li.h-card.h-card_md.h-card_comments", (node) => {
         const is_system_msg = node.querySelector("div.sn-card-component_accent-bar:not(.sn-card-component_accent-bar_dark)");
@@ -612,12 +636,6 @@ async function edit_main(element) {
     */
 }
 
-async function pick_group_main(element) {
-    find_or_observe_for_element("IMG", (node) => {
-		console.log(node);
-	}, undefined, false);
-}
-
 console.warn("Better Incidents Start");
 if (location.includes("b47514e26f122500a2fbff2f5d3ee4d0")){
     //overrideAJAX();
@@ -628,10 +646,51 @@ if (location.includes("incident.do")){
     //overrideAJAX();
 	edit_main();
 }
-
-if (location.includes("sys_user_group_list.do")){
-    //overrideAJAX();
-	pick_group_main();
-}
-
 console.warn("Better Incidents End");
+
+function copyFormatted (html) {
+  // Create container for the HTML
+  // [1]
+  var container = document.createElement('div')
+  container.innerHTML = html
+
+  // Hide element
+  // [2]
+  container.style.position = 'fixed'
+  container.style.pointerEvents = 'none'
+  container.style.opacity = 0
+
+  // Detect all style sheets of the page
+  var activeSheets = Array.prototype.slice.call(document.styleSheets)
+    .filter(function (sheet) {
+      return !sheet.disabled
+    })
+
+  // Mount the container to the DOM to make `contentWindow` available
+  // [3]
+  document.body.appendChild(container)
+
+  // Copy to clipboard
+  // [4]
+  window.getSelection().removeAllRanges()
+
+  var range = document.createRange()
+  range.selectNode(container)
+  window.getSelection().addRange(range)
+
+  // [5.1]
+  document.execCommand('copy')
+
+  // [5.2]
+  for (var i = 0; i < activeSheets.length; i++) activeSheets[i].disabled = true
+
+  // [5.3]
+  document.execCommand('copy')
+
+  // [5.4]
+  for (var i = 0; i < activeSheets.length; i++) activeSheets[i].disabled = false
+
+  // Remove the container
+  // [6]
+  document.body.removeChild(container)
+}

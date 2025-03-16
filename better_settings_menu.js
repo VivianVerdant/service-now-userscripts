@@ -70,9 +70,21 @@ class better_settings_menu {
         return this;
     }
 
+    add_node = function (parent, type, id, classes) {
+        const new_node = document.createElement(type);
+        new_node.id = id;
+        if (classes) {
+            for (const clss of classes) {
+                new_node.classList.add(clss);
+            }
+        }
+        parent.appendChild(new_node);
+        return new_node;
+    };
+
     set_option_item = (name, value) => {
         let options = this.saved_options;
-        options[name] = value;
+        options[name].value = value;
         this.saved_options = options;
         //this.update_modal();
         GM_setValue("settings", this.saved_options);
@@ -90,35 +102,50 @@ class better_settings_menu {
         //- Create and attach event listeners
     }
 
-    make_readable = (str) => {
-        let result = str.replaceAll(/(_)/g, " ");
-        result = result.split(" ")
-        for (let i = 0; i < result.length; i++) {
-            result[i] = result[i][0].toUpperCase() + result[i].substr(1);
-        }
-       return result.join(" ");
-    }
-
     create_bool_setting = (key, value) => {
-        let setting = this.modal_container.addNode("div", key, ["bool_setting", "setting_entry"]);
-        let name = setting.addNode("span", "");
-        name.innerHTML = this.make_readable(key);
-        let toggle = setting.addNode("input", "", ["checkbox_switch"]);
+        let setting = this.add_node(this.modal_container, "div", key, ["bool_setting", "setting_entry"]);
+        let name = this.add_node(setting, "span", "");
+        name.innerHTML = value.description;
+        let toggle = this.add_node(setting, "input", "", ["checkbox_switch"]);
         toggle.setAttribute("type","checkbox");
         toggle.setAttribute("name",key);
-		toggle.checked = value;
+		toggle.checked = value.value;
         toggle.addEventListener("input", this.update_all_settings());
     }
 
     create_string_setting = (key, value) => {
-        let setting = this.modal_container.addNode("div", key, ["string_setting", "setting_entry"]);
-        let name = setting.addNode("span", "");
-        name.innerHTML = this.make_readable(key);
-        let string = setting.addNode("input", "", ["string_field"]);
+        let setting = this.add_node(this.modal_container, "div", key, ["bool_setting", "setting_entry"]);
+        let name = this.add_node(setting, "span", "");
+        name.innerHTML = value.description;
+        let string = addN_nde(setting, "input", "", ["string_field"]);
         string.setAttribute("type","text");
-        string.setAttribute("placeholder","Hex Value");
+        string.setAttribute("placeholder","string");
         string.setAttribute("name", key);
-        string.value = value;
+        string.value = value.value;
+        string.addEventListener("input", this.update_all_settings());
+    }
+
+    create_int_setting = (key, value) => {
+        let setting = this.add_node(this.modal_container, "div", key, ["bool_setting", "setting_entry"]);
+        let name = this.add_node(setting, "span", "");
+        name.innerHTML = value.description;
+        let string = addN_nde(setting, "input", "", ["string_field"]);
+        string.setAttribute("type","text");
+        string.setAttribute("placeholder","Integer");
+        string.setAttribute("name", key);
+        string.value = value.value;
+        string.addEventListener("input", this.update_all_settings());
+    }
+
+    create_rgb_setting = (key, value) => {
+        let setting = this.add_node(this.modal_container, "div", key, ["bool_setting", "setting_entry"]);
+        let name = this.add_node(setting, "span", "");
+        name.innerHTML = value.description;
+        let string = addN_nde(setting, "input", "", ["string_field"]);
+        string.setAttribute("type","text");
+        string.setAttribute("placeholder","R G B color value");
+        string.setAttribute("name", key);
+        string.value = value.value;
         string.addEventListener("input", this.update_all_settings());
     }
 
@@ -133,12 +160,18 @@ class better_settings_menu {
                 //update element
             } else {
                 //create element
-                switch (typeof value){
-                    case 'boolean':
+                switch (value.value){
+                    case 'bool':
                         this.create_bool_setting(key, value);
                         break;
                     case 'string':
                         this.create_string_setting(key, value);
+                        break;
+                    case 'RBG':
+                        this.create_rgb_setting(key, value);
+                        break;
+                    case 'int':
+                        this.create_int_setting(key, value);
                         break;
                     default:
                         //default

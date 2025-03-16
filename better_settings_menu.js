@@ -1,3 +1,4 @@
+/* globals GM_setValue */
 class better_settings_menu {
     constructor(parent, saved_options, title, style) {
 
@@ -103,50 +104,61 @@ class better_settings_menu {
     }
 
     create_bool_setting = (key, value) => {
-        let setting = this.add_node(this.modal_container, "div", key, ["bool_setting", "setting_entry"]);
-        let name = this.add_node(setting, "span", "");
+        let setting = this.add_node(this.modal_container, "div", key, ["bool_setting", "form-group", "setting_entry"]);
+        let name = this.add_node(setting, "span", "", ["control-label", "label-text"]);
         name.innerHTML = value.description;
         let toggle = this.add_node(setting, "input", "", ["checkbox_switch"]);
         toggle.setAttribute("type","checkbox");
         toggle.setAttribute("name",key);
 		toggle.checked = value.value;
         toggle.addEventListener("input", this.update_all_settings());
+        //console.warn(setting, name, toggle);
     }
 
     create_string_setting = (key, value) => {
-        let setting = this.add_node(this.modal_container, "div", key, ["bool_setting", "setting_entry"]);
-        let name = this.add_node(setting, "span", "");
+        let setting = this.add_node(this.modal_container, "div", key, ["bool_setting", "form-group", "setting_entry"]);
+        let name = this.add_node(setting, "span", "", ["control-label", "label-text"]);
         name.innerHTML = value.description;
-        let string = addN_nde(setting, "input", "", ["string_field"]);
+        let string = this.add_node(setting, "input", "", ["string_field","form-control"]);
         string.setAttribute("type","text");
-        string.setAttribute("placeholder","string");
+        string.setAttribute("placeholder","String");
         string.setAttribute("name", key);
         string.value = value.value;
         string.addEventListener("input", this.update_all_settings());
+        //console.warn(setting, name, string);
     }
 
     create_int_setting = (key, value) => {
-        let setting = this.add_node(this.modal_container, "div", key, ["bool_setting", "setting_entry"]);
-        let name = this.add_node(setting, "span", "");
+        let setting = this.add_node(this.modal_container, "div", key, ["bool_setting", "form-group", "setting_entry"]);
+        let name = this.add_node(setting, "span", "", ["control-label", "label-text"]);
         name.innerHTML = value.description;
-        let string = addN_nde(setting, "input", "", ["string_field"]);
-        string.setAttribute("type","text");
-        string.setAttribute("placeholder","Integer");
-        string.setAttribute("name", key);
-        string.value = value.value;
-        string.addEventListener("input", this.update_all_settings());
+        let int = this.add_node(setting, "input", "", ["int_field","form-control"]);
+        int.setAttribute("type","number");
+        int.setAttribute("onkeypress", "return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57");
+        int.setAttribute("placeholder","Integer");
+        int.setAttribute("name", key);
+        int.value = value.value;
+        int.addEventListener("input", this.update_all_settings());
+        //console.warn(setting, name, string);
     }
 
     create_rgb_setting = (key, value) => {
-        let setting = this.add_node(this.modal_container, "div", key, ["bool_setting", "setting_entry"]);
-        let name = this.add_node(setting, "span", "");
+        let setting = this.add_node(this.modal_container, "div", key, ["bool_setting", "form-group", "setting_entry"]);
+        let name = this.add_node(setting, "span", "", ["control-label", "label-text"]);
         name.innerHTML = value.description;
-        let string = addN_nde(setting, "input", "", ["string_field"]);
+        let string = this.add_node(setting, "input", "", ["string_field","form-control"]);
         string.setAttribute("type","text");
-        string.setAttribute("placeholder","R G B color value");
+        string.setAttribute("placeholder","R,G,B color value");
         string.setAttribute("name", key);
         string.value = value.value;
         string.addEventListener("input", this.update_all_settings());
+       // console.warn(setting, name, string);
+    }
+
+    create_null_setting = (key, value) => {
+        let setting = this.add_node(this.modal_container, "div", key, ["null_setting", "form-group", "setting_entry"]);
+        let name = this.add_node(setting, "span", "");
+        name.innerHTML = value.description;
     }
 
     update_modal = () => {
@@ -155,26 +167,29 @@ class better_settings_menu {
         let options = this.saved_options;
         //- Iterate through entries
         for (const [key, value] of Object.entries(options)) {
-            console.warn(key, value);
+            //console.warn(key, value);
             if (this.modal.querySelector("#" + key)){
                 //update element
             } else {
                 //create element
-                switch (value.value){
+                switch (value.type){
                     case 'bool':
                         this.create_bool_setting(key, value);
                         break;
                     case 'string':
                         this.create_string_setting(key, value);
                         break;
-                    case 'RBG':
+                    case 'rgb':
                         this.create_rgb_setting(key, value);
                         break;
                     case 'int':
                         this.create_int_setting(key, value);
                         break;
+                    case 'null':
+                        this.create_null_setting(key, value);
+                        break;
                     default:
-                        //default
+                        console.warn("No function to handle setting of type: ", value.value);
                 }
             }
         }

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      2.2
+// @version      2.3
 // @description  Description
 // @author       Vivian
 // @match        https://virteva.service-now.com/*
@@ -10,6 +10,7 @@
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/find_or_observe_for_element.js
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/pseudorandom.js
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/better_settings_menu.js
+// @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/textarea_autoenter.js
 // @require      https://github.com/VivianVerdant/chronomouse/raw/refs/heads/master/chronomouse.2.4.0.min.js
 // @resource     settings_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_settings_menu.css
 // @resource     better_incident_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_incident.css
@@ -20,10 +21,13 @@
 // @grant        GM_getValue
 // @run-at       document-start
 // ==/UserScript==
-/* globals find_or_observe_for_element showRelatedRecList createBetterSettingsMenu AJAXCompleter getColorFromSeed better_settings_menu GlideRecord g_form getLocalInfo */
+/* globals find_or_observe_for_element showRelatedRecList createBetterSettingsMenu AJAXCompleter getColorFromSeed better_settings_menu GlideRecord g_form g_navigation getLocalInfo */
 
 
 /* Changelog
+v2.3 - Total rework of setting menu
+     - Added auto entering of newline characters in Work Notes textarea
+     - Added setting for how far back related Incident popup window shoud search (does not affect number displayed on page)
 v2.2 - Added settings for new incident screen and button in header to access
          - Custom layout enable
 		 - Auto open related icidents window
@@ -61,16 +65,21 @@ function testAlert(e) {
 }
 
 let default_settings = {
-    custom_new_layout: false,
-	auto_open_related_incidents: false,
-	custom_edit_layout: false,
-    custom_notes: false,
-    header_random_color: false,
-    custom_color_theme: false,
-	auto_open_kb_search: false,
-    background: "255,255,255",
-    primary_text: "0,0,0",
-    required: "255,0,0",
+    new_incident_page: {value: null, type: "null", description: "New Incident Page Settings"},
+    custom_new_layout: {value: false, type: "bool", description: "Enable custom layout on Create Incident page:"},
+	auto_open_related_incidents: {value: false, type: "bool", description: "Auto open related Incidents:"},
+    edit_incident_page: {value: null, type: "null", description: "Edit Incident Page Settings"},
+	custom_edit_layout: {value: false, type: "bool", description: "Enable custom layout on Edit Incident page:"},
+    custom_notes: {value: false, type: "bool", description: "Display custom company notes:"},
+    header_random_color: {value: false, type: "bool", description: "Use a random color for incident header:"},
+	auto_open_kb_search: {value: false, type: "bool", description: "Automatically open the KB Search tool:"},
+    related_inc_days_ago: {value: 90, type: "int", description: "How many days back should related Incidents search:"},
+    work_notes_newline_character: {value: "", type: "string", description: "Auto enter string every newline in work notes:<br/><h6>Leave empty to disable</h6>"},
+    custom_color_theme: {value: false, type: "bool", description: "Enable custom colors below:"},
+    link_to_google_colorwheel: {value: "null", type: "null", description: "Open link to <a href='https://g.co/kgs/Zf8Gdpg' target='_blank'>Google color picker</a>"},
+    background: {value: "255,255,255", type: "rgb", description: "Page background:"},
+    primary_text: {value: "0,0,0", type: "rgb", description: "Primary text:"},
+    required: {value: "255,0,0", type: "rgb", description: "Required field background:"}
 };
 
 var settings = GM_getValue("settings", default_settings);
@@ -79,7 +88,14 @@ for (const [key, value] of Object.entries(default_settings)) {
     if (!settings[key]) {
         settings[key] = value;
     }
+    if (typeof settings[key] != "object") {
+        settings[key] = value;
+    }
 }
+
+settings = Object.assign(default_settings, settings);
+
+console.warn(settings);
 
 var location = window.location.href;
 var run_once = false;
@@ -120,7 +136,7 @@ function overrideAJAX(){
             console.log(i);
             if (i >= 0) {
                 data = data.replace("sysparm_chars=", "sysparm_chars=*");
-                console.warn(data);
+                console.log(data);
             }
 
             //let formData = new FormData(data);
@@ -193,7 +209,7 @@ function create_notes(node) {
 	}
 
     let classlist;
-    if (settings.custom_edit_layout) {
+    if (settings.custom_edit_layout.value) {
         classlist = ["personalNotes", "notification-info", "notification"];
     } else {
         classlist = ["personalNotes"];
@@ -227,14 +243,14 @@ function create_notes(node) {
 }
 
 async function create_localtime(node) {
-    console.warn("foobar time");
-    console.warn(node);
+    console.log("foobar time");
+    console.log(node);
     let addons_node = node.querySelector(".form-field-addons");
     // class="btn btn-default btn-ref reference_decoration icon-alert-triangle"
     let local_time_button = addons_node.addNode("a", "local_time_button", ["btn", "btn-default", "reference_decoration"]);
 
     let input_field_node = node.querySelector("[id='incident.u_phone']") || node.querySelector("[id='incident.u_contact_phone']");
-    console.warn(input_field_node);
+    console.log(input_field_node);
     input_field_node.addEventListener("blur", phone_string_input);
     local_time_button.addEventListener("click", phone_string_input);
 
@@ -311,12 +327,134 @@ function kbToClipboard(e){
 
 async function create_settings_menu(node) {
         const menu = new better_settings_menu(node, settings, "Better Settings Menu", GM_getResourceText("settings_css"));
-        console.warn(menu);
+        console.log(menu);
         menu.main_button.classList.add("btn", "btn-default", "action_context", "header", "btn-icon", "icon-cog", "form_action_button");
         menu.close_button.classList.add("btn", "btn-icon", "icon-connect-close-sm");
         //menu.set_option_item("Bar", false);
         GM_setValue("settings", menu.saved_options);
 }
+
+
+/* globals referenceField consoleDebug excludeCurrentRecord */
+//Define function to call onclick of one of the links - will display a popup based on which link is clicked
+async function showRelatedRecList_custom(tableName) {
+    try {
+        console.warn("custom related inc function");
+        var userSysID = g_form.getValue(referenceField);
+
+        var displayValue = g_form.getDisplayBox(referenceField).value;
+
+        //Sort by sys_created_on, but float active records to the top
+        var orderBy = '^ORDERBYDESCsys_updated_on';
+
+        var title = 'Showing records related to: ' + displayValue + " (custom)";
+
+        //Build encoded query
+        var query = getTableUserQuery_custom(tableName, userSysID);
+        query += orderBy;
+
+        var popupUrl = tableName + '_list.do';
+        popupUrl += '?sysparm_query=' + query;
+
+        g_navigation.openPopup(popupUrl, title, 'menubar=no,toolbar=no', false)
+    }
+    catch (e) {
+        consoleDebug('Error showing related list popup: ' + e);
+    }
+}
+
+//Define a function to return the user reference field for a specified table
+function getTableUserQuery_custom(tableName, userSysID) {
+    try {
+        var result = '';
+
+        //Define how many days to search records based on sys_created_on
+        var daysAgo = settings.related_inc_days_ago.value;
+
+        var activeOrRelativeTimeQuery = '';
+        //Avoiding escaping issues...
+        if (excludeCurrentRecord) {
+            if (!g_form.isNewRecord()) {
+                var excludedRecord = '';
+                var formTable = g_form.getTableName();
+                if (formTable == tableName) {
+                    //Set current record to be excluded
+                    excludedRecord = g_form.getValue('number');
+                    activeOrRelativeTimeQuery += '^number!=' + excludedRecord;
+                } else if (formTable == 'sc_task') {
+                    excludedRecord = g_form.getDisplayBox('request_item').value;
+                    activeOrRelativeTimeQuery += '^number!=' + excludedRecord;
+                }
+            }
+        }
+
+        //Using relative because it's more intuitive when displayed in the filter
+        activeOrRelativeTimeQuery += '^active=true^ORsys_created_onRELATIVEGT@dayofweek@ago@' + daysAgo;
+
+        var tableUserFields = [];
+        switch (tableName) {
+            case 'incident':
+                tableUserFields.push('u_affected_user');
+                tableUserFields.push('caller_id');
+                tableUserFields.push('opened_by');
+                break;
+            case 'u_email':
+                tableUserFields.push('u_contact');
+                break;
+            case 'sc_req_item':
+                tableUserFields.push('u_requested_for');
+                tableUserFields.push('requested_for');
+                tableUserFields.push('u_requested_by');
+                tableUserFields.push('opened_by');
+                break;
+            default:
+                throw new Error(tableName + ' is not valid');
+        }
+
+        //Not equals instead of less than due to escaping issues (escaping solutions didn't work or were inconsistent between catalog and form UI)
+        //Iterate and query for any user reference fields returned
+        for (var i = 0; i != tableUserFields.length; i++) {
+            result += tableUserFields[i] + '=' + userSysID;
+            //Append ^OR if not last item in array
+            if ((i + 1) != tableUserFields.length) {
+                result += '^OR';
+            }//If last item in array don't append or and add the rest of the query
+            else {
+                result += activeOrRelativeTimeQuery;
+            }
+        }
+    } catch (e) {
+        consoleDebug('Error building query: ' + e);
+        result = false;
+    }
+
+    return result;
+}
+
+const replace_related_inc_observer = new MutationObserver((mutations_list) => {
+    if (document.querySelector("#vrt_show_related_task_records_link_incident")) {
+        const related_inc_node = document.querySelector("#vrt_show_related_task_records_link_incident");
+        console.warn("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        console.warn(related_inc_node);
+        console.warn(related_inc_node.onclick);
+        related_inc_node.onclick = function() {showRelatedRecList_custom('incident')};
+        console.warn(related_inc_node.onclick);
+    }
+
+    if (location.includes("b47514e26f122500a2fbff2f5d3ee4d0")) {
+        for (const n of mutations_list) {
+            if (n.addedNodes.length > 0){
+                console.warn(n.addedNodes);
+                for (const m of n.addedNodes) {
+                    console.warn(m.data);
+                    if (m.data != "(0)" && settings.auto_open_related_incidents.value ) {
+                        showRelatedRecList_custom('incident');
+                    }
+                }
+            }
+        }
+    }
+});
 
 async function new_main(element) {
 	console.log("new main");
@@ -328,12 +466,12 @@ async function new_main(element) {
 	find_or_observe_for_element("#sc_attachment_button", async (node) => {
 		console.log('header has been added:-------------------------------------------');
 		const button_section = node.parentNode;
-		console.warn(button_section);
+		console.log(button_section);
 		create_settings_menu(button_section);
 		//button_section.addNode("button", "newincsettingsbutton", ["open-bsn-modal-button", "btn", "btn-default", "action_context", "header", "btn-icon", "icon-cog", "form_action_button"]);
 	}, undefined, true);
 
-	if (settings.custom_new_layout) {
+	if (settings.custom_new_layout.value) {
 		GM_addStyle(GM_getResourceText("better_new_incident_css"));
 	}
 
@@ -348,27 +486,11 @@ async function new_main(element) {
 		//node.lastElementChild.classList.add("hidden");
 	}, undefined, false);
 
-	if (settings.auto_open_related_incidents) {
-		const observer = new MutationObserver((mutations_list) => {
-			for (const n of mutations_list) {
-				if (n.addedNodes.length > 0){
-					console.warn(n.addedNodes);
-					for (const m of n.addedNodes) {
-						console.warn(m.data);
-						if (m.data != "(0)") {
-							showRelatedRecList('incident');
-						}
-					}
-				}
-			}
-		});
-
-		find_or_observe_for_element("#vrt_show_related_task_records_link_incident_count", async (node) => {
-			console.warn('related incidents node:-------------------------------------------');
-			console.warn(node);
-			observer.observe(document.querySelector("#vrt_show_related_task_records_link_incident_count"), { subtree: true, childList: true });
-		}, undefined, false);
-	}
+    find_or_observe_for_element("#vrt_show_related_task_records_link_incident_count", async (node) => {
+        console.warn('related incidents node:-------------------------------------------');
+        console.warn(node);
+        replace_related_inc_observer.observe(document.querySelector("#vrt_show_related_task_records_link_incident_count"), { subtree: true, childList: true });
+    }, undefined, false);
 
 	document.onkeydown = function(e) {
 		if( e.ctrlKey && (e.key === 's' || e.key === 'd') ){
@@ -406,7 +528,7 @@ async function edit_main(element) {
         create_settings_menu(node);
 	}, undefined, true);
 
-    if (settings.custom_edit_layout) {
+    if (settings.custom_edit_layout.value) {
         GM_addStyle(GM_getResourceText("better_incident_css"));
 
         find_or_observe_for_element(".outputmsg", async (node) => {
@@ -441,26 +563,29 @@ async function edit_main(element) {
         //add css
     }
 
-    if (settings.custom_color_theme) {
+    if (settings.custom_color_theme.value) {
         // insert custom colors
-        const custom_css = `
-.-polaris \{
-    --now-color_text--primary: ${settings.primary_text} !important;
-    --now-form-field--color: ${settings.primary_text} !important;
-    --now-button--bare_primary--color: ${settings.primary_text} !important;
-    --now-button--secondary--color: ${settings.primary_text} !important;
-    --now-color--primary-1: ${settings.primary_text} !important;
-    --now-color_text--secondary: ${settings.primary_text} !important;
-    --now-checkbox_label--color: ${settings.primary_text} !important;
-    --now-tabs--color: ${settings.primary_text} !important;
-
-    --now-color_background--primary: ${settings.background} !important;
-    --now-color_background--secondary: ${settings.background} !important;
-
-    --now-color_alert--critical-2: ${settings.required} !important;
-
-\}`;
-        console.warn(custom_css);
+        var custom_css = ".-polaris \{";
+        if (settings.primary_text.value) {
+            custom_css = custom_css + `
+            --now-color_text--primary: ${settings.primary_text.value} !important;
+            --now-form-field--color: ${settings.primary_text.value} !important;
+            --now-button--bare_primary--color: ${settings.primary_text.value} !important;
+            --now-button--secondary--color: ${settings.primary_text.value} !important;
+            --now-color--primary-1: ${settings.primary_text.value} !important;
+            --now-color_text--secondary: ${settings.primary_text.value} !important;
+            --now-checkbox_label--color: ${settings.primary_text.value} !important;
+            --now-tabs--color: ${settings.primary_text.value} !important;
+        `}
+        if (settings.background.value) {
+            custom_css = custom_css + `
+            --now-color_background--primary: ${settings.background.value} !important;
+            --now-color_background--secondary: ${settings.background.value} !important;
+        `}
+        if (settings.required.value) {
+            custom_css = custom_css + `--now-color_alert--critical-2: ${settings.required.value} !important;`}
+        custom_css = custom_css + `\}`;
+        console.log(custom_css);
         GM_addStyle(custom_css);
     }
 
@@ -482,7 +607,7 @@ async function edit_main(element) {
 		inner.innerHTML = node.value;
 		btn.appendChild(inner);
 
-        if (settings.header_random_color) {
+        if (settings.header_random_color.value) {
             const hue = parseInt(node.value.replace(/\D/g,''));
             console.log("Num: ",hue);
             document.querySelector(':root').style.setProperty('--header-color', getColorFromSeed(hue));
@@ -519,7 +644,7 @@ async function edit_main(element) {
 		}
 	}, "form", true);
 
-    if (settings.custom_notes) {
+    if (settings.custom_notes.value) {
         find_or_observe_for_element("body > div > form > span.tabs2_section.tabs2_section_0.tabs2_section0 > span > div.section-content.with-overflow > div:nth-child(3)", (node) => {
             console.log('insert notes after:-------------------------------------------');
             console.log(node);
@@ -530,7 +655,7 @@ async function edit_main(element) {
         });
     }
 
-    if (settings.custom_notes) {
+    if (settings.custom_notes.value) {
         find_or_observe_for_element("[id='element.incident.u_phone']", (node) => {
             console.log('insert local time:-------------------------------------------');
             console.log(node);
@@ -541,7 +666,7 @@ async function edit_main(element) {
         });
     }
 
-    if (settings.custom_notes) {
+    if (settings.custom_notes.value) {
         find_or_observe_for_element("[id='element.incident.u_contact_phone']", (node) => {
             console.log('insert local time:-------------------------------------------');
             console.log(node);
@@ -554,7 +679,7 @@ async function edit_main(element) {
 
 	document.onreadystatechange = function () {
 		if (document.readyState == "complete") {
-			if (settings.auto_open_kb_search) {
+			if (settings.auto_open_kb_search.value) {
 				document.querySelector("[id='cxs_maximize_results']").click();
 			}
 
@@ -616,24 +741,19 @@ async function edit_main(element) {
         btn.target = "_blank";
 	}, undefined, true);
 
-    /*
-    find_or_observe_for_element("li.h-card.h-card_md.h-card_comments", (node) => {
-        const is_system_msg = node.querySelector("div.sn-card-component_accent-bar:not(.sn-card-component_accent-bar_dark)");
-		if (is_system_msg) {
-            console.warn(node);
-            const created_by = node.querySelector(".sn-card-component-createdby");
-            if (created_by) {
-                console.warn(created_by.innerText);
-            }
-            for (const n in node.querySelectorAll("*")) {
-                console.warn(n.classList || "");
-                if (n.classList && n.classList.contains("sn-widget-list-table-cell")) {
-                    console.warn(n.innerText);
-                }
-            }
-        }
-	}, undefined, false);
-    */
+    find_or_observe_for_element("#vrt_show_related_task_records_link_incident_count", async (node) => {
+        console.warn('related incidents node:-------------------------------------------');
+        console.warn(node);
+        replace_related_inc_observer.observe(document.querySelector("#vrt_show_related_task_records_link_incident_count"), { subtree: true, childList: true });
+    }, undefined, true);
+
+    /* globals assign_textarea */
+    if (settings.work_notes_newline_character.value != "") {
+        console.log("newline character set to: ", settings.work_notes_newline_character.value);
+        find_or_observe_for_element("#activity-stream-textarea", async (node) => {
+            assign_textarea(node, settings.work_notes_newline_character.value);
+        }, undefined, true);
+    }
 }
 
 console.warn("Better Incidents Start");

@@ -7,85 +7,75 @@
     display: inline-flex;
     z-index: 1050;
     background: rgb(0 0 0 / 50%);
-}
+    font-size: 16px;
 
-.bsn-modal-container {
-    margin: auto;
-    margin-top: 100px;
-    width: 500px;
-    height: 500px;
-    background: white;
-    border-radius: 3px;
-    border-color: black;
-	border-width: 1px;
-	border-style: solid;
-    display: inline-flex;
-	flex-direction: column;
-}
+    h6 {
+        margin-block-start: unset;
+        margin-block-end: unset;
+    }
 
-.bsn-modal-container::after {
-    margin: 1rem 1rem;
-    color: #888;
-    content: "Most changes require reloading the page"
-}
+    .bsn-modal-container {
+        margin: auto;
+        width: min-content;
+        min-width: 450px;
+        height: min-content;
+        background: white;
+        border-radius: 3px;
+        border-color: black;
+        border-width: 1px;
+        border-style: solid;
+        display: inline-flex;
+        flex-direction: column;
+    }
 
-.bsn-header {
-    border-bottom: 1px solid #888;
-    display: flex;
-}
+    .bsn-modal-container::after {
+        margin: 1rem 1rem;
+        color: #888;
+        content: "Most changes require reloading the page"
+    }
 
-.bsn-title {
-	margin: auto;
-	position: relative;
-}
+    .bsn-header {
+        border-bottom: 1px solid #888;
+        display: flex;
+        margin-bottom: 1rem;
+    }
 
-.close-bsn-modal-btn {
-    float: right;
-    padding: 0 !important;
-}
+    .bsn-title {
+        margin: auto;
+        position: relative;
+    }
 
-.setting_entry {
-    display: inline-flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-    font-size: 2.5rem;
-}
+    .close-bsn-modal-btn {
+        float: right;
+        padding: 0 !important;
+    }
 
-.setting_entry > * {
-    margin: 0rem 1rem !important;
-}
+    .setting_entry {
+        display: inline-flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
 
-.bool_setting {
-    background: unset;
-}
+    .setting_entry > * {
+        margin: 0rem 1rem !important;
+        min-height: 28px;
+    }
 
-.checkbox_switch {
-    width: 2rem;
-    height: 2rem;
-}
+    .bool_setting {
+        background: unset;
+    }
 
-.bsn-modal-container > div > span {
-    width: 100%;
-}
+    .null_setting {
+        text-decoration: underline;
+    }
 
-.bsn-modal-container > div > .string_field {
-    display: block;
-    width: 100%;
-    height: 32px;
-    padding: 6px 9px;
-    font-size: 13px;
-    line-height: 1.42857;
-    color: #151515;
-    background-color: #fff;
-    background-image: none;
-    border: 1px solid #cbcbcb;
-    border-radius: 3px;
-    -webkit-box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
-    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
-    -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-    -moz-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-    -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-    transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+    .checkbox_switch {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    span {
+        width: 100%;
+    }
 }

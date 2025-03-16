@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      2.3
+// @version      2.3.1
 // @description  Description
 // @author       Vivian
-// @match        https://virteva.service-now.com/*
+// @match        https://*.service-now.com/*
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/issues
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/find_or_observe_for_element.js
@@ -25,6 +25,7 @@
 
 
 /* Changelog
+v2.3.1 - Bugix: apply newline feature to both single and double field work notes textareas
 v2.3 - Total rework of setting menu
      - Added auto entering of newline characters in Work Notes textarea
      - Added setting for how far back related Incident popup window shoud search (does not affect number displayed on page)
@@ -751,6 +752,9 @@ async function edit_main(element) {
     if (settings.work_notes_newline_character.value != "") {
         console.log("newline character set to: ", settings.work_notes_newline_character.value);
         find_or_observe_for_element("#activity-stream-textarea", async (node) => {
+            assign_textarea(node, settings.work_notes_newline_character.value);
+        }, undefined, true);
+        find_or_observe_for_element("#activity-stream-work_notes-textarea", async (node) => {
             assign_textarea(node, settings.work_notes_newline_character.value);
         }, undefined, true);
     }

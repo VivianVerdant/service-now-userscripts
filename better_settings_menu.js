@@ -155,7 +155,7 @@ class better_settings_menu {
         let options = this.saved_options;
         //- Iterate through entries
         for (const [key, value] of Object.entries(options)) {
-            console.log(key, value);
+            console.warn(key, value);
             if (this.modal.querySelector("#" + key)){
                 //update element
             } else {

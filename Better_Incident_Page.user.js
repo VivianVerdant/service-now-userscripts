@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      2.3.1
+// @version      2.4.0
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -21,10 +21,11 @@
 // @grant        GM_getValue
 // @run-at       document-start
 // ==/UserScript==
-/* globals find_or_observe_for_element showRelatedRecList createBetterSettingsMenu AJAXCompleter getColorFromSeed better_settings_menu GlideRecord g_form g_navigation getLocalInfo */
+/* globals find_or_observe_for_element showRelatedRecList createBetterSettingsMenu AJAXCompleter getColorFromSeed better_settings_menu GlideRecord g_form g_navigation g_user getLocalInfo */
 
 
 /* Changelog
+v2.4 - Will close the popup window of related tickets, if one exists, after creating a new ticket
 v2.3.1 - Bugix: apply newline feature to both single and double field work notes textareas
 v2.3 - Total rework of setting menu
      - Added auto entering of newline characters in Work Notes textarea
@@ -76,6 +77,7 @@ let default_settings = {
 	auto_open_kb_search: {value: false, type: "bool", description: "Automatically open the KB Search tool:"},
     related_inc_days_ago: {value: 90, type: "int", description: "How many days back should related Incidents search:"},
     work_notes_newline_character: {value: "", type: "string", description: "Auto enter string every newline in work notes:<br/><h6>Leave empty to disable</h6>"},
+    custom_signature: {value: "\nThanks,\n${analyst}\n${company} IT Service Desk", type: "multistring", description: "Custom text to insert at end of additional comments text field:"},
     custom_color_theme: {value: false, type: "bool", description: "Enable custom colors below:"},
     link_to_google_colorwheel: {value: "null", type: "null", description: "Open link to <a href='https://g.co/kgs/Zf8Gdpg' target='_blank'>Google color picker</a>"},
     background: {value: "255,255,255", type: "rgb", description: "Page background:"},
@@ -115,60 +117,6 @@ HTMLElement.prototype.addNode = function (type, id, classes) {
 	this.appendChild(new_node);
 	return new_node;
 };
-
-function overrideAJAX(){
-	var open = window.XMLHttpRequest.prototype.open,
-		send = window.XMLHttpRequest.prototype.send;
-
-	function openReplacement(method, url, async, user, password) {
-		if (url.includes("rectangle")){
-			//url = url.concat("&u_company=");
-		}
-		this._url = url;
-		console.log(arguments);
-		return open.apply(this, arguments);
-	}
-
-	function sendReplacement(data) {
-		//console.log(data);
-
-        if (data && typeof data == "string") {
-            const i = data.indexOf("sysparm_chars");
-            console.log(i);
-            if (i >= 0) {
-                data = data.replace("sysparm_chars=", "sysparm_chars=*");
-                console.log(data);
-            }
-
-            //let formData = new FormData(data);
-        }
-
-		if(this.onreadystatechange) {
-			this._onreadystatechange = this.onreadystatechange;
-		}
-		//this.onreadystatechange = onReadyStateChangeReplacement;
-
-		function loadEvent(data) {
-            console.log(data);
-		}
-		this.addEventListener('load', loadEvent);
-
-		return send.apply(this, arguments);
-	}
-
-	function onReadyStateChangeReplacement() {
-		if (this.readyState == 4 && this._url.includes("rectangle" )){
-
-		}
-		if(this._onreadystatechange) {
-			return this._onreadystatechange.apply(this, arguments);
-		}
-	}
-
-	window.XMLHttpRequest.prototype.open = openReplacement;
-	window.XMLHttpRequest.prototype.send = sendReplacement;
-
-}
 
 async function onClickResolveBtn(){
 	let resolve_tab = document.querySelectorAll("div#tabs2_section > span:nth-child(3) > span:nth-child(1) > span:nth-child(2)")[0];
@@ -335,6 +283,7 @@ async function create_settings_menu(node) {
         GM_setValue("settings", menu.saved_options);
 }
 
+var related_record_popup
 
 /* globals referenceField consoleDebug excludeCurrentRecord */
 //Define function to call onclick of one of the links - will display a popup based on which link is clicked
@@ -357,7 +306,7 @@ async function showRelatedRecList_custom(tableName) {
         var popupUrl = tableName + '_list.do';
         popupUrl += '?sysparm_query=' + query;
 
-        g_navigation.openPopup(popupUrl, title, 'menubar=no,toolbar=no', false)
+        related_record_popup = g_navigation.openPopup(popupUrl, title, 'menubar=no,toolbar=no', false)
     }
     catch (e) {
         consoleDebug('Error showing related list popup: ' + e);
@@ -493,9 +442,16 @@ async function new_main(element) {
         replace_related_inc_observer.observe(document.querySelector("#vrt_show_related_task_records_link_incident_count"), { subtree: true, childList: true });
     }, undefined, false);
 
+    find_or_observe_for_element("#submit_button", async (node) => {
+        node.addEventListener("click", (e) => {if (related_record_popup) {related_record_popup.close();}});
+    }, undefined, true);
+
 	document.onkeydown = function(e) {
 		if( e.ctrlKey && (e.key === 's' || e.key === 'd') ){
 			e.preventDefault();
+            if (related_record_popup) {
+                related_record_popup.close();
+            }
 			document.querySelector("#submit_button").click();
 		}
 	};
@@ -721,7 +677,6 @@ async function edit_main(element) {
 		}
 	}
 
-
 	document.onkeydown = function(e) {
 		if(e.key === 's' && e.ctrlKey){
 			e.preventDefault();
@@ -733,7 +688,6 @@ async function edit_main(element) {
 	};
 
     find_or_observe_for_element("[id='sys_display.incident.u_kb_article']", (node) => {
-		console.log(node);
 		const btn = node.parentNode.addNode("a", "custom_btn", ["icon-info"]); //btn btn-default btn-ref icon icon-info
 		btn.setAttribute("style", "float: right;");
         const sys_id = node.value.split(' ')[0];
@@ -743,9 +697,32 @@ async function edit_main(element) {
 	}, undefined, true);
 
     find_or_observe_for_element("#vrt_show_related_task_records_link_incident_count", async (node) => {
-        console.warn('related incidents node:-------------------------------------------');
-        console.warn(node);
         replace_related_inc_observer.observe(document.querySelector("#vrt_show_related_task_records_link_incident_count"), { subtree: true, childList: true });
+    }, undefined, true);
+
+    find_or_observe_for_element("#activity-stream-comments-textarea", async (node) => {
+        const sigbtn = node.parentNode.parentNode.addNode("div","insert-signature-button",["btn", "btn-default"]);
+        sigbtn.style = "float:right;";
+        sigbtn.innerHTML = "Add signature";
+        const nodeB = document.querySelector(".comment-box .pull-right");
+        const sigbtnB = nodeB.addNode("div","insert-signature-buttonB",["btn", "btn-default"]);
+        sigbtnB.style = "float:right;";
+        sigbtnB.innerHTML = "Add signature";
+        sigbtn.addEventListener("click", (e) => {e.preventDefault(); const el = document.querySelector("#activity-stream-comments-textarea"); el.value += custom_text_parser(settings.custom_signature.value); el.style.height = (el.scrollHeight > el.clientHeight) ? (el.scrollHeight)+"px" : "60px";});
+        console.warn(sigbtn);
+        console.warn(sigbtnB);
+        setTimeout(() => {document.querySelector("#insert-signature-buttonB").addEventListener("click", (e) => {e.preventDefault(); const el = document.querySelector("#activity-stream-textarea"); el.value += custom_text_parser(settings.custom_signature.value); el.style.height = (el.scrollHeight > el.clientHeight) ? (el.scrollHeight)+"px" : "60px";})}, 8000);
+    }, undefined, true);
+
+    find_or_observe_for_element("[name='work_notes-journal-checkbox']", async (node) => {
+        toggle_insert_signature_button();
+        node.addEventListener("click", (e) => {toggle_insert_signature_button();});
+    }, undefined, true);
+
+    find_or_observe_for_element(".icon-stream-one-input", async (node) => {
+        toggle_insert_signature_button();
+        node.addEventListener("click", (e) => {toggle_insert_signature_button();});
+        document.querySelector(".icon-stream-all-input").addEventListener("click", (e) => {toggle_insert_signature_button();});
     }, undefined, true);
 
     /* globals assign_textarea */
@@ -762,59 +739,50 @@ async function edit_main(element) {
 
 console.warn("Better Incidents Start");
 if (location.includes("b47514e26f122500a2fbff2f5d3ee4d0")){
-    //overrideAJAX();
 	new_main();
 }
 
 if (location.includes("incident.do")){
-    //overrideAJAX();
 	edit_main();
 }
 console.warn("Better Incidents End");
 
-function copyFormatted (html) {
-  // Create container for the HTML
-  // [1]
-  var container = document.createElement('div')
-  container.innerHTML = html
+function toggle_insert_signature_button() {
+    setTimeout(() => {
+        if (!document.querySelector("#multiple-input-journal-entry").classList.contains("ng-hide")) {
+            document.querySelector("#insert-signature-buttonB").classList.add("hidden");
+            console.warn("HIDE toggled off");
+        } else {
+            if (document.querySelector("[name='work_notes-journal-checkbox']").checked) {
+                document.querySelector("#insert-signature-buttonB").classList.add("hidden");
+                console.warn("SHOW toggled off");
+            } else {
+                document.querySelector("#insert-signature-buttonB").classList.remove("hidden");
+                console.warn("SHOW toggled on");
+            }
+        }
+        const el = document.querySelector("#activity-stream-textarea");
+        el.style.height = (el.scrollHeight > el.clientHeight) ? (el.scrollHeight)+"px" : "60px";
 
-  // Hide element
-  // [2]
-  container.style.position = 'fixed'
-  container.style.pointerEvents = 'none'
-  container.style.opacity = 0
+    }, 100);
+}
 
-  // Detect all style sheets of the page
-  var activeSheets = Array.prototype.slice.call(document.styleSheets)
-    .filter(function (sheet) {
-      return !sheet.disabled
+function custom_text_parser(str) {
+    function replaceStringVariable(text, data) {
+        // Create regex using the keys of the replacement object.
+        const regex = new RegExp('\\${(' + Object.keys(data).join('|') + ')}', 'g')
+
+        // Replace the string by the value in object
+        return text.replace(regex, (m, p1) => data[p1] || m)
+    }
+
+    const newText = replaceStringVariable(str, {
+        analyst: g_user.fullName,
+        incident: g_form.getValue('number'),
+        company: g_form.getDisplayBox("company").value,
+        userFN: g_form.getReference("u_affected_user").first_name,
+        companyPN: g_form.getReference('company').u_service_desk_contact_information.replace(/(?:a|[^a])*?(?:^|\s|\()(\d{3})[^\d]{1,2}(\d{3})[^\d](\d{4})(\s|$)(?:a|[^a])*/,`$1-$2-$3`)
     })
 
-  // Mount the container to the DOM to make `contentWindow` available
-  // [3]
-  document.body.appendChild(container)
-
-  // Copy to clipboard
-  // [4]
-  window.getSelection().removeAllRanges()
-
-  var range = document.createRange()
-  range.selectNode(container)
-  window.getSelection().addRange(range)
-
-  // [5.1]
-  document.execCommand('copy')
-
-  // [5.2]
-  for (var i = 0; i < activeSheets.length; i++) activeSheets[i].disabled = true
-
-  // [5.3]
-  document.execCommand('copy')
-
-  // [5.4]
-  for (var i = 0; i < activeSheets.length; i++) activeSheets[i].disabled = false
-
-  // Remove the container
-  // [6]
-  document.body.removeChild(container)
+    return newText
 }

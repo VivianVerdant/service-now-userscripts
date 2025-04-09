@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      2.4.0
+// @version      2.5.0
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -25,7 +25,8 @@
 
 
 /* Changelog
-v2.4 - Will close the popup window of related tickets, if one exists, after creating a new ticket
+v2.5 - added support for custom buttons in custom work notes, see support doc for more information https://github.com/VivianVerdant/service-now-userscripts/wiki/Better-Incident-Page#custom-company-notes
+v2.4 - Will close the popup window of related tickets if one exists after creating a new ticket
 v2.3.1 - Bugix: apply newline feature to both single and double field work notes textareas
 v2.3 - Total rework of setting menu
      - Added auto entering of newline characters in Work Notes textarea
@@ -144,6 +145,54 @@ function saveNote() {
 	GM_setValue("saved_notes", saved_notes);
 }
 
+window.addEventListener("click",on_click_insert_text_node)
+
+function on_click_insert_text_node(event) {
+    const node = event.target;
+    if (node.tagName == "TEXT-INSERT") {
+        event.preventDefault();
+        if (node.getAttribute("target") && (node.getAttribute("target") == "comments" || node.getAttribute("target") == "comment") && node.getAttribute("text")) {
+            //alert(node.getAttribute("text"));
+            const text = custom_text_parser(node.getAttribute("text"));
+            if (document.querySelector("#multiple-input-journal-entry").classList.contains("ng-hide")) {
+                if (document.querySelector("#activity-stream-textarea").getAttribute("aria-label") == "Additional comments") {
+                    const el = document.querySelector("#activity-stream-textarea");
+                    el.value += text;
+                    el.style.height = (el.scrollHeight > el.clientHeight) ? (el.scrollHeight)+"px" : "60px";
+                } else {
+                    document.querySelector("[name='work_notes-journal-checkbox']").click()
+                    document.querySelector("#activity-stream-textarea").value += text;
+                }
+            } else {
+                    const el = document.querySelector("#activity-stream-comments-textarea");
+                    el.value += text;
+                    el.style.height = (el.scrollHeight > el.clientHeight) ? (el.scrollHeight)+"px" : "60px";
+            }
+        }
+
+        if (node.getAttribute("target") && (node.getAttribute("target") == "worknotes" || node.getAttribute("target") == "worknote") && node.getAttribute("text")) {
+            //alert(node.getAttribute("text"));
+            const text = custom_text_parser(node.getAttribute("text"));
+            if (document.querySelector("#multiple-input-journal-entry").classList.contains("ng-hide")) {
+                if (document.querySelector("#activity-stream-textarea").getAttribute("aria-label") == "Additional comments") {
+                    document.querySelector("[name='work_notes-journal-checkbox']").click()
+                    const el = document.querySelector("#activity-stream-textarea");
+                    el.value += text;
+                    el.style.height = (el.scrollHeight > el.clientHeight) ? (el.scrollHeight)+"px" : "60px";
+                } else {
+                    const el = document.querySelector("#activity-stream-textarea");
+                    el.value += text;
+                    el.style.height = (el.scrollHeight > el.clientHeight) ? (el.scrollHeight)+"px" : "60px";
+                }
+            } else {
+                    const el = document.querySelector("#activity-stream-work_notes-textarea");
+                    el.value += text;
+                    el.style.height = (el.scrollHeight > el.clientHeight) ? (el.scrollHeight)+"px" : "60px";
+            }
+        }
+    }
+}
+
 function create_notes(node) {
 	let saved_notes = GM_getValue("saved_notes", new Object());
 	const company = document.querySelector("[id='sys_display.incident.company']").value;
@@ -171,9 +220,14 @@ function create_notes(node) {
 	const notes_div = notes.addNode("div", "custom_notes_div");
 	notes_div.innerHTML = note;
 
+    const help_button = notes.addNode("a", "help_button", ["btn", "btn-default", "btn-ref", "hidden"]);
+    help_button.setAttribute("href","https://github.com/VivianVerdant/service-now-userscripts/wiki/Better-Incident-Page#custom-company-notes");
+    help_button.setAttribute("target","_blank");
+    help_button.addNode("span", "help_button_img", ["icon", "icon-help"]);
+
 	const lock_button = notes.addNode("button", "toggle_notes_lock", ["btn", "btn-default", "btn-ref"]);
 	lock_button.addNode("span", "toggle_notes_img", ["icon", "icon-locked"]);
-	lock_button.onclick = (e) => {
+    lock_button.onclick = (e) => {
 		e.preventDefault();
 
 		const text_node = document.querySelector("#custom_notes_text");
@@ -182,10 +236,16 @@ function create_notes(node) {
 		const div_node = document.querySelector("#custom_notes_div");
 		div_node.classList.toggle("hidden");
 
+        const help_node = document.querySelector("#help_button");
+		help_node.classList.toggle("hidden");
+
         const img = document.querySelector("#toggle_notes_img");
 		img.classList.toggle("icon-locked");
 		img.classList.toggle("icon-unlocked");
 		saveNote();
+
+        const el = document.querySelector("#custom_notes_text");
+        el.style.height = (el.scrollHeight > el.clientHeight) ? (el.scrollHeight)+"px" : "80px";
 	};
 
 	//icon icon-locked

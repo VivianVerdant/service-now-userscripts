@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      2.5.0
+// @version      2.5.1
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -25,7 +25,9 @@
 
 
 /* Changelog
-v2.5 - added support for custom buttons in custom work notes, see support doc for more information https://github.com/VivianVerdant/service-now-userscripts/wiki/Better-Incident-Page#custom-company-notes
+v2.5.1 - Added a default button addon for company work notes to insert the generic signature text
+       - Added several new dynamic variables that can be used
+v2.5 - Added support for custom buttons in custom work notes, see support doc for more information https://github.com/VivianVerdant/service-now-userscripts/wiki/Better-Incident-Page#custom-company-notes
 v2.4 - Will close the popup window of related tickets if one exists after creating a new ticket
 v2.3.1 - Bugix: apply newline feature to both single and double field work notes textareas
 v2.3 - Total rework of setting menu
@@ -202,6 +204,17 @@ function create_notes(node) {
 		note = saved_notes[company];
 	} else {
 		note = "Personal " + company + " notes:";
+        note += `<br/>
+<text-insert
+target="comments"
+text="Hello \${userFN},
+
+My name is \${analyst} and I'm with the \${company} IT Service Desk, reaching out to you about \${shortdesc} as part of \${incident}.
+
+
+
+Please give us a call at \${companyPN} and reference \${incident} so we can help you troubleshoot. The service desk is open 24/7 and this will be the fastest resolution to your issue.
+If you do not need any further assistance, please respond to my email stating that your issue has been resolved.">Insert Comment</text-insert>`;
 		saved_notes[company] = note;
 		GM_setValue("saved_notes", saved_notes);
 	}
@@ -838,6 +851,8 @@ function custom_text_parser(str) {
 
     const newText = replaceStringVariable(str, {
         analyst: g_user.fullName,
+        analystFN: g_user.firstName,
+        shortdesc: g_form.getValue('short_description'),
         incident: g_form.getValue('number'),
         company: g_form.getDisplayBox("company").value,
         userFN: g_form.getReference("u_affected_user").first_name,

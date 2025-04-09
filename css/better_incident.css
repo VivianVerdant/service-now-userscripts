@@ -37,6 +37,7 @@ div[id="element.incident.u_device_asset"]::after {
 #custom_notes {
 	display: inline-flex;
 	margin: 2px;
+    padding: 4px;
 }
 
 textarea.disabled {
@@ -50,6 +51,10 @@ textarea.disabled {
 	float: right;
 }
 
+#help_button {
+    background-color: RGBA(255, 255, 255, .25);
+}
+
 #custom_notes_text {
 	background: white;
 }
@@ -57,6 +62,10 @@ textarea.disabled {
 #custom_notes_div {
 	width: 100%;
 	height: fit-content;
+}
+
+#custom_notes_text {
+    max-height: none;
 }
 
 /* HEADER */
@@ -695,4 +704,34 @@ HTML[data-doctype=true] .form-field-addons {
 .col-md-11,
 .col-md-12 {
 	width: unset;
+}
+
+text-insert {
+    font-family: var(--now-button--font-family, var(--now-actionable--font-family, var(--now-font-family, "Source Sans Pro", Arial, sans-serif)));
+    font-style: var(--now-button--font-style,var(--now-actionable--font-style,normal));
+    font-size: var(--now-global-font-size--md, 14px);
+    font-weight: var(--now-button--font-weight,var(--now-actionable--font-weight,normal));
+    height: 32px;
+    background-color: RGBA(var(--now-color_background--primary,var(--now-color--neutral-0,255,255,255)));
+    border-color: RGB(var(--now-button--secondary--border-color,var(--now-color--neutral-7,135,147,148)));
+    border-width: var(--now-button--secondary--border-width,var(--now-button--border-width,var(--now-actionable--border-width,1px)));
+    border-style: solid;
+    border-radius: var(--now-button--border-radius,var(--now-actionable--border-radius,0));
+    color: RGB(var(--now-button--secondary--color,var(--now-color--neutral-18,22,27,28)));
+    transition: background-color .3s cubic-bezier(.075, .82, .165, 1),border-color .3s cubic-bezier(.075, .82, .165, 1),box-shadow .3s cubic-bezier(.075, .82, .165, 1),color .3s cubic-bezier(.075, .82, .165, 1),opacity .3s cubic-bezier(.075, .82, .165, 1),transform .1s cubic-bezier(.77, 0, .175, 1);
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    display: inline-flex;
+    line-height: 1;
+    padding: 0 var(--now-global-space--md,10px);
+    width: fit-content;
+    margin-top: 12px;
+
+}
+
+text-insert:hover {
+    background-color: RGBA(var(--now-button--secondary--background-color--hover,var(--now-color--neutral-3,209,214,214)),var(--now-button--secondary--background-color-alpha--hover,1));
+    border-color: RGB(var(--now-button--secondary--border-color--hover,var(--now-color--neutral-7,135,147,148)));
+    color: RGB(var(--now-button--secondary--color--hover,var(--now-color--secondary-2,1,89,107)));
 }

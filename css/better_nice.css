@@ -8,10 +8,20 @@
 	background: #2861a8;
 }
 
+@keyframes blink{
+  0% {
+    background-color: #e85d46;
+  }
+  100% {
+    background-color: black;
+  }*/
+  100% {
+    background-color: #e85d46;
+  }
+}
 
 .blinkey {
 	animation: blink 1s infinite;
-	min-height: 82px;
 }
 
 /*
@@ -26,19 +36,8 @@ div.agentstateui.agent-state-ui[data-outstate="Lunch"] > div.state-bar > span.ti
     font-weight: bold;
     letter-spacing: 2px;*/
 }
-/*
-@keyframes blink{
-  0% {
-    background-color: #e85d46;
-  }
-  100% {
-    background-color: black;
-  }*/
-  /*100% {
-    background-color: #e85d46;
-  }
-}
 
+/*
 .advanced-address-book-ui .external-template[data-call-state="chooseSkill"] .skill-list-container,
 .skill-list-container .ui-front {
 	display: block !important;
@@ -142,4 +141,71 @@ div#uimanager_container div.glance-only+.ui-frame,
 div#uimanager_container div.ui-frame {
     margin-left: 0px !important;
     padding-bottom: 205px;
+}
+
+.acw-ui[data-is-child-element="true"]:not([data-media-type="WorkItem"]) {
+    bottom: 210px;
+    left: 10px;
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#dashboard {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+
+#ctl00_serverNameDiv,
+.nice-header,
+.cxone-sidebar,
+#ctl00_lblWebServerName {
+	display: none !important;
+}
+
+#ctl00_pageContentDiv {
+    margin-top: 17px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    width: 100%!important;
+}
+
+.page-content .dashboard {
+	min-width: 0 !important;
+}
+
+.dashboard .widgetDroppable {
+	min-width: 0 !important;
+}
+
+.dashboard .widgetContainer {
+	margin: 2px !important;
+}
+
+div.evolve-sidebar-closed {
+	left: unset !important;
+}
+
+.dashboard .consoleViewBar,
+#ctl00_pageContentDiv {
+	margin-top: unset !important;
+	padding: unset !important;
+	margin-bottom: -14px !important;
+    z-index: 9999 !important;
+}
+
+div > div.slick-cell.l1.r1.alignRight {
+	width: 60px !important;
+	left: 130px !important;
+}
+
+div > div.slick-cell.l2.r2.alignLeft {
+	left: 230px !important;
+}
+
+[id*="AgentName"] {
+	width: 100px !important;
+}
+
+[id*="LastUpdateTime"] {
+	width: 100px !important;
 }

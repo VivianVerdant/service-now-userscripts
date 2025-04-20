@@ -1,3 +1,62 @@
 :root {
 	--color: transparent;
 }
+
+[aria-label="date selection"],
+[title="Add calendar"],
+[title="Visit Bookings with me"],
+#LeftRail,
+#o365header {
+    display: none !important;
+}
+
+[aria-label="Ribbon"] {
+    height: auto !important;
+}
+
+/*#TopBar,
+[title="Show all"],
+#leftPaneContainer [data-automationid="splitbuttonprimary"] > div,
+[aria-label="calendar list"] li > div:first-child,
+[aria-label="calendar list"] > div > div:first-child*/
+#BottomBar {
+    display: none !important;
+}
+
+#leftPaneContainer * {
+    width: unset !important;
+    min-width: unset !important;
+}
+
+#leftPaneContainer button {
+    padding: 5px;
+}
+
+body {
+    min-width: 0px !important;
+}
+
+#MainModule > div > div > div {
+    margin: 0;
+}
+
+[id="Jump to calendar view-region"] > div > div > div > div.paSPI > div.RyYB7 > div > div > div:not([data-is-scrollable="true"]) {
+    width: 20px !important;
+}
+
+.ms-Callout-container > div {
+    width: 445px;
+}
+
+.calendar-SelectionStyles-resizeBoxParent > div > div > div {
+    font-size: large;
+    overflow: visible;
+}
+
+.break-event {
+    background-color: #6d9636 !important;
+}
+
+.lunch-event {
+    background-color: #8e6129 !important;
+}

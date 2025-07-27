@@ -1,26 +1,29 @@
 .kb-wrapper {
-    table:first-of-type {
-        width: 100% !important;
-        max-width: 1100px !important;
-        place-self: center;
-        
-        td:nth-of-type(odd) {
-            max-width: 16% !important;
-        }        
-    }
-        
-    table, tbody, tr, td {
-        height: fit-content !important;
-    }
+	table:first-of-type {
+		width: 100% !important;
+		max-width: 1100px !important;
+		place-self: center;
+		
+		td:nth-of-type(odd) {
+			max-width: 16% !important;
+		}
+		td:nth-of-type(even) {
+			width: auto !important;
+		}
+	}
     
-    *:not(a) {
-        color: var(--primary-text-color) !important;
-        background-color: var(--primary-background-color) !important;
-    }
-    
-    td:nth-of-type(even) strong {
-        color: var(--emphasis-text-color) !important;
-    }
+	table, tbody, tr, td {
+		height: fit-content !important;
+	}
 
-    padding: 0 !important;
+	*:not(a) {
+		color: var(--primary-text-color) !important;
+		background-color: var(--primary-background-color) !important;
+	}
+	
+	td:nth-of-type(even) strong {
+		color: var(--emphasis-text-color) !important;
+	}
+
+	padding: 0 !important;
 }

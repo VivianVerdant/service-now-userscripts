@@ -3,7 +3,7 @@
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
-// @version      0.0.1
+// @version      0.0.2
 // @description  try to take over the world!
 // @author       Vivian
 // @match        https://virteva.service-now.com/*
@@ -46,6 +46,7 @@ form,
 .tabs2_list,
 .list_v2,
 .breadcrumb_container,
+#cat_item_view table,
 [id="incident.incident.parent_incident"],
 .tab_section #cxs_widget_container, .tab_section #cxs_widget_container .cxs_results_header .horizontal-rule::before, .tab_section #cxs_widget_container::after, .tab_section #cxs_widget_container::before, .tabs2_section_0 #cxs_widget_container, .tabs2_section_0 #cxs_widget_container .cxs_results_header .horizontal-rule::before, .tabs2_section_0 #cxs_widget_container::after, .tabs2_section_0 #cxs_widget_container::before {
     color: var(--primary-text-color) !important;

@@ -3,7 +3,7 @@
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts/tree/main
 // @supportURL   https://github.com/VivianVerdant/service-now-userscripts/tree/main
-// @version      0.1
+// @version      0.0.2
 // @description  Suite of tools and improvements for Service-Now
 // @author       Vivian
 // @run-at       document-start
@@ -14,6 +14,7 @@
 // @resource     better_kb_search_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_kb_search.css
 // @resource     better_kb_view_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_kb_view.css
 // @resource     better_kb_edit_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_kb_edit.css
+// @resource     better_kb_fix_formatting_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_kb_fix_formatting.css
 // @grant        GM_addStyle
 // @grant        GM_getResourceText
 // @grant        GM_setValue
@@ -602,19 +603,17 @@ if (l.searchParams.get("u_company")){
 async function main() {
 	if (l.searchParams.get("id") == "kb_search"){
 		// Load custom CSS
-		const better_kb_search_css = GM_getResourceText("better_kb_search_css");
-		GM_addStyle(better_kb_search_css);
+		GM_addStyle(GM_getResourceText("better_kb_search_css"));
 		overrideAJAX();
 		search_main();
 	} else if (l.searchParams.get("id") == "kb_article_view" || l.searchParams.has("sysparm_article")){
 		// Load custom CSS
-		const better_kb_view_css = GM_getResourceText("better_kb_view_css");
-		GM_addStyle(better_kb_view_css);
+		GM_addStyle(GM_getResourceText("better_kb_view_css"));
+        GM_addStyle(GM_getResourceText("better_kb_fix_formatting_css"));
 		view_main();
 	}else if (l.pathname === "/kb_knowledge.do"){
 		// Load custom CSS
-		const better_kb_edit_css = GM_getResourceText("better_kb_edit_css");
-		//GM_addStyle(better_kb_edit_css);
+		//GM_addStyle(GM_getResourceText("better_kb_edit_css"));
         edit_main();
 	}
 }

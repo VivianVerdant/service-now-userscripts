@@ -58,24 +58,35 @@ async function main(element) {
 
     wait_for_element("#clickHereIFrame", (node) => {
         console.log(node);
-        node = node.parentNode.parentNode.parentNode;
-        const frame = document.createElement("iframe");
-        frame.id = "noc-frame";
-        frame.classList.add("noc-frame");
-        const shadow = node.parentNode.attachShadow({ mode: "open" });
-        const style_node = document.createElement("style");
-        style_node.innerHTML = GM_getResourceText("better_dashboard_css");
-        shadow.appendChild(style_node);
-        shadow.appendChild(frame);
 
-        node.classList.add("hidden");
-        if (noc === 1) {
-            frame.setAttribute("src", "https://virteva.service-now.com/noc1.do");
-            noc += 1;
-        } else {
-            frame.setAttribute("src", "https://virteva.service-now.com/noc2.do");
-        }
+        node.classList.add("addednocwait");
+        wait_for_element("#clickHereIFrame:not(.addednocwait)", (node) => {
+            const noc1 = document.querySelectorAll("#clickHereIFrame")[0].parentNode.parentNode.parentNode;
 
+            const frame1 = document.createElement("iframe");
+            frame1.id = "noc-frame";
+            frame1.classList.add("noc-frame");
+            const shadow1 = noc1.parentNode.attachShadow({ mode: "open" });
+            const style_node1 = document.createElement("style");
+            style_node1.innerHTML = GM_getResourceText("better_dashboard_css");
+            shadow1.appendChild(style_node1);
+            shadow1.appendChild(frame1);
+            noc1.classList.add("hidden");
+            frame1.setAttribute("src", "https://virteva.service-now.com/noc1.do");
+
+            const noc2 = document.querySelectorAll("#clickHereIFrame")[1].parentNode.parentNode.parentNode;
+            const frame2 = document.createElement("iframe");
+            frame2.id = "noc-frame";
+            frame2.classList.add("noc-frame");
+            const shadow2 = noc2.parentNode.attachShadow({ mode: "open" });
+            const style_node2 = document.createElement("style");
+            style_node2.innerHTML = GM_getResourceText("better_dashboard_css");
+            shadow2.appendChild(style_node2);
+            shadow2.appendChild(frame2);
+            noc2.classList.add("hidden");
+            frame2.setAttribute("src", "https://virteva.service-now.com/noc2.do");
+
+        });
 	}, false);
 
     wait_for_element("a", (node) => {

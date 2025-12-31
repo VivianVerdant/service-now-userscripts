@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Service-Now Function Buttons
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      0.2.0
+// @version      0.2.1
 // @description  Add buttons to do stuff, I guess
 // @author       Vivian Roerig Willett
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts
@@ -71,22 +71,13 @@ const email_regex = /(?<=UserPrincipalName\s*:\s*)(.*)/g;
 
 function task() {
     const page_type = "task";
-    add_header_button("AD Comment",()=>{
-        const work_notes = document.querySelector(".h-card-wrapper.activities-form").innerText;
-        const display_name = display_name_regex.exec(work_notes)[0];
-        const email = email_regex.exec(work_notes)[0];
-        document.getElementById("tabs2_section").querySelector(".tab_header:nth-of-type(2) > span").click();
-        const comments = document.getElementById("sc_task.request_item.comments");
-        const requested_by = document.querySelector(".form-group.sc-row:has([aria-label='Requested by']) .input-group input").value;
-        comments.value = `Hello ${requested_by},
-This account has been created per your request
-Display Name: ${display_name}
-Email: ${email}
-
-Thank you,
-${g_user.firstName}
-Request Fulfillment`;
-        fix_text_area(comments);
+    wait_for_element("[id='element.sc_task.request_item.company']", (node) => {
+        const company_sys_id = document.getElementById("sc_task.request_item.company").getAttribute("value");
+        switch (company_sys_id){
+            case "59563f611b5d94d09a47524d0d4bcb45":
+                archwell_task();
+                break
+        }
     });
 }
 
@@ -110,14 +101,34 @@ function kb() {
     add_header_button("KB",()=>{g_form.addInfoMessage(page_type);});
 }
 
-
-
 wait_for_element("textarea", (node) => {
     //console.log('textarea has been added:-------------------------------------------');
-    console.debug(node);
+    //console.debug(node);
     const text_area_fn = async (e) => {e.target.style.height = "0px"; e.target.style.height = e.target.scrollHeight + 8 + "px";}
     node.addEventListener("change", text_area_fn);
     node.addEventListener("keydown", text_area_fn);
     node.addEventListener("click", text_area_fn);
     setTimeout(() => {node.click();}, 1000);
 }, false);
+
+function archwell_task() {
+    add_header_button("AD Comment",()=>{
+        try {
+            const work_notes = document.querySelector(".h-card-wrapper.activities-form").innerText;
+            const display_name = display_name_regex.exec(work_notes)[0];
+            const email = email_regex.exec(work_notes)[0];
+            document.getElementById("tabs2_section").querySelector(".tab_header:nth-of-type(2) > span").click();
+            const comments = document.getElementById("sc_task.request_item.comments");
+            const requested_for = document.querySelector(".form-group.sc-row:has([aria-label='Requested for']) .input-group input").value;
+            comments.value = `Hello ${requested_for},
+This account has been created per your request
+Display Name: ${display_name}
+Email: ${email}
+
+Thank you,
+${g_user.firstName}
+Request Fulfillment`;
+            fix_text_area(comments);
+        } catch(e) {}
+    });
+}

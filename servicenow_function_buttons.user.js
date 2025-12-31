@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Service-Now Function Buttons
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      0.2.1
+// @version      0.2.2
 // @description  Add buttons to do stuff, I guess
 // @author       Vivian Roerig Willett
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts
@@ -120,14 +120,14 @@ function archwell_task() {
             document.getElementById("tabs2_section").querySelector(".tab_header:nth-of-type(2) > span").click();
             const comments = document.getElementById("sc_task.request_item.comments");
             const requested_for = document.querySelector(".form-group.sc-row:has([aria-label='Requested for']) .input-group input").value;
-            comments.value = `Hello ${requested_for},
-This account has been created per your request
-Display Name: ${display_name}
-Email: ${email}
-
-Thank you,
-${g_user.firstName}
-Request Fulfillment`;
+            comments.value = `Hello ${requested_for},\n`
+                + `This account has been created per your request\n`
+                + `Display Name: ${display_name}\n`
+                + `Email: ${email}\n`
+                + `\n`
+                + `Thank you,\n`
+                + `${g_user.firstName}\n`
+                + `Request Fulfillment`;
             fix_text_area(comments);
         } catch(e) {}
     });

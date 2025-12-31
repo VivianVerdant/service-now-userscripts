@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Service-Now Function Buttons
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      0.1.0
+// @version      0.2.0
 // @description  Add buttons to do stuff, I guess
 // @author       Vivian Roerig Willett
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts
@@ -51,11 +51,44 @@
         case "/kb":
             kb();
             break
+        case "/sc_task.do":
+            task();
+            break
         default:
             break
     }
 
 })();
+
+async function fix_text_area(e) {
+    e.style.height = "0px";
+    e.style.height = e.scrollHeight + 8 + "px";
+    setTimeout(() => {e.click();}, 100);
+}
+
+const display_name_regex = /(?<=DisplayName\s*:\s*)(.*)/g;
+const email_regex = /(?<=UserPrincipalName\s*:\s*)(.*)/g;
+
+function task() {
+    const page_type = "task";
+    add_header_button("AD Comment",()=>{
+        const work_notes = document.querySelector(".h-card-wrapper.activities-form").innerText;
+        const display_name = display_name_regex.exec(work_notes)[0];
+        const email = email_regex.exec(work_notes)[0];
+        document.getElementById("tabs2_section").querySelector(".tab_header:nth-of-type(2) > span").click();
+        const comments = document.getElementById("sc_task.request_item.comments");
+        const requested_by = document.querySelector(".form-group.sc-row:has([aria-label='Requested by']) .input-group input").value;
+        comments.value = `Hello ${requested_by},
+This account has been created per your request
+Display Name: ${display_name}
+Email: ${email}
+
+Thank you,
+${g_user.firstName}
+Request Fulfillment`;
+        fix_text_area(comments);
+    });
+}
 
 function email() {
     const page_type = "email";
@@ -76,3 +109,15 @@ function kb() {
     const page_type = "email";
     add_header_button("KB",()=>{g_form.addInfoMessage(page_type);});
 }
+
+
+
+wait_for_element("textarea", (node) => {
+    //console.log('textarea has been added:-------------------------------------------');
+    console.debug(node);
+    const text_area_fn = async (e) => {e.target.style.height = "0px"; e.target.style.height = e.target.scrollHeight + 8 + "px";}
+    node.addEventListener("change", text_area_fn);
+    node.addEventListener("keydown", text_area_fn);
+    node.addEventListener("click", text_area_fn);
+    setTimeout(() => {node.click();}, 1000);
+}, false);

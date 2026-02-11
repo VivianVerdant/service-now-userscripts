@@ -1,0 +1,16 @@
+[id*='element.container']:nth-of-type(11) .vsplit:nth-of-type(2)::after {
+    content: "Membership Experience Manager, Center Manager\A Care Coordinator, Care Navigator, or Medical Assistant" !important;
+display: block;
+text-align: center;
+white-space: pre;
+width: fit-content;
+margin-left: auto;
+margin-right: auto;
+border: 1px solid transparent;
+background-color: #ffafaf;
+border-color: red;
+border-radius: 4px;
+font-size: var(--now-global-font-size--md, 14px);
+padding: var(--now-global-space--md,10px);
+box-sizing: border-box;
+}

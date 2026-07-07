@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      2.5.1
+// @version      2.6.0
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -16,6 +16,7 @@
 // @resource     better_incident_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_incident.css
 // @resource     better_new_incident_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_new_incident.css
 // @grant        GM_addStyle
+// @grant        GM_registerMenuCommand
 // @grant        GM_getResourceText
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -25,6 +26,8 @@
 
 
 /* Changelog
+v2.6.0 - Bugfix: local time now displays properly
+       - Added preselects KB name when focusing the attached knowledge field, for better copying or drag and dropping
 v2.5.1 - Added a default button addon for company work notes to insert the generic signature text
        - Added several new dynamic variables that can be used
 v2.5 - Added support for custom buttons in custom work notes, see support doc for more information https://github.com/VivianVerdant/service-now-userscripts/wiki/Better-Incident-Page#custom-company-notes
@@ -63,6 +66,17 @@ v0.1 - Initial release
 */
 
 'use strict';
+
+const menu_command_id_1 = GM_registerMenuCommand("Show Alert", function( MouseEvent ) {
+  alert("Menu item selected");
+}, {
+  accessKey: "a",
+  autoClose: true
+});
+
+const menu_command_id_2 = GM_registerMenuCommand("Log", function( MouseEvent ) {
+  console.log("Menu item selected");
+}, "l");
 
 function testAlert(e) {
     e.preventDefault();
@@ -265,13 +279,9 @@ If you do not need any further assistance, please respond to my email stating th
 }
 
 async function create_localtime(node) {
-    console.log("foobar time");
-    console.log(node);
-    let addons_node = node.querySelector(".form-field-addons");
-    // class="btn btn-default btn-ref reference_decoration icon-alert-triangle"
-    let local_time_button = addons_node.addNode("a", "local_time_button", ["btn", "btn-default", "reference_decoration"]);
+    let local_time_button = node.addNode("div", "local_time_button", ["btn", "reference_decoration"]);
 
-    let input_field_node = node.querySelector("[id='incident.u_phone']") || node.querySelector("[id='incident.u_contact_phone']");
+    let input_field_node = document.querySelector("[id='incident.u_phone']") || document.querySelector("[id='incident.u_contact_phone']");
     console.log(input_field_node);
     input_field_node.addEventListener("blur", phone_string_input);
     local_time_button.addEventListener("click", phone_string_input);
@@ -686,7 +696,7 @@ async function edit_main(element) {
     }
 
     if (settings.custom_notes.value) {
-        find_or_observe_for_element("[id='element.incident.u_phone']", (node) => {
+        find_or_observe_for_element("[id='element.incident.u_phone'] .form-field-addons", (node) => {
             console.log('insert local time:-------------------------------------------');
             console.log(node);
             create_localtime(node);
@@ -697,7 +707,7 @@ async function edit_main(element) {
     }
 
     if (settings.custom_notes.value) {
-        find_or_observe_for_element("[id='element.incident.u_contact_phone']", (node) => {
+        find_or_observe_for_element("[id='element.incident.u_contact_phone'] .form-field-addons", (node) => {
             console.log('insert local time:-------------------------------------------');
             console.log(node);
             create_localtime(node);
@@ -706,6 +716,14 @@ async function edit_main(element) {
 		});*/
         });
     }
+
+	find_or_observe_for_element("[id='sys_display.incident.u_kb_article']", (node) => {
+        node.addEventListener("focus", (event) => {
+            const match = event.target.value.match(/(^\w*)/)[0];
+            const len = match.length;
+            node.setSelectionRange(0, len);
+        })
+    }, undefined, true);
 
 	document.onreadystatechange = function () {
 		if (document.readyState == "complete") {
@@ -772,7 +790,7 @@ async function edit_main(element) {
     find_or_observe_for_element("#vrt_show_related_task_records_link_incident_count", async (node) => {
         replace_related_inc_observer.observe(document.querySelector("#vrt_show_related_task_records_link_incident_count"), { subtree: true, childList: true });
     }, undefined, true);
-
+/*
     find_or_observe_for_element("#activity-stream-comments-textarea", async (node) => {
         const sigbtn = node.parentNode.parentNode.addNode("div","insert-signature-button",["btn", "btn-default"]);
         sigbtn.style = "float:right;";
@@ -786,7 +804,7 @@ async function edit_main(element) {
         console.warn(sigbtnB);
         setTimeout(() => {document.querySelector("#insert-signature-buttonB").addEventListener("click", (e) => {e.preventDefault(); const el = document.querySelector("#activity-stream-textarea"); el.value += custom_text_parser(settings.custom_signature.value); el.style.height = (el.scrollHeight > el.clientHeight) ? (el.scrollHeight)+"px" : "60px";})}, 8000);
     }, undefined, true);
-
+*/
     find_or_observe_for_element("[name='work_notes-journal-checkbox']", async (node) => {
         toggle_insert_signature_button();
         node.addEventListener("click", (e) => {toggle_insert_signature_button();});

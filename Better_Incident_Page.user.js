@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      2.6.0
+// @version      2.6.1
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -11,6 +11,7 @@
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/pseudorandom.js
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/better_settings_menu.js
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/textarea_autoenter.js
+// @require      https://github.com/VivianVerdant/service-now-userscripts/raw/refs/heads/main/lib/autocorrect.js
 // @require      https://github.com/VivianVerdant/chronomouse/raw/refs/heads/master/chronomouse.2.4.0.min.js
 // @resource     settings_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_settings_menu.css
 // @resource     better_incident_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_incident.css
@@ -26,6 +27,7 @@
 
 
 /* Changelog
+v2.6.1 - Inital support for autocorrecting
 v2.6.0 - Bugfix: local time now displays properly
        - Added preselects KB name when focusing the attached knowledge field, for better copying or drag and dropping
 v2.5.1 - Added a default button addon for company work notes to insert the generic signature text
@@ -66,6 +68,23 @@ v0.1 - Initial release
 */
 
 'use strict';
+
+const autocorrect_dictionary = {
+	"windows": "Windows",
+	"workday": "Workday",
+	"epic": "Epic",
+	"vpn": "VPN",
+	"okta": "Okta",
+	//"foo": "bar",
+	//"foo": "bar",
+	//"foo": "bar",
+	//"foo": "bar",
+	//"foo": "bar",
+	//"foo": "bar",
+	//"foo": "bar",
+	//"foo": "bar",
+	//"foo": "bar",
+}
 
 const menu_command_id_1 = GM_registerMenuCommand("Show Alert", function( MouseEvent ) {
   alert("Menu item selected");
@@ -467,19 +486,19 @@ function getTableUserQuery_custom(tableName, userSysID) {
 const replace_related_inc_observer = new MutationObserver((mutations_list) => {
     if (document.querySelector("#vrt_show_related_task_records_link_incident")) {
         const related_inc_node = document.querySelector("#vrt_show_related_task_records_link_incident");
-        console.warn("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        console.warn(related_inc_node);
-        console.warn(related_inc_node.onclick);
+        //console.warn("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        //console.warn(related_inc_node);
+        //console.warn(related_inc_node.onclick);
         related_inc_node.onclick = function() {showRelatedRecList_custom('incident')};
-        console.warn(related_inc_node.onclick);
+        //console.warn(related_inc_node.onclick);
     }
 
     if (location.includes("b47514e26f122500a2fbff2f5d3ee4d0")) {
         for (const n of mutations_list) {
             if (n.addedNodes.length > 0){
-                console.warn(n.addedNodes);
+                //console.warn(n.addedNodes);
                 for (const m of n.addedNodes) {
-                    console.warn(m.data);
+                    //console.warn(m.data);
                     if (m.data != "(0)" && settings.auto_open_related_incidents.value ) {
                         showRelatedRecList_custom('incident');
                     }
@@ -538,6 +557,15 @@ async function new_main(element) {
 			document.querySelector("#submit_button").click();
 		}
 	};
+
+    /* globals assign_autocorrect_element */
+    find_or_observe_for_element("[id='IO:8ecaa7cc4f6bf10018a258211310c7ec']", async (node) => {
+		assign_autocorrect_element(node, autocorrect_dictionary);
+    }, undefined, true);
+
+	find_or_observe_for_element("[id='IO:4f8d89a56f722100ad775ddd5d3ee453']", async (node) => {
+		assign_autocorrect_element(node, autocorrect_dictionary);
+    }, undefined, true);
 
 	/*
 	if (settings.custom_notes) {
@@ -805,16 +833,6 @@ async function edit_main(element) {
         setTimeout(() => {document.querySelector("#insert-signature-buttonB").addEventListener("click", (e) => {e.preventDefault(); const el = document.querySelector("#activity-stream-textarea"); el.value += custom_text_parser(settings.custom_signature.value); el.style.height = (el.scrollHeight > el.clientHeight) ? (el.scrollHeight)+"px" : "60px";})}, 8000);
     }, undefined, true);
 */
-    find_or_observe_for_element("[name='work_notes-journal-checkbox']", async (node) => {
-        toggle_insert_signature_button();
-        node.addEventListener("click", (e) => {toggle_insert_signature_button();});
-    }, undefined, true);
-
-    find_or_observe_for_element(".icon-stream-one-input", async (node) => {
-        toggle_insert_signature_button();
-        node.addEventListener("click", (e) => {toggle_insert_signature_button();});
-        document.querySelector(".icon-stream-all-input").addEventListener("click", (e) => {toggle_insert_signature_button();});
-    }, undefined, true);
 
     /* globals assign_textarea */
     if (settings.work_notes_newline_character.value != "") {
@@ -826,6 +844,22 @@ async function edit_main(element) {
             assign_textarea(node, settings.work_notes_newline_character.value);
         }, undefined, true);
     }
+
+	find_or_observe_for_element("[id='incident.short_description']", async (node) => {
+		assign_autocorrect_element(node, autocorrect_dictionary);
+		console.warn(node);
+    }, undefined, true);
+
+	find_or_observe_for_element("[id='incident.description']", async (node) => {
+		assign_autocorrect_element(node, autocorrect_dictionary);
+		console.warn(node);
+    }, undefined, true);
+
+	find_or_observe_for_element("[aria-label='Additional comments']", async (node) => {
+		assign_autocorrect_element(node, autocorrect_dictionary);
+		console.warn(node);
+    }, undefined, false);
+
 }
 
 console.warn("Better Incidents Start");
@@ -837,26 +871,6 @@ if (location.includes("incident.do")){
 	edit_main();
 }
 console.warn("Better Incidents End");
-
-function toggle_insert_signature_button() {
-    setTimeout(() => {
-        if (!document.querySelector("#multiple-input-journal-entry").classList.contains("ng-hide")) {
-            document.querySelector("#insert-signature-buttonB").classList.add("hidden");
-            console.warn("HIDE toggled off");
-        } else {
-            if (document.querySelector("[name='work_notes-journal-checkbox']").checked) {
-                document.querySelector("#insert-signature-buttonB").classList.add("hidden");
-                console.warn("SHOW toggled off");
-            } else {
-                document.querySelector("#insert-signature-buttonB").classList.remove("hidden");
-                console.warn("SHOW toggled on");
-            }
-        }
-        const el = document.querySelector("#activity-stream-textarea");
-        el.style.height = (el.scrollHeight > el.clientHeight) ? (el.scrollHeight)+"px" : "60px";
-
-    }, 100);
-}
 
 function custom_text_parser(str) {
     function replaceStringVariable(text, data) {

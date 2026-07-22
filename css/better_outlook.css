@@ -2,6 +2,7 @@
 	--color: transparent;
 }
 
+#OwaTitleBar,
 [aria-label="date selection"],
 [title="Add calendar"],
 [title="Visit Bookings with me"],

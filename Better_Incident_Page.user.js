@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better Incident Page
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      2.6.1
+// @version      2.7.0
 // @description  Description
 // @author       Vivian
 // @match        https://*.service-now.com/*
@@ -12,6 +12,7 @@
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/better_settings_menu.js
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/main/textarea_autoenter.js
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/refs/heads/main/lib/autocorrect.js
+// @require      https://github.com/VivianVerdant/service-now-userscripts/raw/refs/heads/main/lib/autocorrect_dictionary.js
 // @require      https://github.com/VivianVerdant/chronomouse/raw/refs/heads/master/chronomouse.2.4.0.min.js
 // @resource     settings_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_settings_menu.css
 // @resource     better_incident_css https://github.com/VivianVerdant/service-now-userscripts/raw/main/css/better_incident.css
@@ -23,10 +24,11 @@
 // @grant        GM_getValue
 // @run-at       document-start
 // ==/UserScript==
-/* globals find_or_observe_for_element showRelatedRecList createBetterSettingsMenu AJAXCompleter getColorFromSeed better_settings_menu GlideRecord g_form g_navigation g_user getLocalInfo */
+/* globals autocorrect_dictionary find_or_observe_for_element showRelatedRecList createBetterSettingsMenu AJAXCompleter getColorFromSeed better_settings_menu GlideRecord g_form g_navigation g_user getLocalInfo */
 
 
 /* Changelog
+v2.7.0 - Polished autocorrect support
 v2.6.1 - Inital support for autocorrecting
 v2.6.0 - Bugfix: local time now displays properly
        - Added preselects KB name when focusing the attached knowledge field, for better copying or drag and dropping
@@ -68,23 +70,6 @@ v0.1 - Initial release
 */
 
 'use strict';
-
-const autocorrect_dictionary = {
-	"windows": "Windows",
-	"workday": "Workday",
-	"epic": "Epic",
-	"vpn": "VPN",
-	"okta": "Okta",
-	//"foo": "bar",
-	//"foo": "bar",
-	//"foo": "bar",
-	//"foo": "bar",
-	//"foo": "bar",
-	//"foo": "bar",
-	//"foo": "bar",
-	//"foo": "bar",
-	//"foo": "bar",
-}
 
 const menu_command_id_1 = GM_registerMenuCommand("Show Alert", function( MouseEvent ) {
   alert("Menu item selected");
@@ -847,19 +832,19 @@ async function edit_main(element) {
 
 	find_or_observe_for_element("[id='incident.short_description']", async (node) => {
 		assign_autocorrect_element(node, autocorrect_dictionary);
-		console.warn(node);
     }, undefined, true);
 
-	find_or_observe_for_element("[id='incident.description']", async (node) => {
+	find_or_observe_for_element("[id='incident.close_notes']", async (node) => {
 		assign_autocorrect_element(node, autocorrect_dictionary);
-		console.warn(node);
     }, undefined, true);
 
-	find_or_observe_for_element("[aria-label='Additional comments']", async (node) => {
+	find_or_observe_for_element("#activity-stream-comments-textarea", async (node) => {
 		assign_autocorrect_element(node, autocorrect_dictionary);
-		console.warn(node);
-    }, undefined, false);
+    }, undefined, true);
 
+	find_or_observe_for_element("#activity-stream-textarea", async (node) => {
+		assign_autocorrect_element(node, autocorrect_dictionary);
+    }, undefined, true);
 }
 
 console.warn("Better Incidents Start");

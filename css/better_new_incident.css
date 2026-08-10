@@ -23,6 +23,13 @@
 	line-height: inherit;
 }
 
+html[data-doctype="true"] #item_table textarea:not(pre):not(code):not(tt):not(kbd):not(samp):not(var) {
+    field-sizing: content !important;
+    min-height: 8lh !important;
+    max-height: 100lh !important;
+    height : auto !important;
+}
+
 /* General Overrides */
 .row,
 .sc-row,

@@ -8,6 +8,13 @@ div[id="element.incident.u_device_asset"]::after {
 	line-height: inherit;
 }
 
+textarea:not(pre):not(code):not(tt):not(kbd):not(samp):not(var) {
+    field-sizing: content !important;
+    min-height: 8lh !important;
+    max-height: 100lh !important;
+    height : auto !important;
+}
+
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
 	cursor: unset !important;
 }

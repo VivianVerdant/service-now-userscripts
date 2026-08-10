@@ -71,22 +71,6 @@ v0.1 - Initial release
 
 'use strict';
 
-const menu_command_id_1 = GM_registerMenuCommand("Show Alert", function( MouseEvent ) {
-  alert("Menu item selected");
-}, {
-  accessKey: "a",
-  autoClose: true
-});
-
-const menu_command_id_2 = GM_registerMenuCommand("Log", function( MouseEvent ) {
-  console.log("Menu item selected");
-}, "l");
-
-function testAlert(e) {
-    e.preventDefault();
-    alert("foo");
-}
-
 let default_settings = {
     new_incident_page: {value: null, type: "null", description: "New Incident Page Settings"},
     custom_new_layout: {value: false, type: "bool", description: "Enable custom layout on Create Incident page:"},

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Service-Now Function Buttons
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      0.3.0
+// @version      0.1.1
 // @description  Add buttons to do stuff, I guess
 // @author       Vivian Roerig Willett
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts
@@ -98,45 +98,68 @@ wait_for_element(".sn-card-component:has([data-presence-id])", (node) => {
 }, false);
 */
 
-(function() {
-    'use strict';
+'use strict';
 
-    document.onkeydown = function(e) {
-		if( e.ctrlKey && e.key === 's' ){
-			e.preventDefault();
-            try {
-                g_form.save();
-            } catch(e) {}
-		}
-	};
-
-    var location = new URL(window.location.href);
-
-    if (location.pathname.startsWith("/now/")) {
-        location = location.pathname.match(/\/[a-z_]*(?=%)/);
-    } else {
-        location = location.pathname;
+document.onkeydown = function(e) {
+    if( e.ctrlKey && e.key === 's' ){
+        e.preventDefault();
+        try {
+            g_form.save();
+        } catch(e) {}
     }
-    console.debug(location);
+};
 
-    switch (location){
-        case "/u_email.do":
-            email();
-            break
-        case "/incident.do":
-            incident();
-            break
-        case "/u_event.do":
-            event();
-            break
-        case "/kb":
-            kb();
-            break
-        case "/kb_view.do":
-            kb();
-            break
-        default:
-            break
+var location = new URL(window.location.href);
+
+if (location.pathname.startsWith("/now/")) {
+    location = location.pathname.match(/\/[a-z_]*(?=%)/);
+} else {
+    location = location.pathname;
+}
+console.debug(location);
+
+switch (location){
+    case "/u_email.do":
+        email();
+        break
+    case "/incident.do":
+        incident();
+        break
+    case "/u_event.do":
+        event();
+        break
+    case "/kb":
+        kb();
+        break
+    case "/kb_view.do":
+        kb();
+        break
+    default:
+        break
+}
+
+const url_regex = /(http|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])/gmi
+
+wait_for_element("[name$='.description']", (node) => {
+    const text = node.value;
+    const results = text.matchAll(url_regex);
+    for (const url of results) {
+        let link_button = create_node(node.parentNode, "a", "btn btn-default compact");
+        link_button.innerText = url;
+        link_button.href = url;
+        link_button.target = "_blank"
     }
+}, false);
 
-})();
+wait_for_element(".sn-widget-textblock-body", (node) => {
+    const text = node.innerText;
+    console.debug(text);
+    const results = text.matchAll(url_regex);
+    for (const url of results) {
+        console.debug(url);
+        let link_button = create_node(node.parentNode, "a", "btn btn-default compact");
+        link_button.innerText = url;
+        link_button.href = url;
+        link_button.target = "_blank"
+    }
+}, false);

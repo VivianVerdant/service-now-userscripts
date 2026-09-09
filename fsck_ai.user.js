@@ -9,7 +9,6 @@
 // @match        https://partner.microsoft.com/*
 // @require      https://github.com/VivianVerdant/service-now-userscripts/raw/refs/heads/main/lib/wait_for_element.js
 // @grant        GM_addStyle
-// @grant        unsafeWindow
 // @run-at       document-idle
 // ==/UserScript==
 

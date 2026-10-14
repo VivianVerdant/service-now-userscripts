@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Service-Now Function Buttons
 // @namespace    https://github.com/VivianVerdant/service-now-userscripts
-// @version      0.1.1
+// @version      0.2.0
 // @description  Add buttons to do stuff, I guess
 // @author       Vivian Roerig Willett
 // @homepageURL  https://github.com/VivianVerdant/service-now-userscripts
@@ -14,7 +14,7 @@
 // @run-at       document-start
 // ==/UserScript==
 
-/* globals page_header create_node create_button create_header_button add_header_button*/
+/* globals page_header create_node create_button HeaderButtons*/
 /* globals wait_for_element */
 /* globals GlideRecord g_form g_user g_navigation*/
 
@@ -27,60 +27,65 @@ function incident() {
 }
 
 function event() {
-    add_header_button("Informational",() => {
+
+    const header_buttons = new HeaderButtons();
+
+    header_buttons.add_button("Auto Cleared",() => {
+        g_form.setValue("state", 3);
+        g_form.setValue("u_close_code", "Auto-Cleared");
+        setTimeout(() => {g_form.save();}, 200);
+    }, "icon-checkbox-checked");
+
+    header_buttons.add_button("Info",() => {
         g_form.setValue("u_category", "Informational");
         g_form.setValue("u_subcategory", "Escalation");
         g_form.setValue("u_trouble_code", "96b743276fdc8a001ef4eef11c3ee4c9", "Informational");
         setTimeout(() => {g_form.save();}, 200);
     });
 
-    add_header_button("Switch Offline",() => {
+    header_buttons.add_button("Switch",() => {
         g_form.setValue("u_category", "Network");
         g_form.setValue("u_subcategory", "Switch");
         g_form.setValue("u_trouble_code", "fd8128276fd31100ad775ddd5d3ee401", "Switch Offline");
         setTimeout(() => {g_form.save();}, 200);
     });
 
-    add_header_button("Firewall Offline",() => {
+    header_buttons.add_button("Firewall",() => {
         g_form.setValue("u_category", "Network");
         g_form.setValue("u_subcategory", "Firewall");
         g_form.setValue("u_trouble_code", "efb128276fd31100ad775ddd5d3ee4b2", "FIrewall Offline");
         setTimeout(() => {g_form.save();}, 200);
     });
 
-    add_header_button("VM Offline",() => {
+    header_buttons.add_button("VM",() => {
         g_form.setValue("u_category", "Infrastructure");
         g_form.setValue("u_subcategory", "Vmware");
         g_form.setValue("u_trouble_code", "c51164276fd31100ad775ddd5d3ee4b1", "Host Offline");
         setTimeout(() => {g_form.save();}, 200);
     });
 
-    add_header_button("Server Perf",() => {
+    header_buttons.add_button("Server Perf",() => {
         g_form.setValue("u_category", "Infrastructure");
         g_form.setValue("u_subcategory", "Server");
         g_form.setValue("u_trouble_code", "a90011346f32f9006f41cf30be3ee46d", "Performance");
         setTimeout(() => {g_form.save();}, 200);
     });
 
-    add_header_button("UPS",() => {
+    header_buttons.add_button("UPS",() => {
         g_form.setValue("u_category", "Facilities");
         g_form.setValue("u_subcategory", "UPS");
         g_form.setValue("u_trouble_code", "d257d1a06f146d40e2e1a14d5d3ee409", "UPS");
         setTimeout(() => {g_form.save();}, 200);
     });
 
-    add_header_button("VM CPU",() => {
+    header_buttons.add_button("VM CPU",() => {
         g_form.setValue("u_category", "Infrastructure");
         g_form.setValue("u_subcategory", "Vmware");
         g_form.setValue("u_trouble_code", "3bf0a4276fd31100ad775ddd5d3ee403", "CPU");
         setTimeout(() => {g_form.save();}, 200);
     });
 
-    add_header_button("Auto Cleared",() => {
-        g_form.setValue("state", 3);
-        g_form.setValue("u_close_code", "Auto-Cleared");
-        setTimeout(() => {g_form.save();}, 200);
-    }, "icon-checkbox-checked");
+    header_buttons.write();
 }
 
 function kb() {
@@ -110,6 +115,7 @@ document.onkeydown = function(e) {
 };
 
 var location = new URL(window.location.href);
+console.debug(location);
 
 if (location.pathname.startsWith("/now/")) {
     location = location.pathname.match(/\/[a-z_]*(?=%)/);
